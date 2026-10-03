@@ -166,10 +166,10 @@
             <div class="header-selects">
                 <!-- 分类筛选下拉菜单 -->
                 <select class="filter-select" id="categoryFilter" onchange="filterSpotsByCategory()">
-                    <option value="all">核心景点与公园</option>
-                    <option value="historic">历史古迹与神社</option>
-                    <option value="park">公园与绿地</option>
-                    <option value="museum">博物馆与乡土馆</option>
+                    <option value="all" id="optAll">🌟 全部推荐</option>
+                    <option value="historic" id="optHistoric">⛩️ 历史古迹与神社</option>
+                    <option value="park" id="optPark">🌳 公园与绿地</option>
+                    <option value="museum" id="optMuseum">🏛️ 博物馆与场馆</option>
                 </select>
                 <!-- 语言选择 -->
                 <select class="lang-select" id="langSelect" onchange="changeLanguage(this.value)">
@@ -198,61 +198,76 @@
             appName: "🧭 AI 随身导游",
             gpsBtn: "📍 获取实时GPS并探索周边景点",
             welcomeTitle: "欢迎使用 AI 随身导游",
-            welcomeDesc: "默认自动为您过滤并筛选身边的核心名胜古迹、公园及文化场馆。<br>请点击上方按钮开始探索！",
+            welcomeDesc: "默认自动为您过滤并筛选身边的热门名胜、历史古迹、公园绿地及文化场馆。<br>请点击上方按钮开始探索！",
             locating: "📍 正在获取您周边的精准卫星定位...",
             searching: "🔍 正在精细化检索周边旅游与文化地标...",
-            locSuccess: "📍 周边核心景点加载成功！",
+            locSuccess: "📍 周边热门景点加载成功！",
             locError: "❌ 暂时无法获取位置信息，请检查手机定位权限后重试。",
             distPrefix: "距离您：",
-            historyLabel: "历史与建筑解说：",
+            historyLabel: "历史与文化解说：",
             tipsLabel: "参观导览：",
             speakBtn: "🎙️ 语音讲解",
             stopBtn: "⏹ 停止播报",
             navBtn: "🗺 导航",
-            langCode: "zh-CN"
+            langCode: "zh-CN",
+            optAll: "🌟 全部推荐",
+            optHistoric: "⛩️ 历史古迹与神社",
+            optPark: "🌳 公园与绿地",
+            optMuseum: "🏛️ 博物馆与场馆",
+            emptyCat: "当前分类下暂无景点，请尝试切换其他分类或重新获取定位。"
         },
         en: {
             title: "AI Audio Guide",
             appName: "🧭 AI Audio Guide",
             gpsBtn: "📍 Get GPS & Explore Nearby",
             welcomeTitle: "Welcome to AI Audio Guide",
-            welcomeDesc: "Automatically filters key attractions, parks, and cultural spots around you.<br>Tap the button above to begin!",
+            welcomeDesc: "Automatically filters popular attractions, historical sites, parks, and cultural spots around you.<br>Tap the button above to begin!",
             locating: "📍 Acquiring your location...",
             searching: "Searching nearby tourist spots...",
             locSuccess: "📍 Nearby spots loaded successfully!",
             locError: "❌ Unable to get GPS. Please check location permissions.",
             distPrefix: "Distance: ",
-            historyLabel: "History & Architecture: ",
+            historyLabel: "History & Culture: ",
             tipsLabel: "Guide Tips: ",
             speakBtn: "🎙 Audio Guide",
             stopBtn: "Stop",
             navBtn: "🗺 Maps",
-            langCode: "en-US"
+            langCode: "en-US",
+            optAll: "🌟 All Recommendations",
+            optHistoric: "⛩️ Historic Sites & Shrines",
+            optPark: "🌳 Parks & Greenery",
+            optMuseum: "🏛️ Museums & Venues",
+            emptyCat: "No spots found in this category. Try switching categories or refreshing."
         },
         ja: {
             title: "AI音声ガイド",
             appName: "🧭 AI音声ガイド",
             gpsBtn: "📍 現在地を取得して周辺を探索",
             welcomeTitle: "AI音声ガイドへようこそ",
-            welcomeDesc: "周辺の主要な名所、公園、文化施設を自動でフィルタリングしてご案内します。<br>上のボタンを押して始めましょう！",
+            welcomeDesc: "周辺の人気名所、史跡、公園、文化施設を自動でフィルタリングしてご案内します。<br>上のボタンを押して始めましょう！",
             locating: "📍 現在地を取得中...",
             searching: "周辺のスポットを検索中...",
-            locSuccess: "📍 スポットの読み込みに成功しました！",
+            locSuccess: "📍 周辺スポットの読み込みに成功しました！",
             locError: "❌ 位置情報を取得できませんでした。",
             distPrefix: "現在地から：",
-            descLabel: "歴史と建築の解説：",
-            triviaLabel: "見どころ：",
+            historyLabel: "歴史と文化の解説：",
+            tipsLabel: "見どころ・散策のコツ：",
             speakBtn: "🎙️ 音声解説",
             stopBtn: "⏹️ 停止",
             navBtn: "🗺 マップ",
-            langCode: "ja-JP"
+            langCode: "ja-JP",
+            optAll: "🌟 すべてのおすすめ",
+            optHistoric: "⛩️ 史跡・神社仏閣",
+            optPark: "🌳 公園・緑地",
+            optMuseum: "🏛️ 博物館・文化施設",
+            emptyCat: "このカテゴリのスポットはありません。他のカテゴリに切り替えるか、再読み込みしてください。"
         }
     };
 
     let currentLang = "zh";
     let currentSpeakingId = null;
-    let allFetchedSpots = [];  // 保存所有原始搜到的数据
-    let currentSpots = [];     // 当前展示的过滤后数据
+    let allFetchedSpots = [];  
+    let currentSpots = [];     
     let isInitialized = false;
 
     function changeLanguage(lang) {
@@ -267,6 +282,11 @@
         document.getElementById('appNameText').textContent = t.appName;
         document.getElementById('gpsBtnText').textContent = t.gpsBtn;
         
+        document.getElementById('optAll').textContent = t.optAll;
+        document.getElementById('optHistoric').textContent = t.optHistoric;
+        document.getElementById('optPark').textContent = t.optPark;
+        document.getElementById('optMuseum').textContent = t.optMuseum;
+        
         renderList();
     }
 
@@ -274,58 +294,82 @@
         document.getElementById('statusTip').textContent = text;
     }
 
-    // 智能分类与过滤核心：自动把幼儿园、学校等杂项剔除，归纳出标准旅游类别
     function classifySpot(name, tags) {
         let rawType = (tags.tourism || tags.historic || tags.amenity || tags.leisure || "").toLowerCase();
         
-        // 排除掉干扰项（如幼儿园、学校、普通办公楼等）
-        if (name.includes("幼儿园") || name.includes("保育園") || name.includes("学校") || name.includes("小学校") || name.includes("中学校") || name.includes("役所") || name.includes("警察署") || rawType.includes("school") || rawType.includes("kindergarten") || rawType.includes("university")) {
+        if (name.includes("児童館") || name.includes("図書館") || name.includes("保育園") || name.includes("学校") || name.includes("小学校") || name.includes("中学校") || name.includes("高等学校") || name.includes("役所") || name.includes("警察署") || name.includes("儿童馆") || name.includes("图书馆") || name.includes("学校") || name.includes("幼儿园")) {
+            return "excluded";
+        }
+        if (rawType.includes("school") || rawType.includes("kindergarten") || rawType.includes("library") || rawType.includes("university")) {
             return "excluded";
         }
 
-        if (rawType.includes("historic") || name.includes("神社") || name.includes("寺") || name.includes("院") || name.includes("碑") || name.includes("旧址")) {
+        if (rawType.includes("historic") || name.includes("神社") || name.includes("寺") || name.includes("院") || name.includes("碑") || name.includes("旧址") || name.includes("宮")) {
             return "historic";
         }
-        if (rawType.includes("park") || rawType.includes("leisure") || name.includes("公园") || name.includes("緑地") || name.includes("庭園")) {
+        if (rawType.includes("park") || rawType.includes("leisure") || name.includes("公园") || name.includes("緑地") || name.includes("庭園") || name.includes("公園")) {
             return "park";
         }
-        if (rawType.includes("museum") || name.includes("乡土") || name.includes("馆") || name.includes("资料") || name.includes("美术馆")) {
+        if (rawType.includes("museum") || name.includes("乡土") || name.includes("馆") || name.includes("资料") || name.includes("美术馆") || name.includes("博物館")) {
             return "museum";
         }
         
-        // 默认算作核心景点
         return "historic"; 
     }
 
-    function generateProfessionalGuide(name, categoryKey) {
-        let historyDesc = "";
-        let tipsDesc = "";
-
-        if (categoryKey === "historic") {
-            historyDesc = `「${name}」是当地极具历史底蕴与传统文化氛围的知名坐标。建筑结构多延续了传统的日式木作或石造工艺，细节处融合了岁时祭礼与地域信仰，是承载该片区数代人记忆的重要历史文脉。`;
-            tipsDesc = `建议实地参观时细致观察其鸟居、石碑或社殿结构，感受其古朴典雅的传统韵味。`;
-        } else if (categoryKey === "park") {
-            historyDesc = `「${name}」是兼具自然生态与休闲功能的优质公共绿地。园内规划有精致的步道、绿植及休憩设施，不仅为周边居民提供了优美的休闲场所，也是体验当地都市慢生活的好去处。`;
-            tipsDesc = `四季风景各异，非常适合在步行探索途中在此放慢脚步、休憩片刻。`;
-        } else if (categoryKey === "museum") {
-            historyDesc = `「${name}」是专注于地域文化、历史民俗或艺术展陈的核心场馆。馆内系统保存了丰富的历史文献与实物展品，生动记录了该地区从过去到现代的演变轨迹与风土人情。`;
-            tipsDesc = `常年设有精彩的主题展陈，适合驻足细品当地深厚的文化积淀。`;
-        } else {
-            historyDesc = `「${name}」是位于该街区内特色鲜明的人文地标。在日常生活中发挥着重要作用，也为步行探索增添了丰富的体验。`;
-            tipsDesc = `建议顺道前往参观，感受原汁原味的当地街景。`;
+    function generateProfessionalGuide(name, categoryKey, lang) {
+        if (lang === 'en') {
+            let historyDesc = "";
+            let tipsDesc = "";
+            if (categoryKey === "historic") {
+                historyDesc = `"${name}" is a notable local landmark steeped in traditional culture and history, featuring classic architectural craftsmanship and rich regional heritage.`;
+                tipsDesc = `Recommended to observe its traditional structure and enjoy the cultural ambiance.`;
+            } else if (categoryKey === "park") {
+                historyDesc = `"${name}" is a scenic public green space blending natural beauty with leisure facilities, perfect for experiencing local urban lifestyle.`;
+                tipsDesc = `Great for a relaxing stroll and enjoying the seasonal scenery.`;
+            } else {
+                historyDesc = `"${name}" is a cultural venue dedicated to preserving regional history, arts, and local folklore exhibits.`;
+                tipsDesc = `Explore the exhibitions to gain deep insights into local heritage.`;
+            }
+            return { history: historyDesc, tips: tipsDesc };
+        } 
+        else if (lang === 'ja') {
+            let historyDesc = "";
+            let tipsDesc = "";
+            if (categoryKey === "historic") {
+                historyDesc = `「${name}」は、伝統的な文化と歴史の底流を持つ地域の名所です。伝統的な建築様式や地域信仰が息づいています。`;
+                tipsDesc = `社殿や石碑などの伝統的なディテールをゆっくり観察しながら散策するのに最適です。`;
+            } else if (categoryKey === "park") {
+                historyDesc = `「${name}」は、豊かな自然とリラックスできる空間を兼ね備えた優れた公共緑地です。地元の穏やかな雰囲気を楽しめます。`;
+                tipsDesc = `季節ごとの景色を楽しみながら、リフレッシュするのに最適です。`;
+            } else {
+                historyDesc = `「${name}」は、地域の歴史や民俗、文化を保存・展示する重要な施設です。`;
+                tipsDesc = `常設展示を通じて、地元の豊かな文化や背景を深く知ることができます。`;
+            }
+            return { history: historyDesc, tips: tipsDesc };
+        } 
+        else {
+            let historyDesc = "";
+            let tipsDesc = "";
+            if (categoryKey === "historic") {
+                historyDesc = `「${name}」是当地极具历史底蕴与传统文化氛围的知名坐标。建筑结构多延续了传统的日式木作或石造工艺，细节处融合了岁时祭礼与地域信仰，是承载该片区重要历史文脉的旅游地标。`;
+                tipsDesc = `建议实地参观时细致观察其鸟居、石碑或社殿结构，感受其古朴典雅的传统韵味。`;
+            } else if (categoryKey === "park") {
+                historyDesc = `「${name}」是兼具自然生态与休闲功能的优质公共绿地。园内规划有精致的步道、绿植及休憩设施，不仅为游客提供了优美的漫步环境，也是体验当地都市慢生活的好去处。`;
+                tipsDesc = `四季风景各异，非常适合在步行探索途中在此放慢脚步、休憩片刻。`;
+            } else {
+                historyDesc = `「${name}」是专注于地域文化、历史民俗或艺术展陈的文化场馆。馆内系统保存了丰富的历史文献与实物展品，生动记录了该地区独特的风土人情。`;
+                tipsDesc = `常年设有精彩的主题展陈，适合驻足细品当地深厚的文化积淀。`;
+            }
+            return { history: historyDesc, tips: tipsDesc };
         }
-
-        return { history: historyDesc, tips: tipsDesc };
     }
 
     function filterSpotsByCategory() {
         const filterVal = document.getElementById('categoryFilter').value;
-        
         if (filterVal === "all") {
-            // 默认显示所有符合条件的优质景点
             currentSpots = [...allFetchedSpots];
         } else {
-            // 按选定的类别精准筛选
             currentSpots = allFetchedSpots.filter(s => s.categoryKey === filterVal);
         }
         renderList();
@@ -353,7 +397,6 @@
                 
                 setStatus(t.searching);
 
-                // 扩大范围搜索，包含景点、历史、公园、休闲娱乐及文化场馆
                 const query = `[out:json][timeout:15];(
                   node["tourism"](around:1000,${lat},${lon});
                   way["tourism"](around:1000,${lat},${lon});
@@ -379,11 +422,12 @@
                                     let spotLat = el.lat || (el.center && el.center.lat) || lat;
                                     let spotLon = el.lon || (el.center && el.center.lon) || lon;
                                     
-                                    // 进行分类并剔除幼儿园等杂项
                                     let catKey = classifySpot(spotName, el.tags);
                                     if (catKey === "excluded") return; 
 
-                                    let guideInfo = generateProfessionalGuide(spotName, catKey);
+                                    let guideZh = generateProfessionalGuide(spotName, catKey, 'zh');
+                                    let guideEn = generateProfessionalGuide(spotName, catKey, 'en');
+                                    let guideJa = generateProfessionalGuide(spotName, catKey, 'ja');
 
                                     fetchedSpots.push({
                                         id: 100 + index,
@@ -400,14 +444,14 @@
                                         },
                                         mapUrl: `https://maps.google.com/?q=${spotLat},${spotLon}`,
                                         history: {
-                                            zh: guideInfo.history,
-                                            en: "Rich historical and cultural background.",
-                                            ja: "地域の歴史と文化を持つスポットです。"
+                                            zh: guideZh.history,
+                                            en: guideEn.history,
+                                            ja: guideJa.history
                                         },
                                         tips: {
-                                            zh: guideInfo.tips,
-                                            en: "Recommended for a walking tour.",
-                                            ja: "散策におすすめです。"
+                                            zh: guideZh.tips,
+                                            en: guideEn.tips,
+                                            ja: guideJa.tips
                                         }
                                     });
                                 }
@@ -424,8 +468,6 @@
                                 });
 
                                 allFetchedSpots = uniqueSpots;
-                                
-                                // 默认应用筛选（显示“核心景点与公园”）
                                 document.getElementById('categoryFilter').value = "all";
                                 currentSpots = [...allFetchedSpots];
 
@@ -485,8 +527,7 @@
             emptyDiv.className = 'welcome-card';
             emptyDiv.innerHTML = `
                 <div class="welcome-icon">🔍</div>
-                <div class="welcome-title">当前分类下暂无景点</div>
-                <div class="welcome-desc">您可以尝试在上方下拉菜单切换其他分类，或重新刷新定位。</div>
+                <div class="welcome-title">${t.emptyCat}</div>
             `;
             listContainer.appendChild(emptyDiv);
             return;
