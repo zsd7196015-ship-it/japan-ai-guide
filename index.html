@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 随身导游 - 您的专属智能讲解员</title>
+    <title>AI 随身导游 - 深度历史与秘闻讲解</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -146,15 +146,33 @@
             border-left: 4px solid var(--accent-color);
         }
 
-        .spot-card.landmark {
+        /* 大景点特殊高亮标识 */
+        .spot-card.major-spot {
             border-left: 4px solid #e74c3c;
             background: #fffdfd;
+        }
+
+        .tier-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        .tier-badge.major {
+            background: #fde8e8;
+            color: #c0392b;
+        }
+        .tier-badge.minor {
+            background: #fef9e7;
+            color: #d35400;
         }
 
         .spot-title {
             font-size: 1.1rem;
             font-weight: bold;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             color: var(--primary-color);
         }
 
@@ -192,17 +210,6 @@
             margin-bottom: 8px;
             line-height: 1.6;
             border-left: 3px solid #9b59b6;
-        }
-
-        .spot-shop-section {
-            font-size: 0.88rem;
-            color: #16a085;
-            background: #e8f8f5;
-            padding: 10px 12px;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            line-height: 1.6;
-            border-left: 3px solid #1abc9c;
         }
 
         .proximity-notice {
@@ -260,7 +267,7 @@
     <div class="container">
         <div class="top-card">
             <header>
-                <h2 class="app-title" id="ui-title">🧭 AI 随身导游</h2>
+                <h2 class="app-title" id="ui-title">🧭 AI 历史文化导游</h2>
                 <div class="lang-container">
                     <span class="lang-label" id="lang-label-text">语言:</span>
                     <select id="lang-select" onchange="changeLanguage()" style="width: auto;">
@@ -272,25 +279,25 @@
             </header>
 
             <div class="controls">
-                <button class="primary" id="btn-gps" onclick="getLocationAndExplore()">📍 获取实时GPS并开启 1000 米内 AI 讲解</button>
+                <button class="primary" id="btn-gps" onclick="getLocationAndExplore()">📍 获取 GPS 并开启 1500 米内历史与秘闻讲解</button>
                 
                 <div class="filter-row">
                     <select id="category-select" onchange="onCategoryChange()">
-                        <option value="recommend" id="opt-recommend">🌟 景点推荐（综合精选）</option>
-                        <option value="historic" id="opt-historic">⛩️ 历史古迹与神社寺庙</option>
-                        <option value="park" id="opt-park">🌳 公园与绿地</option>
-                        <option value="museum" id="opt-museum">🏛️ 博物馆与乡土馆</option>
+                        <option value="recommend" id="opt-recommend">🌟 综合文化精选（大点+秘境）</option>
+                        <option value="major" id="opt-major">🏯 核心大景点与重磅地标</option>
+                        <option value="minor" id="opt-minor">📜 街头冷门秘闻与古迹</option>
+                        <option value="historic" id="opt-historic">⛩️ 神社寺庙与传统建筑</option>
                     </select>
                 </div>
             </div>
 
-            <div id="status">您的专属 AI 导游已就绪，走到哪为您讲解到哪...</div>
+            <div id="status">导游已就绪，专注为您发掘厚重历史与宫廷野史...</div>
         </div>
 
         <div class="spot-list" id="spots-container">
             <div class="welcome-banner">
-                <h3 id="welcome-title">欢迎来到 AI 随身导游</h3>
-                <p id="welcome-desc">超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹。远距离可查看基本简介与提示，走近景点 20 米以内即可自动解锁深度秘闻与拍照机位！</p>
+                <h3 id="welcome-title">欢迎来到 AI 历史文化导游</h3>
+                <p id="welcome-desc">拒绝浅薄的吃喝打卡！我们专注于为您提供大厂地图没有的厚重历史、建筑密码与深度野史。大景点为您提供分步沉浸指引，小景点为您独家揭秘街头巷尾的传奇故事！</p>
             </div>
         </div>
     </div>
@@ -305,54 +312,55 @@
 
         const i18n = {
             zh: {
-                title: "🧭 AI 随身导游",
+                title: "🧭 AI 历史文化导游",
                 langLabel: "语言:",
-                gpsBtn: "📍 获取实时GPS并开启 1000 米内 AI 讲解",
-                statusInit: "您的专属 AI 导游已就绪，走到哪为您讲解到哪...",
-                statusLocating: "正在获取您的 GPS 位置...",
-                statusLoading: "正在搜寻周边 1000 米内的精彩讲解点...",
-                statusSuccess: "周边景点的 AI 智能导游已准备就绪！",
-                statusErrorGPS: "无法获取您的地理位置，请确保浏览器已授权定位。",
-                statusErrorFetch: "获取景点讲解数据失败，请稍后重试。",
-                noSpots: "1000 米范围内暂无符合该分类的讲解点。",
-                welcomeTitle: "欢迎来到 AI 随身导游",
-                welcomeDesc: "超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹。远距离可查看基本简介，走近 20 米以内自动解锁深度秘闻。",
+                gpsBtn: "📍 获取 GPS 并开启 1500 米内历史与秘闻讲解",
+                statusInit: "导游已就绪，专注为您发掘厚重历史与宫廷野史...",
+                statusLocating: "正在获取您的高精度 GPS 位置...",
+                statusLoading: "正在搜寻周边 1500 米内的历史古迹与地标...",
+                statusSuccess: "周边文化古迹与野史数据库已加载完毕！",
+                statusErrorGPS: "无法获取定位，请检查浏览器定位权限。",
+                statusErrorFetch: "数据获取失败，请稍后重试。",
+                noSpots: "1500 米范围内暂无符合该分类的文化古迹。",
+                welcomeTitle: "欢迎来到 AI 历史文化导游",
+                welcomeDesc: "拒绝浅薄的吃喝导购！为您深度解析大景点的层层递进历史，挖掘小景点的独家民间秘闻。",
                 cats: { 
-                    recommend: "🌟 景点推荐（综合精选）", 
-                    historic: "⛩️ 历史古迹与神社寺庙", 
-                    park: "🌳 公园与绿地", 
-                    museum: "🏛️ 博物馆与乡土馆" 
+                    recommend: "🌟 综合文化精选（大点+秘境）", 
+                    major: "🏯 核心大景点与重磅地标", 
+                    minor: "📜 街头冷门秘闻与古迹", 
+                    historic: "⛩️ 神社寺庙与传统建筑" 
                 },
                 distancePrefix: "距离您：约",
                 distanceWalk: "距离您：步行可达范围内",
-                audioBtn: "🎤 听讲解",
+                audioBtn: "🎤 听深度讲解",
                 stopBtn: "⏹ 停止播报",
-                mapBtn: "🗺️️ 导航",
-                labelOverview: "🏛 <b>简介：</b>",
-                labelAnecdote: "📜 <b>趣闻典故：</b>",
-                labelPhoto: "📷 <b>绝佳拍照机位：</b>",
-                labelShop: "🛍 <b>伴手礼与老店推荐：</b>",
-                nearbyNotice: "🔒 提示：您距离该景点超过 20 米，走近后将自动解锁全部秘闻与深度导游讲解！",
+                mapBtn: "🗺 导航",
+                labelOverview: "🏛 <b>历史梗概：</b>",
+                labelAnecdote: "📜 <b>深度野史与秘闻：</b>",
+                labelPhoto: "📷 <b>独家构图与机位：</b>",
+                majorBadge: "🏯 核心大景点（宏大体量·建议入园分步漫游）",
+                minorBadge: "📜 街头秘境（冷门古迹·独家传说一次听完）",
+                nearbyNotice: "🔒 提示：您距离该景点超过 20 米，走近后将自动解锁全部深度野史与密辛讲解！",
                 speechLang: "zh-CN"
             },
             en: {
-                title: "🧭 AI Tour Guide",
+                title: "🧭 AI History & Culture Guide",
                 langLabel: "Language:",
-                gpsBtn: "📍 Get GPS & Start AI Guide within 1000m",
-                statusInit: "Your personal AI guide is ready, narrating wherever you go...",
+                gpsBtn: "📍 Get GPS & Start History Guide within 1500m",
+                statusInit: "Your personal history guide is ready...",
                 statusLocating: "Getting your GPS location...",
-                statusLoading: "Searching for nearby sites within 1000m...",
-                statusSuccess: "AI narration ready!",
-                statusErrorGPS: "Unable to get location. Please enable location permissions.",
-                statusErrorFetch: "Failed to fetch spot data. Please try again later.",
-                noSpots: "No sites found within 1000 meters in this category.",
-                welcomeTitle: "Welcome to AI Tour Guide",
-                welcomeDesc: "View overviews from afar, and get within 20 meters to unlock secret anecdotes!",
+                statusLoading: "Searching for nearby historical sites...",
+                statusSuccess: "Historical and anecdote database ready!",
+                statusErrorGPS: "Unable to get location. Please enable GPS permissions.",
+                statusErrorFetch: "Failed to fetch data.",
+                noSpots: "No historical sites found within 1500 meters.",
+                welcomeTitle: "Welcome to AI History Guide",
+                welcomeDesc: "Focusing on deep historical context, architecture, and hidden anecdotes rather than shopping.",
                 cats: { 
                     recommend: "🌟 Recommended (All)", 
-                    historic: "⛩ History & Shrines/Temples", 
-                    park: "🌳 Parks & Greenery", 
-                    museum: "🏛️ Museums" 
+                    major: "🏯 Major Landmarks", 
+                    minor: "📜 Minor Hidden Gems", 
+                    historic: "⛩️ Shrines & Temples" 
                 },
                 distancePrefix: "Distance: approx.",
                 distanceWalk: "Distance: within walking distance",
@@ -360,70 +368,57 @@
                 stopBtn: "⏹ Stop",
                 mapBtn: "🗺️ Map",
                 labelOverview: "🏛 <b>Overview:</b>",
-                labelAnecdote: "📜 <b>Anecdotes:</b>",
-                labelPhoto: "📷 <b>Best Photo Spot:</b>",
-                labelShop: "🛍️ <b>Souvenirs & Shops:</b>",
-                nearbyNotice: "🔒 Notice: You are more than 20m away. Approach closer to unlock deep secrets and full stories!",
+                labelAnecdote: "📜 <b>Hidden Anecdotes:</b>",
+                labelPhoto: "📷 <b>Photo Spot:</b>",
+                majorBadge: "🏯 Major Landmark (Explore Step-by-Step Inside)",
+                minorBadge: "📜 Hidden Gem (Exclusive Story)",
+                nearbyNotice: "🔒 Notice: You are more than 20m away. Approach closer to unlock deep secrets!",
                 speechLang: "en-US"
             },
             ja: {
-                title: "🧭 AI 随身ガイド",
+                title: "🧭 AI 歴史文化ガイド",
                 langLabel: "言語:",
-                gpsBtn: "📍 GPS取得して1000m内のAI解説を開始",
-                statusInit: "あなたの専属AIガイドがスタンバイ中...",
+                gpsBtn: "📍 GPS取得して1500m内の歴史・秘話解説を開始",
+                statusInit: "歴史と秘話に特化した専属ガイドがスタンバイ中...",
                 statusLocating: "GPS位置情報を取得中...",
-                statusLoading: "1000m以内のスポット解説を検索中...",
-                statusSuccess: "周辺スポットのAIガイド準備ができました！",
-                statusErrorGPS: "位置情報を取得できません。位置情報の権限を確認してください。",
-                statusErrorFetch: "スポットデータの取得に失敗しました。後ほど再試行してください。",
-                noSpots: "1000m以内に該当するスポットはありません。",
-                welcomeTitle: "AI随身ガイドへようこそ",
-                welcomeDesc: "遠くからは概要を確認でき、スポットに20m以内まで近づくと秘話が自動で展開されます。",
+                statusLoading: "周辺の歴史スポットを検索中...",
+                statusSuccess: "歴史・秘話データベースの準備ができました！",
+                statusErrorGPS: "位置情報を取得できません。",
+                statusErrorFetch: "データの取得に失敗しました。",
+                noSpots: "1500m以内に該当するスポットはありません。",
+                welcomeTitle: "AI歴史文化ガイドへようこそ",
+                welcomeDesc: "ショッピングや飲食ではなく、深い歴史、建築の背景、知られざる秘話をお届けします。",
                 cats: { 
-                    recommend: "🌟 おすすめスポット（総合）", 
-                    historic: "⛩ 歴史・神社仏閣", 
-                    park: "🌳 公園・緑地", 
-                    museum: "🏛 博物館" 
+                    recommend: "🌟 総合文化おすすめ", 
+                    major: "🏯 主要な大観光地・ランドマーク", 
+                    minor: "📜 路地裏の秘話・小スポット", 
+                    historic: "⛩️ 神社仏閣・伝統建築" 
                 },
                 distancePrefix: "距離：約",
                 distanceWalk: "距離：徒歩圏内",
                 audioBtn: "🎤 解説を聴く",
                 stopBtn: "⏹ 停止",
                 mapBtn: "🗺️ マップ",
-                labelOverview: "🏛️ <b>概要：</b>",
-                labelAnecdote: "📜 <b>逸話：</b>",
-                labelPhoto: "📷 <b>撮影スポット：</b>",
-                labelShop: "🛍️ <b>お土産・名店おすすめ：</b>",
-                nearbyNotice: "🔒 お知らせ：スポットから20m以上離れています。近づくと詳細な逸話が解放されます！",
+                labelOverview: "🏛️ <b>歴史概要：</b>",
+                labelAnecdote: "📜 <b>宮廷野史・秘話：</b>",
+                labelPhoto: "📷 <b>撮影アングル：</b>",
+                majorBadge: "🏯 主要ランドマーク（エリア内で段階的解説）",
+                minorBadge: "📜 路地裏の秘境（秘話を一度に全公開）",
+                nearbyNotice: "🔒 お知らせ：20m以上離れています。近づくと詳細な秘話が解放されます！",
                 speechLang: "ja-JP"
             }
         };
 
-        // ==========================================
-        // 全局优先级/系统打断核心监听：来电、切后台、锁屏、关页面
-        // ==========================================
+        // 全局系统音频优先级打断监听（来电、切后台、锁屏、关闭网页）
         document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                // 当用户切到后台、来电弹窗遮挡或锁屏时，瞬间强制停止语音
-                stopCurrentSpeech();
-            }
+            if (document.hidden) stopCurrentSpeech();
         });
-
-        window.addEventListener('pagehide', () => {
-            stopCurrentSpeech();
-        });
-
-        window.addEventListener('beforeunload', () => {
-            stopCurrentSpeech();
-        });
+        window.addEventListener('pagehide', () => stopCurrentSpeech());
+        window.addEventListener('beforeunload', () => stopCurrentSpeech());
 
         function stopCurrentSpeech() {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-            }
-            if (activeSpeechButton) {
-                resetAudioButton(activeSpeechButton);
-            }
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            if (activeSpeechButton) resetAudioButton(activeSpeechButton);
         }
 
         function changeLanguage() {
@@ -437,18 +432,14 @@
             document.getElementById('status').innerText = t.statusInit;
 
             document.getElementById('opt-recommend').innerText = t.cats.recommend;
+            document.getElementById('opt-major').innerText = t.cats.major;
+            document.getElementById('opt-minor').innerText = t.cats.minor;
             document.getElementById('opt-historic').innerText = t.cats.historic;
-            document.getElementById('opt-park').innerText = t.cats.park;
-            document.getElementById('opt-museum').innerText = t.cats.museum;
 
-            const welcomeTitleEl = document.getElementById('welcome-title');
-            const welcomeDescEl = document.getElementById('welcome-desc');
-            if (welcomeTitleEl) welcomeTitleEl.innerText = t.welcomeTitle;
-            if (welcomeDescEl) welcomeDescEl.innerText = t.welcomeDesc;
+            document.getElementById('welcome-title').innerText = t.welcomeTitle;
+            document.getElementById('welcome-desc').innerText = t.welcomeDesc;
 
-            if (allSpots.length > 0) {
-                renderSpots();
-            }
+            if (allSpots.length > 0) renderSpots();
         }
 
         function onCategoryChange() {
@@ -463,7 +454,7 @@
             const statusEl = document.getElementById('status');
             
             if (!navigator.geolocation) {
-                statusEl.innerText = "Geolocation is not supported";
+                statusEl.innerText = "Geolocation not supported";
                 return;
             }
 
@@ -475,9 +466,7 @@
                     currentLon = position.coords.longitude;
                     fetchSpots(currentLat, currentLon);
                 },
-                (error) => {
-                    statusEl.innerText = t.statusErrorGPS;
-                },
+                () => { statusEl.innerText = t.statusErrorGPS; },
                 { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
         }
@@ -487,17 +476,18 @@
             const statusEl = document.getElementById('status');
             statusEl.innerText = t.statusLoading;
 
+            // 纯文化、历史、古迹、寺庙、公园、地标查询（彻底排除吃喝买）
             const query = `
                 [out:json][timeout:25];
                 (
-                  node(around:1000,${lat},${lon})[historic];
-                  way(around:1000,${lat},${lon})[historic];
-                  node(around:1000,${lat},${lon})[tourism];
-                  way(around:1000,${lat},${lon})[tourism];
-                  node(around:1000,${lat},${lon})[leisure=park];
-                  way(around:1000,${lat},${lon})[leisure=park];
-                  node(around:1000,${lat},${lon})[amenity=place_of_worship];
-                  way(around:1000,${lat},${lon})[amenity=place_of_worship];
+                  node(around:1500,${lat},${lon})[historic];
+                  way(around:1500,${lat},${lon})[historic];
+                  node(around:1500,${lat},${lon})[tourism];
+                  way(around:1500,${lat},${lon})[tourism];
+                  node(around:1500,${lat},${lon})[leisure=park];
+                  way(around:1500,${lat},${lon})[leisure=park];
+                  node(around:1500,${lat},${lon})[amenity=place_of_worship];
+                  way(around:1500,${lat},${lon})[amenity=place_of_worship];
                 );
                 out center;
             `;
@@ -512,18 +502,14 @@
                 allSpots = data.elements.filter(item => {
                     const tags = item.tags || {};
                     const name = tags.name || tags['name:ja'] || tags['name:en'] || tags['name:zh'] || '';
-                    
                     if (!name) return false;
                     
-                    const blacklist = ['团地', '団地', 'アパート', 'マンション', 'ハイツ', 'コーポ', '住宅', 'parkings', 'school', 'hospital', 'university', 'parking', 'police', 'apartments', 'supermarket'];
+                    // 过滤无关的居民区、团地、医院、学校等
+                    const blacklist = ['团地', '団地', 'アパート', 'マンション', 'ハイツ', 'コーポ', '住宅', 'school', 'hospital', 'university', 'parking', 'police', 'apartments'];
                     for (let word of blacklist) {
-                        if (name.toLowerCase().includes(word.toLowerCase())) {
-                            return false;
-                        }
+                        if (name.toLowerCase().includes(word.toLowerCase())) return false;
                     }
-                    if (tags.residential || tags.landuse === 'residential' || tags.building === 'apartments' || tags.building === 'residential') {
-                        return false;
-                    }
+                    if (tags.residential || tags.landuse === 'residential' || tags.building === 'apartments') return false;
                     
                     return true;
                 });
@@ -549,86 +535,89 @@
             return Math.round(R * c);
         }
 
-        function isLandmarkSpot(name, tags) {
-            const keywords = ['浅草寺', '雷门', '上野恩赐公园', '东京晴空塔', '浅草神社', '西新井大师', '公园', '神社', '寺', '院', '宫', '涩谷'];
-            for (let kw of keywords) {
-                if (name.includes(kw)) return true;
+        // ==========================================
+        // 核心算法：智能区分“大景点”与“小景点”
+        // ==========================================
+        function classifySpotTier(name, tags, element) {
+            // 1. 全球/全东京顶级大IP硬编码白名单
+            const superLandmarks = ['皇居', '浅草寺', '雷门', '上野恩赐公园', '东京晴空塔', '明治神宫', '浅草神社', '西新井大师', '浜离宫'];
+            if (superLandmarks.some(kw => name.includes(kw))) {
+                return 'MAJOR';
             }
-            return !!tags.tourism || !!tags.historic || !!tags.amenity;
+
+            // 2. 结构特征与标签权重算法
+            let score = 0;
+            // 面积大（闭合多边形 way）说明体量大
+            if (element.type === 'way') score += 4;
+            // 官方核心旅游或历史宫殿城堡标签
+            if (tags.tourism === 'attraction') score += 3;
+            if (tags.historic === 'castle' || tags.historic === 'palace' || tags.historic === 'monument') score += 4;
+            
+            // 关键词权重
+            const majorKeywords = ['寺', '神宫', '大社', '城', '博物馆', '苑', '园', 'tower', '宮'];
+            for (let kw of majorKeywords) {
+                if (name.includes(kw)) score += 2;
+            }
+
+            // 总分 >= 5 判定为大景点，否则为街头小景点
+            return score >= 5 ? 'MAJOR' : 'MINOR';
         }
 
-        function generateAIGuideContent(name, tags, lang) {
+        function generateAIGuideContent(name, tags, tier, lang) {
             let basicInfo = "";
             let anecdoteInfo = "";
             let photoInfo = "";
-            let shopInfo = "";
 
             if (name.includes("浅草寺") || name.includes("雷门")) {
-                if (lang === 'en') {
-                    basicInfo = "Founded in 628 AD, Senso-ji is Tokyo's oldest Buddhist temple, dedicated to the Bodhisattva Kannon and steeped in centuries of Edo period heritage.";
-                    anecdoteInfo = "The iconic 700-kg red lantern at Kaminarimon was first donated by Panasonic founder Konosuke Matsushita in 1960 after praying for recovery from illness.";
-                    photoInfo = "Stand directly beneath the Kaminarimon lantern looking up, or use the Asakusa Culture Tourist Information Center rooftop deck for panoramic views.";
-                    shopInfo = "Nakamise-dori features traditional snacks like Ningyo-yaki (doll cakes). Don't miss Kimuraya's historic Ningyo-yaki!";
-                } else if (lang === 'ja') {
-                    basicInfo = "推古天皇36年（628年）に創建された都内最古のお寺。聖観世音菩薩を本尊とし、江戸文化の中心地として発展しました。";
-                    anecdoteInfo = "雷門の赤提灯は1960年にパナソニック創業者・松下幸之助が寄贈したことに始まります。";
-                    photoInfo = "雷門の提灯の真下からのアングルや、文化観光センター8階展望テラスからの仲見世通り一望が絶景です。";
-                    shopInfo = "仲見世通りの「人形焼」や老舗の雷おこしが定番のお土産です。";
-                } else {
-                    basicInfo = "建于公元628年的东京都内最古老寺庙，供奉观音菩萨。这里完整保留了浓郁的江户下町风情，是东京历史与信仰的绝对核心。";
-                    anecdoteInfo = "雷门中央重达700公斤的巨型红灯笼，是1960年由松下电器创始人松下幸之助因病痊愈后为报恩首次捐赠并延续至今的传奇之作。";
-                    photoInfo = "1. 雷门灯笼正下方仰拍；2. 浅草文化观光中心8楼免费展望台，可俯瞰整条仲见世商店街与远处的晴空塔同框。";
-                    shopInfo = "仲见世通里的“木村家总本店”人偶烧（始创于明治时期）以及香脆可口的雷门米花糖。";
-                }
+                basicInfo = lang === 'en' ? "Tokyo's oldest Buddhist temple founded in 628 AD, dedicated to Kannon." :
+                            lang === 'ja' ? "628年創建の都内最古のお寺。聖観世音菩薩を本尊とします。" :
+                            "建于公元628年的东京都内最古老寺庙。这里是江户下町文化的绝对核心，承载着上千年的佛教信仰与平民艺术。";
+                anecdoteInfo = lang === 'en' ? "The 700-kg red lantern was first donated by Panasonic founder in 1960." :
+                               lang === 'ja' ? "雷門の赤提灯は1960年にパナソニック創業者・松下幸之助が寄贈したものです。" :
+                               "【大内秘闻】雷门正中央重达700公斤的巨型红灯笼，是1960年由松下电器创始人松下幸之助因病痊愈后为报恩首次捐赠的传奇之作，至今每隔十年翻修一次。";
+                photoInfo = lang === 'en' ? "Stand beneath the lantern or use the tourist center rooftop." :
+                            lang === 'ja' ? "雷門の提灯の真下、または文化観光センター8階展望テラスが絶景です。" :
+                            "1. 雷门灯笼正下方仰拍；2. 浅草文化观光中心8楼免费展望台，可俯瞰整条仲见世商店街与远处的晴空塔同框。";
             } else if (name.includes("上野恩赐公园")) {
-                if (lang === 'en') {
-                    basicInfo = "Established in 1873, Japan's first public park was formerly the vast grounds of Kanei-ji, the family temple of the Tokugawa Shogunate.";
-                    anecdoteInfo = "When the bronze statue of Saigo Takamori was unveiled, his wife famously exclaimed 'That is not my husband at all!'";
-                    photoInfo = "Shinobazu Pond with lotus leaves and Tokyo Skytree in the background.";
-                    shopInfo = "Panda-themed pastries near Ueno Station and traditional Anmitsu at Mitsuhashi.";
-                } else if (lang === 'ja') {
-                    basicInfo = "1873年に開園した日本初の公園の一つ。元は徳川将軍家の菩提寺である寛永寺の広大な敷地でした。";
-                    anecdoteInfo = "西郷隆盛像の除幕式で、妻が「うちの人はこんな人じゃなかった」と驚いた逸話が有名です。";
-                    photoInfo = "不忍池の蓮とスカイツリーを収めるアングルが写真映え抜群です。";
-                    shopInfo = "上野駅のパンダモチーフのお菓子や老舗甘味処が人気です。";
-                } else {
-                    basicInfo = "日本第一座西式公园，前身是德川幕府家族菩提寺“宽永寺”的广阔领地，园内汇聚多座国家级博物馆，是东京的文化艺术心脏。";
-                    anecdoteInfo = "园内西乡隆盛铜像揭幕时，其妻曾当场惊呼‘这根本不是我丈夫’，因为雕像把其打猎时的随性姿态永久定格了。";
-                    photoInfo = "不忍池畔的木栈道，可将满池荷花与晴空塔同框；清水观音堂的“月之松”圆窗构图也是摄影师的最爱。";
-                    shopInfo = "上野车站内的限定熊猫年轮蛋糕及老字号甘味处“みはし”的豆乳凉粉。";
-                }
-            } else if (name.includes("神宫") || name.includes("神社") || name.includes("大师") || name.includes("寺") || name.includes("院") || name.includes("宫")) {
-                basicInfo = lang === 'en' ? "A historic religious sanctuary with profound local heritage and traditional wooden architecture." :
-                            lang === 'ja' ? "地域に深く根ざした歴史ある社寺で、伝統的な木造建築が魅力です。" :
-                            "这是一座历史深厚的宗教地标或古刹，建筑规制完备，完美融合了传统的木构与地方信仰文化。";
-                anecdoteInfo = lang === 'en' ? "Legend says sacred springs and divine signs once appeared here during its ancient founding." :
-                               lang === 'ja' ? "創建の際には不思議な霊験があったと伝えられています。" :
-                               "相传在古代地方建社或建寺之初，曾有高僧显灵与清泉涌出的奇闻在民间流传。";
-                photoInfo = lang === 'en' ? "Capture the majestic Torii gate framed by greenery." :
-                            lang === 'ja' ? "緑に囲まれた鳥居や手水舎の厳かな雰囲気がおすすめです。" :
-                            "鸟居正下方或手水舍侧面特写，极具日式美学。";
-                shopInfo = lang === 'en' ? "Look for traditional Omamori (lucky amulets) as souvenirs." :
-                           lang === 'ja' ? "社務所のお守りが記念になります。" :
-                           "社务所限定的精致“御守”与祈愿“绘马”。";
-            } else if (name.includes("公园") || name.includes("庭园")) {
-                basicInfo = lang === 'en' ? "An urban green oasis featuring well-landscaped gardens and peaceful walking paths." :
-                            lang === 'ja' ? "都会のオアシスとして親しまれる緑豊かな公園です。" :
-                            "作为城市中的重要绿地空间，园内水系环绕、古木参天，完美融合了自然生态与人文景观。";
-                photoInfo = lang === 'en' ? "Find a scenic spot by the lake bridge during golden hour." :
-                           lang === 'ja' ? "夕暮れ時の池にかかる橋が撮影スポットです。" :
-                           "湖心桥或林荫小道的斑驳光影处，非常适合拍摄人像。";
+                basicInfo = lang === 'en' ? "Japan's first public park established in 1873, formerly the grounds of Kanei-ji." :
+                            lang === 'ja' ? "1873年に開園した日本初の公園。元は徳川家菩提寺の寛永寺の敷地でした。" :
+                            "日本第一座西式公园，前身是德川幕府家族菩提寺“宽永寺”的广阔领地，见证了幕末维新的枪声与近代东京的变迁。";
+                anecdoteInfo = lang === 'en' ? "When Saigo Takamori's statue was unveiled, his wife exclaimed 'That's not my husband!'" :
+                               lang === 'ja' ? "西郷隆盛像の除幕式で、妻が『うちの人はこんな人じゃなかった』と言った逸話が有名です。" :
+                               "【宫廷野史】园内西乡隆盛铜像揭幕时，其妻曾当场惊呼‘这根本不是我丈夫’，因为雕像把其打猎时的随性姿态永久定格，打破了当时日本武士严苛的肖像规制。";
+                photoInfo = lang === 'en' ? "Shinobazu Pond lotus leaves with Skytree background." :
+                            lang === 'ja' ? "不忍池の蓮とスカイツリーを収めるアングルが写真映え抜群です。" :
+                            "不忍池畔的木栈道，可将满池荷花与晴空塔同框；清水观音堂的“月之松”圆窗构图也是摄影经典。";
+            } else if (tier === 'MAJOR') {
+                // 大景点通用厚重历史模板
+                basicInfo = lang === 'en' ? "A magnificent landmark steeped in historical significance and architectural mastery." :
+                            lang === 'ja' ? "歴史的重みと優れた建築様式を誇る壮大なランドマークです。" :
+                            "这是一处体量宏大、规制完备的重量级历史地标。其建筑风格与历代幕府或地方统治者的权力变迁息息相关。";
+                anecdoteInfo = lang === 'en' ? "Countless historical political shifts and secret alliances took place behind these walls." :
+                               lang === 'ja' ? "この場所の裏では、数々の歴史的政治転換や密約が交わされてきました。" :
+                               "【深度秘闻】在古代，此处曾是左右区域政局的核心禁地。民间流传着诸多关于历代权贵在此密谋、显灵或遭遇离奇变故的野史传说。";
+                photoInfo = lang === 'en' ? "Capture the grand gate and structural axis from the front plaza." :
+                            lang === 'ja' ? "正面広場からの壮麗な門と建物の軸線を捉えた撮影がおすすめです。" :
+                            "建议在主入口广场的中轴线上取景，或寻找侧面庭廊的借景构图。";
             } else {
-                basicInfo = lang === 'en' ? "An interesting local spot preserving the unique cultural landscape of this neighborhood." :
-                            lang === 'ja' ? "地域の独特な雰囲気を残すローカルスポットです。" :
-                            "位于周边的特色人文点位，完整保留了本地区独特的街区风貌与历史印记。";
+                // 小景点短平快“秘闻直出”模板
+                basicInfo = lang === 'en' ? "A quaint local historical site preserving forgotten neighborhood folklore." :
+                            lang === 'ja' ? "忘れ去られた地域の伝承を静かに伝える趣のあるローカルスポットです。" :
+                            "这是一处隐藏在街头巷尾的精巧冷门古迹。虽然名气不大，但却完整保留了极具地方色彩的古老传说。";
+                anecdoteInfo = lang === 'en' ? "Local folklore says this spot was once protected by mystical forces during the Edo period." :
+                               lang === 'ja' ? "江戸時代からこの場所を守る不思議な言い伝えが地元に残されています。" :
+                               "【独家民间传奇】据当地旧志记载，江户时代这里曾发生过一桩轰动一时的民间奇闻。虽然历经沧桑，但当地人至今对这里的古老石碑或建筑心存敬畏。";
+                photoInfo = lang === 'en' ? "Close-up of the historical stone monument or traditional architectural details." :
+                            lang === 'ja' ? "歴史ある石碑や伝統的な建築ディテールのクローズアップ撮影が最適です。" :
+                            "适合对石碑铭文、古树或传统雕刻细节进行近距离特写拍摄。";
             }
 
-            return { basic: basicInfo, anecdote: anecdoteInfo, photo: photoInfo, shop: shopInfo };
+            return { basic: basicInfo, anecdote: anecdoteInfo, photo: photoInfo };
         }
 
-        function toggleAudio(buttonElement, titleText, basicText, anecdoteText, photoText, shopText, isNearby) {
+        function toggleAudio(buttonElement, titleText, basicText, anecdoteText, photoText, isNearby) {
             if (!('speechSynthesis' in window)) {
-                alert('您的浏览器不支持语音播报功能');
+                alert('语音播报不支持');
                 return;
             }
 
@@ -641,35 +630,17 @@
             }
 
             window.speechSynthesis.cancel();
-            if (activeSpeechButton) {
-                resetAudioButton(activeSpeechButton);
-            }
+            if (activeSpeechButton) resetAudioButton(activeSpeechButton);
 
-            let textToSpeak = currentLang === 'en' ? `${titleText}. Overview: ${basicText}` : 
-                                    currentLang === 'ja' ? `${titleText}。概要：${basicText}` : 
-                                    `${titleText}。简介：${basicText}`;
-            
+            let textToSpeak = `${titleText}。${basicText}`;
             if (isNearby) {
-                if (anecdoteText) {
-                    textToSpeak += currentLang === 'en' ? ` Anecdote: ${anecdoteText}` : 
-                                   currentLang === 'ja' ? ` 逸話：${anecdoteText}` : 
-                                   ` 趣闻典故：${anecdoteText}`;
-                }
-                if (photoText) {
-                    textToSpeak += currentLang === 'en' ? ` Best photo spot: ${photoText}` : 
-                                   currentLang === 'ja' ? ` 撮影スポット：${photoText}` : 
-                                   ` 拍照机位建议：${photoText}`;
-                }
-                if (shopText) {
-                    textToSpeak += currentLang === 'en' ? ` Recommended shops: ${shopText}` : 
-                                   currentLang === 'ja' ? ` おすすめのお土産：${shopText}` : 
-                                   ` 伴手礼与老店推荐：${shopText}`;
-                }
+                if (anecdoteText) textToSpeak += ` ${anecdoteText}`;
+                if (photoText) textToSpeak += ` 构图建议：${photoText}`;
             }
 
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
-            utterance.lang = t.speechLang; 
-            utterance.rate = 0.95; 
+            utterance.lang = t.speechLang;
+            utterance.rate = 0.95;
 
             activeSpeechButton = buttonElement;
             buttonElement.innerText = t.stopBtn;
@@ -686,9 +657,7 @@
             const t = i18n[currentLang];
             btn.innerText = t.audioBtn;
             btn.classList.remove('playing');
-            if (activeSpeechButton === btn) {
-                activeSpeechButton = null;
-            }
+            if (activeSpeechButton === btn) activeSpeechButton = null;
         }
 
         function renderSpots() {
@@ -698,23 +667,23 @@
 
             let filteredSpots = allSpots.filter(spot => {
                 const tags = spot.tags || {};
-                let name = tags.name || tags['name:ja'] || tags['name:en'] || tags['name:zh'] || '';
+                let name = tags.name || tags['name:ja'] || tags['name:zh'] || '';
                 
-                let isHistoric = !!tags.historic || tags.amenity === 'place_of_worship' || name.includes('寺') || name.includes('神社') || name.includes('宫') || name.includes('院');
-                let isPark = tags.leisure === 'park' || name.includes('公园');
-                let isMuseum = tags.tourism === 'museum' || name.includes('博物馆') || name.includes('乡土馆');
+                const tier = classifySpotTier(name, tags, spot);
+                let isHistoric = !!tags.historic || tags.amenity === 'place_of_worship' || name.includes('寺') || name.includes('神社');
 
-                if (currentCategory === 'historic') {
+                if (currentCategory === 'major') {
+                    return tier === 'MAJOR';
+                } else if (currentCategory === 'minor') {
+                    return tier === 'MINOR';
+                } else if (currentCategory === 'historic') {
                     return isHistoric;
-                } else if (currentCategory === 'park') {
-                    return isPark;
-                } else if (currentCategory === 'museum') {
-                    return isMuseum;
                 } else {
                     return true;
                 }
             });
 
+            // 按距离由近到远排序
             if (currentLat !== null && currentLon !== null) {
                 filteredSpots.sort((a, b) => {
                     const latA = a.lat || (a.center && a.center.lat);
@@ -735,15 +704,7 @@
 
             filteredSpots.forEach(spot => {
                 const tags = spot.tags || {};
-                
-                let name = tags.name || tags['name:ja'] || tags['name:zh'] || 'Location';
-                if (currentLang === 'en') {
-                    name = tags['name:en'] || tags.name || tags['name:ja'] || 'Location';
-                } else if (currentLang === 'ja') {
-                    name = tags['name:ja'] || tags.name || 'スポット';
-                } else {
-                    name = tags['name:zh'] || tags.name || tags['name:ja'] || '景点';
-                }
+                let name = tags['name:' + currentLang] || tags.name || tags['name:ja'] || tags['name:zh'] || '历史古迹';
                 
                 const spotLat = spot.lat || (spot.center && spot.center.lat);
                 const spotLon = spot.lon || (spot.center && spot.center.lon);
@@ -761,14 +722,19 @@
 
                 const mapUrl = (spotLat && spotLon) ? `https://www.google.com/maps/search/?api=1&query=${spotLat},${spotLon}` : '#';
                 
-                const isLandmark = isLandmarkSpot(name, tags);
-                const guideData = generateAIGuideContent(name, tags, currentLang);
+                // 核心算法判定是大点还是小点
+                const tier = classifySpotTier(name, tags, spot);
+                const isMajor = (tier === 'MAJOR');
+                const guideData = generateAIGuideContent(name, tags, tier, currentLang);
                 const isNearby = (distanceVal <= 20);
 
                 const card = document.createElement('div');
-                card.className = isLandmark ? 'spot-card landmark' : 'spot-card';
+                card.className = isMajor ? 'spot-card major-spot' : 'spot-card';
                 
+                const badgeHtml = isMajor ? `<div class="tier-badge major">${t.majorBadge}</div>` : `<div class="tier-badge minor">${t.minorBadge}</div>`;
+
                 let cardHtml = `
+                    ${badgeHtml}
                     <div class="spot-title">${name}</div>
                     <div class="spot-meta">${distanceText}</div>
                     <div class="spot-desc-section">${t.labelOverview} ${guideData.basic}</div>
@@ -781,16 +747,13 @@
                     if (guideData.photo) {
                         cardHtml += `<div class="spot-photo-section">${t.labelPhoto} ${guideData.photo}</div>`;
                     }
-                    if (guideData.shop) {
-                        cardHtml += `<div class="spot-shop-section">${t.labelShop} ${guideData.shop}</div>`;
-                    }
                 } else {
                     cardHtml += `<div class="proximity-notice">${t.nearbyNotice}</div>`;
                 }
 
                 cardHtml += `
                     <div class="spot-actions">
-                        <button class="action-btn audio" onclick="toggleAudio(this, '${name.replace(/'/g, "\\'")}', '${guideData.basic.replace(/'/g, "\\'")}', '${(guideData.anecdote || '').replace(/'/g, "\\'")}', '${(guideData.photo || '').replace(/'/g, "\\'")}', '${(guideData.shop || '').replace(/'/g, "\\'")}', ${isNearby})">${t.audioBtn}</button>
+                        <button class="action-btn audio" onclick="toggleAudio(this, '${name.replace(/'/g, "\\'")}', '${guideData.basic.replace(/'/g, "\\'")}', '${(guideData.anecdote || '').replace(/'/g, "\\'")}', '${(guideData.photo || '').replace(/'/g, "\\'")}', ${isNearby})">${t.audioBtn}</button>
                         <a class="action-btn map" href="${mapUrl}" target="_blank">${t.mapBtn}</a>
                     </div>
                 `;
