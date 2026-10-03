@@ -280,8 +280,8 @@
                 audioBtn: "🎤 听讲解",
                 stopBtn: "⏹️ 停止播报",
                 mapBtn: "🗺️ 导航",
-                labelOverview: "🏛️ <b>Overview:</b>",
-                labelAnecdote: "📜 <b>Anecdotes:</b>",
+                labelOverview: "🏛️ <b>简介：</b>",
+                labelAnecdote: "📜 <b>趣闻：</b>",
                 speechLang: "zh-CN"
             },
             en: {
@@ -334,8 +334,8 @@
                 audioBtn: "🎤 解説を聴く",
                 stopBtn: "⏹ 停止",
                 mapBtn: "🗺️ マップ",
-                labelOverview: "🏛️ <b>概要:</b>",
-                labelAnecdote: "📜 <b>逸話:</b>",
+                labelOverview: "🏛️ <b>概要：</b>",
+                labelAnecdote: "📜 <b>逸話：</b>",
                 speechLang: "ja-JP"
             }
         };
@@ -527,7 +527,7 @@
             if (anecdoteText) {
                 textToSpeak += currentLang === 'en' ? ` Anecdote: ${anecdoteText}` : 
                                currentLang === 'ja' ? ` 逸話：${anecdoteText}` : 
-                               ` 趣闻传说：${anecdoteText}`;
+                               ` 趣闻：${anecdoteText}`;
             }
 
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
@@ -595,7 +595,6 @@
             filteredSpots.forEach(spot => {
                 const tags = spot.tags || {};
                 
-                // 智能处理景点名称：英文模式优先取 name:en，日文模式优先取 name:ja 或原始日文，确保没有英文的景点能正常显示日文汉字
                 let name = tags.name || tags['name:ja'] || tags['name:zh'] || 'Location';
                 if (currentLang === 'en') {
                     name = tags['name:en'] || tags.name || tags['name:ja'] || 'Location';
