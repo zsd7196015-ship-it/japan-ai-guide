@@ -7,7 +7,7 @@
     <style>
         :root {
             --primary-color: #2c3e50;
-            --accent-color: #3498db;
+            --accent-color: #27ae60;
             --bg-color: #f8f9fa;
             --card-bg: #ffffff;
             --text-main: #2c3e50;
@@ -69,7 +69,7 @@
         }
 
         button.primary {
-            background-color: #27ae60;
+            background-color: var(--accent-color);
             color: white;
             border: none;
             flex: 1;
@@ -82,6 +82,31 @@
 
         select {
             background-color: #fff;
+        }
+
+        .categories {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .cat-btn {
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            border-radius: 20px;
+            border: 1px solid #dcdde1;
+            background: #fff;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .cat-btn.active {
+            background: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
         }
 
         #status {
@@ -102,7 +127,7 @@
             padding: 18px;
             border-radius: var(--border-radius);
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border-left: 4px solid #27ae60;
+            border-left: 4px solid var(--accent-color);
         }
 
         .spot-title {
@@ -114,7 +139,7 @@
 
         .spot-meta {
             font-size: 0.85rem;
-            color: #27ae60;
+            color: var(--accent-color);
             font-weight: 600;
             margin-bottom: 10px;
         }
@@ -155,7 +180,7 @@
         }
 
         .action-btn.audio {
-            background-color: #27ae60;
+            background-color: var(--accent-color);
             color: white;
             border: none;
         }
@@ -181,6 +206,13 @@
             <button class="primary" id="btn-gps" onclick="getLocationAndSearch()">📍 获取实时GPS并探索周边景点</button>
         </div>
 
+        <div class="categories">
+            <button class="cat-btn active" onclick="filterCategory('all', this)">全部景点</button>
+            <button class="cat-btn" onclick="filterCategory('park', this)">草地与公园</button>
+            <button class="cat-btn" onclick="filterCategory('historic', this)">历史建筑与神社</button>
+            <button class="cat-btn" onclick="filterCategory('museum', this)">乡土馆与博物馆</button>
+        </div>
+
         <div id="status">请点击上方按钮获取位置并加载周边景点...</div>
         <div class="spot-list" id="spots-container"></div>
     </div>
@@ -188,6 +220,7 @@
     <script>
         let currentLat = null;
         let currentLon = null;
+        let currentCategory = 'all';
         let allSpots = [];
 
         function getLocationAndSearch() {
@@ -276,27 +309,65 @@
             return Math.round(R * c);
         }
 
+        function filterCategory(category, btnElement) {
+            currentCategory = category;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderSpots();
+        }
+
         function renderSpots() {
             const container = document.getElementById('spots-container');
             container.innerHTML = '';
 
-            if (allSpots.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-secondary);">附近暂无符合条件的景点。</div>`;
+            // 1. 分类筛选
+            let filteredSpots = allSpots.filter(spot => {
+                const tags = spot.tags || {};
+                let spotType = 'other';
+                if (tags.leisure === 'park') {
+                    spotType = 'park';
+                } else if (tags.historic) {
+                    spotType = 'historic';
+                } else if (tags.tourism === 'museum') {
+                    spotType = 'museum';
+                }
+
+                if (currentCategory === 'all') return true;
+                return spotType === currentCategory;
+            });
+
+            // 2. 由近及远（距离从小到大）精确排序
+            if (currentLat !== null && currentLon !== null) {
+                filteredSpots.sort((a, b) => {
+                    const latA = a.lat || (a.center && a.center.lat);
+                    const lonA = a.lon || (a.center && a.center.lon);
+                    const latB = b.lat || (b.center && b.center.lat);
+                    const lonB = b.lon || (b.center && b.center.lon);
+
+                    const distA = (latA && lonA) ? calculateDistance(currentLat, currentLon, latA, lonA) : 999999;
+                    const distB = (latB && lonB) ? calculateDistance(currentLat, currentLon, latB, lonB) : 999999;
+
+                    return distA - distB;
+                });
+            }
+
+            if (filteredSpots.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-secondary);">该分类下暂无符合条件的景点。</div>`;
                 return;
             }
 
-            allSpots.forEach(spot => {
+            // 3. 完整渲染（含语音讲解、地图导航、防错距离）
+            filteredSpots.forEach(spot => {
                 const tags = spot.tags || {};
                 const name = tags.name || tags['name:en'] || tags['name:ja'] || tags['name:zh'] || '未知地点';
                 
                 const spotLat = spot.lat || (spot.center && spot.center.lat);
                 const spotLon = spot.lon || (spot.center && spot.center.lon);
 
-                // 默认文案
                 let distanceText = "距离您：步行可达范围内";
                 if (currentLat !== null && currentLon !== null && spotLat && spotLon) {
                     const dist = calculateDistance(currentLat, currentLon, spotLat, spotLon);
-                    // 严格保持：只有当距离大于 0 时才显示具体距离米数，绝不显示 0 米
+                    // 严格防错：只有当距离大于 0 时才显示具体米数，绝不显示 0 米
                     if (dist > 0) {
                         distanceText = `距离您：约 ${dist} 米`;
                     }
