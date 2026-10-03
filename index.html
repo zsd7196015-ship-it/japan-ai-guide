@@ -73,10 +73,10 @@
         /* 状态提示 */
         .status-msg {
             font-size: 13px;
-            color: #555;
+            color: #e67e22;
             text-align: center;
             margin-bottom: 12px;
-            font-weight: 500;
+            font-weight: bold;
         }
         /* 欢迎引导页样式 */
         .welcome-card {
@@ -198,11 +198,11 @@
             appName: "🧭 AI 随身导游",
             gpsBtn: "📍 获取实时GPS并探索周边景点",
             welcomeTitle: "欢迎使用 AI 随身导游",
-            welcomeDesc: "默认自动为您过滤并筛选身边的热门名胜、历史古迹、公园绿地及文化场馆。<br>请点击上方按钮开始探索！",
+            welcomeDesc: "请点击上方绿色按钮**“获取实时GPS并探索周边景点”**。<br>系统将自动获取您的精确位置，并计算身边的历史名胜与公园绿地直线距离！",
             locating: "📍 正在获取您周边的精准卫星定位...",
             searching: "🔍 正在精细化检索周边旅游与文化地标...",
             locSuccess: "📍 周边热门景点加载成功！",
-            locError: "❌ 暂时无法获取位置信息，请检查手机定位权限后重试。",
+            locError: "❌ 暂时无法获取位置信息，请检查手机浏览器定位权限后重试。",
             distPrefix: "直线距离约：",
             historyLabel: "历史与文化解说：",
             tipsLabel: "参观导览：",
@@ -221,7 +221,7 @@
             appName: "🧭 AI Audio Guide",
             gpsBtn: "📍 Get GPS & Explore Nearby",
             welcomeTitle: "Welcome to AI Audio Guide",
-            welcomeDesc: "Automatically filters popular attractions, historical sites, parks, and cultural spots around you.<br>Tap the button above to begin!",
+            welcomeDesc: "Please tap the green button above to get your GPS location.<br>It will automatically find nearby spots and calculate straight-line distances!",
             locating: "📍 Acquiring your location...",
             searching: "Searching nearby tourist spots...",
             locSuccess: "📍 Nearby spots loaded successfully!",
@@ -244,22 +244,22 @@
             appName: "🧭 AI音声ガイド",
             gpsBtn: "📍 現在地を取得して周辺を探索",
             welcomeTitle: "AI音声ガイドへようこそ",
-            welcomeDesc: "周辺の人気名所、史跡、公園、文化施設を自動でフィルタリングしてご案内します。<br>上のボタンを押して始めましょう！",
+            welcomeDesc: "上の緑色のボタンを押して現在地を取得してください。<br>周辺のスポットと直線距離を自動で計算してご案内します！",
             locating: "📍 現在地を取得中...",
             searching: "周辺のスポットを検索中...",
             locSuccess: "📍 周辺スポットの読み込みに成功しました！",
-            locError: "❌ 位置情報を取得できませんでした。",
+            locError: "❌ 位置情報を取得できませんでした。位置情報の権限をご確認ください。",
             distPrefix: "直線距離：約 ",
             historyLabel: "歴史と文化の解説：",
             tipsLabel: "見どころ・散策のコツ：",
-            speakBtn: "🎙️ 音声解説",
-            stopBtn: "⏹️️ 停止",
+            speakBtn: "🎙️️ 音声解説",
+            stopBtn: "⏹ 停止",
             navBtn: "🗺 マップ",
             langCode: "ja-JP",
             optAll: "🌟 すべてのおすすめ",
             optHistoric: "⛩️ 史跡・神社仏閣",
             optPark: "🌳 公園・緑地",
-            optMuseum: "🏛️️ 博物館・文化施設",
+            optMuseum: "🏛 博物館・文化施設",
             emptyCat: "このカテゴリのスポットはありません。他のカテゴリに切り替えるか、再読み込みしてください。"
         }
     };
@@ -312,6 +312,9 @@
 
     // 格式化距离显示
     function formatDistance(meters, lang) {
+        if (meters === null || meters === undefined || isNaN(meters)) {
+            return lang === 'en' ? "Calculating..." : (lang === 'ja' ? "計算中..." : "正在计算距离...");
+        }
         if (lang === 'en') {
             if (meters < 1000) {
                 return `${Math.round(meters)} meters`;
@@ -556,7 +559,7 @@
             const welcomeDiv = document.createElement('div');
             welcomeDiv.className = 'welcome-card';
             welcomeDiv.innerHTML = `
-                <div class="welcome-icon">⛩️</div>
+                <div class="welcome-icon">📍</div>
                 <div class="welcome-title">${t.welcomeTitle}</div>
                 <div class="welcome-desc">${t.welcomeDesc}</div>
             `;
