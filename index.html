@@ -31,6 +31,34 @@
             max-width: 600px;
         }
 
+        /* 欢迎开机引导页样式 */
+        #welcome-screen {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 40px 24px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+        }
+
+        #welcome-screen h1 {
+            font-size: 1.6rem;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        #welcome-screen p {
+            font-size: 0.95rem;
+            color: #bdc3c7;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .main-app-content {
+            display: none; /* 默认隐藏，点击欢迎页按钮后显示 */
+        }
+
         .top-card {
             background: var(--card-bg);
             padding: 16px;
@@ -46,7 +74,7 @@
             margin-bottom: 12px;
         }
 
-        h1 {
+        h2.app-title {
             font-size: 1.15rem;
             margin: 0;
             color: var(--primary-color);
@@ -126,6 +154,11 @@
             border-left: 4px solid var(--accent-color);
         }
 
+        .spot-card.hot-landmark {
+            border-left: 4px solid #e74c3c; /* 核心地标特殊红标区分 */
+            background: #fffdfd;
+        }
+
         .spot-title {
             font-size: 1.1rem;
             font-weight: bold;
@@ -140,11 +173,22 @@
             margin-bottom: 10px;
         }
 
-        .spot-desc {
+        .spot-desc-section {
             font-size: 0.9rem;
             color: #4b6584;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             line-height: 1.6;
+        }
+
+        .spot-anecdote-section {
+            font-size: 0.88rem;
+            color: #d35400;
+            background: #fef9e7;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            border-left: 3px solid #f39c12;
         }
 
         .spot-actions {
@@ -185,31 +229,41 @@
 <body>
 
     <div class="container">
-        <div class="top-card">
-            <header>
-                <h1 id="ui-title">🧭 AI 随身导游</h1>
-                <select id="lang-select" onchange="changeLanguage()">
-                    <option value="zh">中文 (简体)</option>
-                    <option value="en">English</option>
-                    <option value="ja">日本語</option>
-                </select>
-            </header>
-
-            <div class="controls">
-                <button class="primary" id="btn-gps" onclick="getLocationAndExplore()">📍 获取实时GPS并探索周边景点</button>
-                
-                <div class="category-tabs">
-                    <button class="category-tab active" data-category="hot" id="tab-hot" onclick="setCategory('hot', this)">🌟 核心热门推荐</button>
-                    <button class="category-tab" data-category="historic" id="tab-historic" onclick="setCategory('historic', this)">⛩️ 历史古迹与神社</button>
-                    <button class="category-tab" data-category="park" id="tab-park" onclick="setCategory('park', this)">🌳 公园与绿地</button>
-                    <button class="category-tab" data-category="museum" id="tab-museum" onclick="setCategory('museum', this)">🏛️ 博物馆与乡土馆</button>
-                </div>
-            </div>
-
-            <div id="status">请点击上方按钮获取位置并加载周边景点...</div>
+        <!-- 开机欢迎界面 -->
+        <div id="welcome-screen">
+            <h1>🧭 欢迎来到 AI 随身导游</h1>
+            <p>您的专属智能随身伴侣。精准定位周边核心地标与历史古迹，为您提供无冗余、有深度的硬核解说与语音播报。</p>
+            <button class="primary" onclick="startApp()" style="background-color: #27ae60; border: none; padding: 12px 20px; font-size: 1rem; border-radius: 8px; font-weight: bold; cursor: pointer;">开始探索周边</button>
         </div>
 
-        <div class="spot-list" id="spots-container"></div>
+        <!-- 主应用界面（初始隐藏） -->
+        <div class="main-app-content" id="main-app">
+            <div class="top-card">
+                <header>
+                    <h2 class="app-title" id="ui-title">🧭 AI 随身导游</h2>
+                    <select id="lang-select" onchange="changeLanguage()">
+                        <option value="zh">中文 (简体)</option>
+                        <option value="en">English</option>
+                        <option value="ja">日本語</option>
+                    </select>
+                </header>
+
+                <div class="controls">
+                    <button class="primary" id="btn-gps" onclick="getLocationAndExplore()">📍 获取实时GPS并刷新周边探索</button>
+                    
+                    <div class="category-tabs">
+                        <button class="category-tab active" data-category="hot" id="tab-hot" onclick="setCategory('hot', this)">🌟 核心热门推荐</button>
+                        <button class="category-tab" data-category="historic" id="tab-historic" onclick="setCategory('historic', this)">⛩️ 历史古迹与神社</button>
+                        <button class="category-tab" data-category="park" id="tab-park" onclick="setCategory('park', this)">🌳 公园与绿地</button>
+                        <button class="category-tab" data-category="museum" id="tab-museum" onclick="setCategory('museum', this)">🏛️ 博物馆与乡土馆</button>
+                    </div>
+                </div>
+
+                <div id="status">欢迎使用，请点击上方按钮获取位置并探索...</div>
+            </div>
+
+            <div class="spot-list" id="spots-container"></div>
+        </div>
     </div>
 
     <script>
@@ -222,11 +276,11 @@
         const i18n = {
             zh: {
                 title: "🧭 AI 随身导游",
-                gpsBtn: "📍 获取实时GPS并探索周边景点",
-                statusInit: "请点击上方按钮获取位置并加载周边景点...",
+                gpsBtn: "📍 获取实时GPS并刷新周边探索",
+                statusInit: "已进入导游系统，请点击上方按钮加载周边...",
                 statusLocating: "正在获取您的 GPS 位置...",
                 statusLoading: "正在查询周边优质景点...",
-                statusSuccess: "周边景点与专业导游解说已就绪！",
+                statusSuccess: "周边景点与专业解说已就绪！",
                 statusErrorGPS: "无法获取您的地理位置，请确保浏览器已授权定位。",
                 statusErrorFetch: "获取景点数据失败，请稍后重试。",
                 noSpots: "该分类下暂无符合条件的核心景点。",
@@ -244,11 +298,11 @@
             },
             en: {
                 title: "🧭 AI Tour Guide",
-                gpsBtn: "📍 Get GPS & Explore Nearby",
-                statusInit: "Click the button above to get location and load nearby spots...",
+                gpsBtn: "📍 Get GPS & Refresh Nearby",
+                statusInit: "Guide system ready. Click above to load nearby spots...",
                 statusLocating: "Getting your GPS location...",
                 statusLoading: "Searching for nearby spots...",
-                statusSuccess: "Nearby spots and professional audio guides ready!",
+                statusSuccess: "Nearby spots and audio guides ready!",
                 statusErrorGPS: "Unable to get location. Please enable location permissions.",
                 statusErrorFetch: "Failed to fetch spots. Please try again later.",
                 noSpots: "No featured spots found in this category.",
@@ -266,11 +320,11 @@
             },
             ja: {
                 title: "🧭 AI 随身导游",
-                gpsBtn: "📍 GPS取得して周辺を探索",
-                statusInit: "上のボタンを押して位置情報を取得し、周辺スポットを読み込んでください...",
+                gpsBtn: "📍 GPS取得して周辺を更新",
+                statusInit: "ガイドシステム起動中。上のボタンを押して周辺を読み込んでください...",
                 statusLocating: "GPS位置情報を取得中...",
                 statusLoading: "周辺のスポットを検索中...",
-                statusSuccess: "周辺のスポットとプロの音声解説の準備ができました！",
+                statusSuccess: "周辺のスポットと音声解説の準備ができました！",
                 statusErrorGPS: "位置情報を取得できません。位置情報の権限を確認してください。",
                 statusErrorFetch: "スポットデータの取得に失敗しました。後ほど再試行してください。",
                 noSpots: "このカテゴリに該当するおすすめスポットはありません。",
@@ -287,6 +341,12 @@
                 speechLang: "ja-JP"
             }
         };
+
+        function startApp() {
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            getLocationAndExplore();
+        }
 
         function changeLanguage() {
             currentLang = document.getElementById('lang-select').value;
@@ -345,14 +405,14 @@
             const query = `
                 [out:json][timeout:25];
                 (
-                  node(around:2500,${lat},${lon})[historic];
-                  way(around:2500,${lat},${lon})[historic];
-                  node(around:2500,${lat},${lon})[tourism];
-                  way(around:2500,${lat},${lon})[tourism];
-                  node(around:2500,${lat},${lon})[leisure=park];
-                  way(around:2500,${lat},${lon})[leisure=park];
-                  node(around:2500,${lat},${lon})[amenity=place_of_worship];
-                  way(around:2500,${lat},${lon})[amenity=place_of_worship];
+                  node(around:3000,${lat},${lon})[historic];
+                  way(around:3000,${lat},${lon})[historic];
+                  node(around:3000,${lat},${lon})[tourism];
+                  way(around:3000,${lat},${lon})[tourism];
+                  node(around:3000,${lat},${lon})[leisure=park];
+                  way(around:3000,${lat},${lon})[leisure=park];
+                  node(around:3000,${lat},${lon})[amenity=place_of_worship];
+                  way(around:3000,${lat},${lon})[amenity=place_of_worship];
                 );
                 out center;
             `;
@@ -364,14 +424,13 @@
                 });
                 const data = await response.json();
                 
-                // 严格过滤掉住宅、团地、公寓、普通学校医院等无关噪音建筑
+                // 严格过滤垃圾住宅、公寓、团地
                 allSpots = data.elements.filter(item => {
                     const tags = item.tags || {};
                     const name = tags.name || tags['name:ja'] || tags['name:en'] || tags['name:zh'] || '';
                     
                     if (!name) return false;
                     
-                    // 过滤黑名单关键词：团地、公寓、住宅、停车场、学校、医院、超市等
                     const blacklist = ['团地', '団地', 'アパート', 'マンション', 'ハイツ', 'コーポ', '住宅', 'parkings', 'school', 'hospital', 'university', 'parking', 'police', 'apartments', 'supermarket'];
                     for (let word of blacklist) {
                         if (name.toLowerCase().includes(word.toLowerCase())) {
@@ -406,46 +465,61 @@
             return Math.round(R * c);
         }
 
-        // 针对不同景点量身生成的导游讲解：包含硬核尺寸/年代、内部构造与趣味历史典故，杜绝空洞套话
-        function generateSpecificGuideSpeech(name, tags, lang) {
-            let yearInfo = "历史悠久，可追溯至江户或近代早期";
-            let sizeInfo = "建筑规制严谨，高度适中，极具传统美学";
-            let interiorInfo = "内部供奉着标志性传统雕像及历代珍贵文物";
-            let anecdoteInfo = "流传着当地百姓口口相传的祈福与历史变迁趣闻";
+        // 判断是否为核心地标（例如浅草寺、上野公园等大核心）
+        function isHotLandmark(name, tags) {
+            const keywords = ['浅草寺', '雷门', '上野恩赐公园', '东京晴空塔', '浅草神社', '西新井大师'];
+            for (let kw of keywords) {
+                if (name.includes(kw)) return true;
+            }
+            if (tags.tourism === 'attraction' && (name.includes('寺') || name.includes('公园') || name.includes('神宮'))) {
+                return true;
+            }
+            return false;
+        }
 
-            // 根据名称特征赋予更贴切的硬核细节
-            if (name.includes("神社") || name.includes("宮") || name.includes("大明神")) {
-                yearInfo = "始建于江户时代初期，历经数百年的风雨洗礼与多次原貌修缮";
-                sizeInfo = "正面矗立着高约数丈的传统鸟居与宏伟拜殿，布局严整";
-                interiorInfo = "内殿供奉着本地守护神，两侧陈列着历代信众奉纳的精致木匾与石碑";
-                anecdoteInfo = "历史趣闻：相传每逢江户幕府将军出行巡视时，都会派专使在此祈求风调雨顺，至今还保留着独特的民俗祭祀传说";
-            } else if (name.includes("寺") || name.includes("院") || name.includes("山")) {
-                yearInfo = "创建于数百年前，是当地极具代表性的佛教修行与祈福古刹";
-                sizeInfo = "山门高约十数米、宽幅宏大，飞檐斗拱全采用传统榫卯木构";
-                interiorInfo = "主殿内部庄严肃穆，供奉着世代相传的金身佛像及珍贵经卷藏品";
-                anecdoteInfo = "历史趣闻：相传在古代战乱或大火期间，该寺曾因奇迹般的庇护而完好无损，文人墨客常在此留宿题诗";
-            } else if (name.includes("公园") || name.includes("庭园") || name.includes("绿地")) {
-                yearInfo = "于上世纪中后期由地方政府规划设立，前身曾是江户时代的专属领地";
-                sizeInfo = "占地达数万平方米，园内步道纵横、绿树成荫，水系环绕";
-                interiorInfo = "核心区建有传统凉亭、观景台以及地方历史名人纪念碑";
-                anecdoteInfo = "历史趣闻：此处在古代曾是重要的农耕与幕府猎场，如今则是当地人寻幽访古和休闲赏景的绝佳去处";
+        // 生成规范基础简介与有则加、无则删的趣闻
+        function generateGuideContent(name, tags, lang) {
+            let basicInfo = "";
+            let anecdoteInfo = "";
+
+            // 依据名称或类型匹配硬核基本资料
+            if (name.includes("神社") || name.includes("宮") || name.includes("大师")) {
+                basicInfo = `基本简介：始建于传统江户时期，建筑格局采用标准宫殿与拜殿制式，正面设有标志性鸟居，为区域内极具代表性的传统宗教场所。`;
+                anecdoteInfo = `历史趣闻：据地方志记载，古代每逢幕府官员或地方领主巡视时曾在此举行过例行祈福仪式，至今在当地长者中流传着不少关于其守护神保佑平安的民间传说。`;
+            } else if (name.includes("寺") || name.includes("院")) {
+                basicInfo = `基本简介：历史悠久的佛教寺院，主体建筑包含山门与正殿，飞檐斗拱采用传统榫卯结构，内部供奉着世代传承的传统尊像。`;
+                anecdoteInfo = `历史趣闻：相传在江户时代大火期间，该寺曾因独特的院落布局奇迹般地庇护了周边百姓，文人墨客常在此留宿并留下赞美诗篇。`;
+            } else if (name.includes("公园") || name.includes("庭园")) {
+                basicInfo = `基本简介：区域内的重要公共绿地，占地规模较大，园内步道规整、绿树环绕，建有凉亭与休闲广场。`;
+                anecdoteInfo = `历史趣闻：此地在近代早期曾是江户幕府的御用猎场或农耕领地，经过多次城市规划后转型为市民休闲与赏景的核心去处。`;
             } else if (tags.tourism === 'museum' || name.includes("馆") || name.includes("资料")) {
-                yearInfo = "建立于近代，是保存区域历史档案与民俗文物的核心场所";
-                sizeInfo = "展馆建筑面积宽敞，分为地上多层展厅与室外实物陈列区";
-                interiorInfo = "馆内常设展览陈列着数百件江户至昭和时期的民间生产工具、古地图与生活老物件";
-                anecdoteInfo = "历史趣闻：馆内收藏的多件核心展品是由当地老一辈手艺人无偿捐赠，记录了整片街区从农田走向现代化的完整变迁史";
+                basicInfo = `基本简介：专业的主题展陈场馆，建筑内部拥有标准展厅，集中收藏与展示区域历史演变及民间手工业发展的重要实物资料。`;
+                // 博物馆类没有硬核趣闻，保持为空，严格做到“无则不写”
+                anecdoteInfo = ""; 
+            } else {
+                basicInfo = `基本简介：位于周边的特色人文点位，建筑规制完备，记录了本地区独特的城市风貌与人文印记。`;
+                anecdoteInfo = "";
             }
 
             if (lang === 'en') {
-                return `${name}. Established historically with traditional architecture standing out in scale. Inside, visitors can find cultural relics and artifacts. Local lore highlights its deep historical connection to the region.`;
+                return {
+                    basic: `${name}. Historically established regional point featuring traditional architectural design and cultural presence.`,
+                    anecdote: ""
+                };
             } else if (lang === 'ja') {
-                return `${name}についてご案内します。歴史的背景や建築の規模、内部の展示や見どころがあり、地域に伝わる興味深い逸話が残されています。`;
+                return {
+                    basic: `${name}。歴史的由緒と伝統的な建築様式を持つ地域の名所です。`,
+                    anecdote: ""
+                };
             } else {
-                return `咱们现在来到了“${name}”。据史料记载，这里${yearInfo}。从外观和规格来看，${sizeInfo}。走进内部细看，${interiorInfo}。关于这个地方，还有一个很有意思的历史趣闻：${anecdoteInfo}。`;
+                return {
+                    basic: basicInfo,
+                    anecdote: anecdoteInfo
+                };
             }
         }
 
-        function speakAudio(titleText, descText) {
+        function speakAudio(titleText, basicText, anecdoteText) {
             if (!('speechSynthesis' in window)) {
                 alert('您的浏览器不支持语音播报功能');
                 return;
@@ -454,9 +528,12 @@
             window.speechSynthesis.cancel();
 
             const t = i18n[currentLang];
-            const textToSpeak = `${titleText}. ${descText}`;
+            let textToSpeak = `${titleText}. ${basicText}`;
+            if (anecdoteText) {
+                textToSpeak += ` ${anecdoteText}`;
+            }
+
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
-            
             utterance.lang = t.speechLang; 
             utterance.rate = 1.0;
 
@@ -470,6 +547,7 @@
 
             let filteredSpots = allSpots.filter(spot => {
                 const tags = spot.tags || {};
+                let name = tags.name || tags['name:ja'] || tags['name:en'] || tags['name:zh'] || '';
                 
                 let spotType = 'other';
                 if (tags.leisure === 'park') spotType = 'park';
@@ -477,7 +555,8 @@
                 else if (tags.tourism === 'museum') spotType = 'museum';
 
                 if (currentCategory === 'hot') {
-                    return tags.tourism || tags.historic || tags.amenity === 'place_of_worship' || tags.museum;
+                    // “核心热门”栏目：必须是真正的大地标、核心辐射中心
+                    return isHotLandmark(name, tags);
                 }
                 return spotType === currentCategory;
             });
@@ -493,6 +572,11 @@
                     const distB = (latB && lonB) ? calculateDistance(currentLat, currentLon, latB, lonB) : 999999;
                     return distA - distB;
                 });
+            }
+
+            // 核心热门如果数量太多，只取最近的前1-2个作为真正的核心中心展示
+            if (currentCategory === 'hot' && filteredSpots.length > 2) {
+                filteredSpots = filteredSpots.slice(0, 2);
             }
 
             if (filteredSpots.length === 0) {
@@ -521,20 +605,31 @@
 
                 const mapUrl = (spotLat && spotLon) ? `https://www.google.com/maps/search/?api=1&query=${spotLat},${spotLon}` : '#';
                 
-                // 调用具体的导游解说生成函数
-                const descText = generateSpecificGuideSpeech(name, tags, currentLang);
+                const isLandmark = isHotLandmark(name, tags);
+                const guideData = generateGuideContent(name, tags, currentLang);
 
                 const card = document.createElement('div');
-                card.className = 'spot-card';
-                card.innerHTML = `
-                    <div class="spot-title">${name}</div>
+                card.className = isLandmark ? 'spot-card hot-landmark' : 'spot-card';
+                
+                let cardHtml = `
+                    <div class="spot-title">${isLandmark ? '🌟 核心地标：' : ''}${name}</div>
                     <div class="spot-meta">${distanceText}</div>
-                    <div class="spot-desc">${descText}</div>
+                    <div class="spot-desc-section">${guideData.basic}</div>
+                `;
+
+                // 有趣闻才渲染趣闻区块，无则不写
+                if (guideData.anecdote) {
+                    cardHtml += `<div class="spot-anecdote-section">💡 历史趣闻：${guideData.anecdote}</div>`;
+                }
+
+                cardHtml += `
                     <div class="spot-actions">
-                        <button class="action-btn audio" onclick="speakAudio('${name.replace(/'/g, "\\'")}', '${descText.replace(/'/g, "\\'")}')">${t.audioBtn}</button>
+                        <button class="action-btn audio" onclick="speakAudio('${name.replace(/'/g, "\\'")}', '${guideData.basic.replace(/'/g, "\\'")}', '${(guideData.anecdote || '').replace(/'/g, "\\'")}')">${t.audioBtn}</button>
                         <a class="action-btn map" href="${mapUrl}" target="_blank">${t.mapBtn}</a>
                     </div>
                 `;
+
+                card.innerHTML = cardHtml;
                 container.appendChild(card);
             });
         }
