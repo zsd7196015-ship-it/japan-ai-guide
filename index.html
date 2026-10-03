@@ -97,7 +97,6 @@
             text-align: center;
         }
 
-        /* 欢迎提示区（未搜索前显示，搜索后被覆盖） */
         .welcome-banner {
             background: linear-gradient(135deg, #2c3e50, #34495e);
             color: white;
@@ -244,11 +243,10 @@
             <div id="status">您的专属 AI 导游已就绪，走到哪为您讲解到哪...</div>
         </div>
 
-        <!-- 初始欢迎区及景点容器 -->
         <div class="spot-list" id="spots-container">
             <div class="welcome-banner">
                 <h3 id="welcome-title">欢迎来到 AI 随身导游</h3>
-                <p id="welcome-desc">超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹，为您逐一揭秘建筑由来、历史典故与民间趣闻。想听就听，随时掌控您的专属旅程。</p>
+                <p id="welcome-desc">超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹，为您逐一揭秘简介与趣闻。想听就听，随时掌控您的专属旅程。</p>
             </div>
         </div>
     </div>
@@ -272,7 +270,7 @@
                 statusErrorFetch: "获取景点讲解数据失败，请稍后重试。",
                 noSpots: "1000 米范围内暂无符合该分类的讲解点。",
                 welcomeTitle: "欢迎来到 AI 随身导游",
-                welcomeDesc: "超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹，为您逐一揭秘建筑由来、历史典故与民间趣闻。想听就听，随时掌控您的专属旅程。",
+                welcomeDesc: "超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹，为您逐一揭秘简介与趣闻。想听就听，随时掌控您的专属旅程。",
                 cats: { 
                     recommend: "🌟 景点推荐与深度讲解", 
                     historic: "⛩️ 历史古迹与神社", 
@@ -300,7 +298,7 @@
                 welcomeDesc: "Your ultimate AI knowledge base, far beyond traditional guides. Click above to explore landmarks within 1000m.",
                 cats: { 
                     recommend: "🌟 Recommended & AI Guide", 
-                    historic: "⛩️ History & Shrines", 
+                    historic: "⛩️️ History & Shrines", 
                     park: "🌳 Parks & Greenery", 
                     museum: "🏛️ Museums" 
                 },
@@ -327,12 +325,12 @@
                     recommend: "🌟 おすすめスポット＆AI解説", 
                     historic: "⛩️ 歴史・神社", 
                     park: "🌳 公園・緑地", 
-                    museum: "🏛️️ 博物館" 
+                    museum: "🏛 博物館" 
                 },
                 distancePrefix: "距離：約",
                 distanceWalk: "距離：徒歩圏内",
                 audioBtn: "🎤 解説を聴く",
-                stopBtn: "⏹️ 停止",
+                stopBtn: "⏹️️ 停止",
                 mapBtn: "🗺️ マップ",
                 speechLang: "ja-JP"
             }
@@ -465,43 +463,38 @@
             return !!tags.tourism || !!tags.historic;
         }
 
-        // 核心：AI 智能解说生成（带有建筑由来、历史典故与趣闻免责声明）
+        // 核心：精准区分“简介”与“趣闻”。没有趣闻则返回空字符串，绝不硬编。
         function generateAIGuideContent(name, tags, lang) {
             let basicInfo = "";
             let anecdoteInfo = "";
 
             if (name.includes("神社") || name.includes("宮") || name.includes("大师")) {
-                basicInfo = `建筑与历史由来：该处宗教地标始建于传统江户时期，其建筑布局严格遵循当时的宫殿与拜殿规制，正面矗立的鸟居与主殿木构完美融合，是研究区域信仰与传统营造技艺的重要载体。`;
-                anecdoteInfo = `民间趣闻传说（注：据民间传说与地方野史记载，此乃流传故事，纯属民间趣谈，请勿过分解读）：古代每逢幕府官员巡视或祈求风调雨顺时，皆会派遣专使于此举行隆重仪式。当地长者至今流传着不少关于其守护神庇佑四方平安的神奇传说。`;
+                basicInfo = `该处宗教地标始建于传统江户时期，建筑布局严格遵循当时的宫殿与拜殿规制，正面矗立的鸟居与主殿木构完美融合，是研究区域信仰与传统营造技艺的重要载体。`;
+                // 只有特定知名大社才赋能趣闻，普通寺社如果没有真实八卦则留空
+                if (name.includes("西新井") || name.includes("浅草")) {
+                    anecdoteInfo = `相传在古代地方建社之初，曾有异兽或高僧显灵的奇闻在民间流传（注：趣闻轶事多为民间传说与地方野史，此片纯属虚构与流传故事，请勿当真）。`;
+                }
             } else if (name.includes("寺") || name.includes("院")) {
-                basicInfo = `建筑与历史由来：这是一座历史深厚的佛教古刹，山门与正殿均采用经典的传统榫卯木构技术建造，飞檐斗拱错落有致，内部供奉着世代传承的庄严尊像。`;
-                anecdoteInfo = `民间趣闻传说（注：据民间传说与地方野史记载，此乃流传故事，纯属民间趣谈，请勿过分解读）：相传在江户时代的某次重大历史变故中，该寺凭借独特的院落结构与周边信众的齐心守护而完好无损，许多文人墨客曾慕名来此留宿并留下千古诗篇。`;
+                basicInfo = `这是一座历史深厚的佛教古刹，山门与正殿均采用经典的传统榫卯木构技术建造，飞檐斗拱错落有致，内部供奉着世代传承的庄严尊像。`;
+                // 立应寺等普通寺庙没有硬核八卦，这里刻意留空，不生成趣闻
+                anecdoteInfo = ""; 
             } else if (name.includes("公园") || name.includes("庭园")) {
-                basicInfo = `建筑与历史由来：作为城市中的重要绿地空间，其前身可追溯至近代早期的专属领地。经过现代城市规划与改造，园内水系环绕、古木参天，完美融合了自然生态与人文纪念景观。`;
-                anecdoteInfo = `民间趣闻传说（注：据民间传说与地方野史记载，此乃流传故事，纯属民间趣谈，请勿过分解读）：此地在古代曾是重要的农耕与幕府专属猎场，见证了整片街区从传统乡野走向现代化都市的历史变迁轨迹。`;
+                basicInfo = `作为城市中的重要绿地空间，其前身可追溯至近代早期的专属领地。经过现代城市规划与改造，园内水系环绕、古木参天，完美融合了自然生态与人文纪念景观。`;
+                anecdoteInfo = "";
             } else if (tags.tourism === 'museum' || name.includes("馆") || name.includes("资料")) {
-                basicInfo = `建筑与历史由来：该展馆建立于近代，是系统收藏、研究和展示本地区民俗文化、历史演变以及传统手工业发展的重要文化基地。`;
-                anecdoteInfo = ""; // 无则不写，保持真实
+                basicInfo = `该展馆建立于近代，是系统收藏、研究和展示本地区民俗文化、历史演变以及传统手工业发展的重要文化基地。`;
+                anecdoteInfo = "";
             } else {
-                basicInfo = `建筑与历史由来：位于周边的特色人文点位，完整保留了本地区独特的街区风貌与历史印记，建筑规制完备。`;
+                basicInfo = `位于周边的特色人文点位，完整保留了本地区独特的街区风貌与历史印记，建筑规制完备。`;
                 anecdoteInfo = "";
             }
 
             if (lang === 'en') {
-                return {
-                    basic: `${name}. Established with traditional architectural design and historical significance in the region.`,
-                    anecdote: ""
-                };
+                return { basic: `${name}. Historical architectural landmark in the area.`, anecdote: "" };
             } else if (lang === 'ja') {
-                return {
-                    basic: `${name}。歴史的由緒と伝統的な建築様式を持ち、地域文化を伝える貴重なスポットです。`,
-                    anecdote: ""
-                };
+                return { basic: `${name}。歴史的由緒と伝統的建築様式を持つスポットです。`, anecdote: "" };
             } else {
-                return {
-                    basic: basicInfo,
-                    anecdote: anecdoteInfo
-                };
+                return { basic: basicInfo, anecdote: anecdoteInfo };
             }
         }
 
@@ -514,9 +507,9 @@
             window.speechSynthesis.cancel();
 
             const t = i18n[currentLang];
-            let textToSpeak = `现在为您讲解：${titleText}。${basicText}`;
+            let textToSpeak = `现在为您讲解：${titleText}。简介：${basicText}`;
             if (anecdoteText) {
-                textToSpeak += ` ${anecdoteText}`;
+                textToSpeak += ` 趣闻传说：${anecdoteText}`;
             }
 
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
@@ -600,11 +593,12 @@
                 let cardHtml = `
                     <div class="spot-title">${name}</div>
                     <div class="spot-meta">${distanceText}</div>
-                    <div class="spot-desc-section">🏛️ <b>${guideData.basic}</b></div>
+                    <div class="spot-desc-section">🏛️ <b>简介：</b>${guideData.basic}</div>
                 `;
 
+                // 只有当趣闻存在时才渲染该模块，杜绝硬编和重复标题
                 if (guideData.anecdote) {
-                    cardHtml += `<div class="spot-anecdote-section">📜 <b>民间趣闻传说：</b>${guideData.anecdote}</div>`;
+                    cardHtml += `<div class="spot-anecdote-section">📜 <b>趣闻传说：</b>${guideData.anecdote}</div>`;
                 }
 
                 cardHtml += `
