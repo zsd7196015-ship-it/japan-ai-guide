@@ -31,48 +31,57 @@
             max-width: 600px;
         }
 
+        /* 顶部的圆角大卡片框 */
+        .top-card {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 16px;
+        }
+
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            background: var(--card-bg);
-            padding: 15px 20px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            margin-bottom: 12px;
         }
 
         h1 {
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             margin: 0;
             color: var(--primary-color);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .controls {
             display: flex;
+            flex-direction: column;
             gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
+        }
+
+        .row-controls {
+            display: flex;
+            gap: 8px;
         }
 
         button, select {
-            padding: 10px 16px;
-            font-size: 0.95rem;
+            padding: 10px 14px;
+            font-size: 0.9rem;
             border: 1px solid #dcdde1;
             border-radius: 8px;
             background: #fff;
             cursor: pointer;
-            transition: all 0.2s ease;
+            outline: none;
         }
 
         button.primary {
             background-color: var(--accent-color);
             color: white;
             border: none;
-            flex: 1;
+            width: 100%;
             font-weight: 600;
         }
 
@@ -82,37 +91,13 @@
 
         select {
             background-color: #fff;
-        }
-
-        .categories {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-        }
-
-        .cat-btn {
-            padding: 6px 14px;
-            font-size: 0.85rem;
-            border-radius: 20px;
-            border: 1px solid #dcdde1;
-            background: #fff;
-            color: var(--text-secondary);
-            white-space: nowrap;
-            cursor: pointer;
-        }
-
-        .cat-btn.active {
-            background: var(--primary-color);
-            color: #fff;
-            border-color: var(--primary-color);
+            flex: 1;
         }
 
         #status {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-secondary);
-            margin-bottom: 15px;
+            margin-top: 10px;
             text-align: center;
         }
 
@@ -195,32 +180,38 @@
 <body>
 
     <div class="container">
-        <header>
-            <h1 id="ui-title">🧭 AI 随身导游</h1>
-            <select id="lang-select">
-                <option value="zh">中文 (简体)</option>
-            </select>
-        </header>
+        <!-- 顶部卡片大框 -->
+        <div class="top-card">
+            <header>
+                <h1 id="ui-title">🧭 AI 随身导游</h1>
+                <select id="lang-select">
+                    <option value="zh">中文 (简体)</option>
+                </select>
+            </header>
 
-        <div class="controls">
-            <button class="primary" id="btn-gps" onclick="getLocationAndSearch()">📍 获取实时GPS并探索周边景点</button>
+            <div class="controls">
+                <button class="primary" id="btn-gps" onclick="getLocationAndSearch()">📍 获取实时GPS并探索周边景点</button>
+                
+                <div class="row-controls">
+                    <!-- 下拉菜单分类：完美对应您要求的四个不重复选项 -->
+                    <select id="category-select" onchange="renderSpots()">
+                        <option value="all">热门景点</option>
+                        <option value="historic">历史古迹与神社</option>
+                        <option value="park">公园与绿地</option>
+                        <option value="museum">博物馆与乡土馆</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="status">请点击上方按钮获取位置并加载周边景点...</div>
         </div>
 
-        <div class="categories">
-            <button class="cat-btn active" onclick="filterCategory('all', this)">全部景点</button>
-            <button class="cat-btn" onclick="filterCategory('park', this)">草地与公园</button>
-            <button class="cat-btn" onclick="filterCategory('historic', this)">历史建筑与神社</button>
-            <button class="cat-btn" onclick="filterCategory('museum', this)">乡土馆与博物馆</button>
-        </div>
-
-        <div id="status">请点击上方按钮获取位置并加载周边景点...</div>
         <div class="spot-list" id="spots-container"></div>
     </div>
 
     <script>
         let currentLat = null;
         let currentLon = null;
-        let currentCategory = 'all';
         let allSpots = [];
 
         function getLocationAndSearch() {
@@ -273,7 +264,7 @@
                 
                 allSpots = data.elements.filter(item => {
                     const tags = item.tags || {};
-                    const name = tags.name || tags['name:en'] || tags['name:ja'] || tags['name:zh'];
+                    const name = tags.name || tags['name:ja'] || tags['name:en'] || tags['name:zh'];
                     if (!name) return false;
 
                     const amenity = tags.amenity;
@@ -309,18 +300,12 @@
             return Math.round(R * c);
         }
 
-        function filterCategory(category, btnElement) {
-            currentCategory = category;
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btnElement.classList.add('active');
-            renderSpots();
-        }
-
         function renderSpots() {
             const container = document.getElementById('spots-container');
             container.innerHTML = '';
 
-            // 1. 分类筛选
+            const currentCategory = document.getElementById('category-select').value;
+
             let filteredSpots = allSpots.filter(spot => {
                 const tags = spot.tags || {};
                 let spotType = 'other';
@@ -336,7 +321,7 @@
                 return spotType === currentCategory;
             });
 
-            // 2. 由近及远（距离从小到大）精确排序
+            // 由近及远精确排序
             if (currentLat !== null && currentLon !== null) {
                 filteredSpots.sort((a, b) => {
                     const latA = a.lat || (a.center && a.center.lat);
@@ -356,10 +341,9 @@
                 return;
             }
 
-            // 3. 完整渲染（含语音讲解、地图导航、防错距离）
             filteredSpots.forEach(spot => {
                 const tags = spot.tags || {};
-                const name = tags.name || tags['name:en'] || tags['name:ja'] || tags['name:zh'] || '未知地点';
+                const name = tags.name || tags['name:ja'] || tags['name:en'] || tags['name:zh'] || '未知地点';
                 
                 const spotLat = spot.lat || (spot.center && spot.center.lat);
                 const spotLon = spot.lon || (spot.center && spot.center.lon);
