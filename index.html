@@ -152,7 +152,6 @@
             border-left: 4px solid #e74c3c;
         }
 
-        /* 30米以内核心讲解区高亮样式 */
         .spot-card.active-trigger {
             border-left: 4px solid var(--accent-color);
             background: #f4fcf7;
@@ -251,7 +250,6 @@
             background-color: #e74c3c; 
         }
 
-        /* 30米以外未解锁讲解时的置灰按钮样式 */
         .action-btn.audio.locked {
             background-color: #bdc3c7;
             color: #7f8c8d;
@@ -295,13 +293,13 @@
                 </div>
             </div>
 
-            <div id="status">已就绪：搜索周边1000米，最近20个景点，走近至30米内为您解锁语音讲解...</div>
+            <div id="status">已就绪：搜索周边1000米内的最近20个景点，走近至30米内为您解锁语音讲解...</div>
         </div>
 
         <div class="spot-list" id="spots-container">
             <div class="welcome-banner">
                 <h3 id="welcome-title">欢迎来到 AI 随身导游</h3>
-                <p id="welcome-desc">后台为您搜索 1000 米以内的所有地标，最多展示最近的 20 个。您可以自由查阅图文故事与拍照机位；当您移动并走进某个景点 30 米范围内时，系统将为您自动解锁语音讲解功能。</p>
+                <p id="welcome-desc">后台为您检索 1000 米以内的所有地标，精选出最近的 20 个。您可以随时查阅图文故事与拍照机位；当您移动并走进某个景点 30 米范围内时，系统将为您自动解锁语音讲解功能。</p>
             </div>
         </div>
     </div>
@@ -319,18 +317,18 @@
                 title: "🧭 AI 随身导游",
                 langLabel: "语言:",
                 gpsBtn: "📍 获取实时GPS并开启 1000米搜索 / 30米触发讲解",
-                statusInit: "已就绪：搜索周边1000米，最近20个景点，走近至30米内解锁语音播报...",
+                statusInit: "已就绪：搜索周边1000米内的最近20个景点，走近至30米内解锁语音播报...",
                 statusLocating: "正在获取您的 GPS 位置...",
                 statusLoading: "正在搜寻周边 1000 米内的景点数据...",
-                statusSuccess: "GPS 获取成功！已为您平铺展示最近的 20 个景点（可在卡片中查阅详情，进入30米内可解锁语音讲解）。",
+                statusSuccess: "GPS 获取成功！已为您列出最近的 20 个景点（可在卡片中查阅详情，进入30米内可解锁语音讲解）。",
                 statusFallback: "网络节点繁忙，已自动为您启用本地高精度备用数据源！",
                 statusErrorGPS: "无法获取您的地理位置，请确保浏览器已授权定位。",
                 noSpots: "目前该分类下暂无符合条件的景点。",
                 welcomeTitle: "欢迎来到 AI 随身导游",
-                welcomeDesc: "系统在后台为您平铺搜寻 1000 米内的地标，最多展示最近 20 个。图文故事与机位供您随时查阅，当您走近至 30 米范围内时方可解锁语音讲解。",
+                welcomeDesc: "系统在后台为您检索 1000 米内的地标，精选最近 20 个。图文故事与机位供您随时查阅，当您走近至 30 米范围内时方可解锁语音讲解。",
                 cats: { 
                     recommend: "🌟 景点推荐与地标", 
-                    historic: "⛩️ 历史古迹与神社", 
+                    historic: "⛩️️ 历史古迹与神社", 
                     park: "🌳 公园与绿地", 
                     museum: "🏛️ 博物馆与乡土馆" 
                 },
@@ -582,7 +580,7 @@
             return !!tags.tourism || !!tags.historic || !!tags.leisure;
         }
 
-        // 生成统一的高品质、生动图文模块数据
+        // 规范化且智能适配的文案生成函数
         function generateAIGuideContent(name, tags, lang) {
             let basicInfo = "";
             let anecdoteInfo = "";
@@ -594,49 +592,49 @@
                     basicInfo = "Founded in 628 AD, Senso-ji is Tokyo's oldest Buddhist temple, dedicated to the Bodhisattva Kannon and steeped in centuries of Edo period heritage.";
                     anecdoteInfo = "The iconic 700-kg red lantern at Kaminarimon was first donated by Panasonic founder Konosuke Matsushita in 1960 after praying for recovery from illness.";
                     photoInfo = "Stand directly beneath the Kaminarimon lantern looking up, or use the Asakusa Culture Tourist Information Center rooftop deck for panoramic views.";
-                    shopInfo = "Nakamise-dori features traditional snacks like Ningyo-yaki (doll cakes). Don't miss Kimuraya's historic Ningyo-yaki!";
+                    shopInfo = "Nakamise-dori features traditional snacks like Ningyo-yaki. Recommended shop: Kimuraya's historic Ningyo-yaki.";
                 } else if (lang === 'ja') {
                     basicInfo = "推古天皇36年（628年）に創建された都内最古のお寺。聖観世音菩薩を本尊とし、江戸文化の中心地として発展しました。";
                     anecdoteInfo = "雷門の赤提灯は1960年にパナソニック創業者・松下幸之助が寄贈したことに始まります。";
                     photoInfo = "雷門の提灯の真下からのアングルや、文化観光センター8階展望テラスからの仲見世通り一望が絶景です。";
-                    shopInfo = "仲見世通りの「人形焼」や老舗の雷おこしが定番のお土産です。";
+                    shopInfo = "仲見世通りの「人形焼」や老舗の雷おこしが定番のお土産です。おすすめ店：木村家本店。";
                 } else {
                     basicInfo = "建于公元628年的东京都内最古老寺庙，供奉观音菩萨。这里完整保留了浓郁的江户下町风情，是东京历史与信仰的绝对核心。";
                     anecdoteInfo = "雷门中央重达700公斤的巨型红灯笼，是1960年由松下电器创始人松下幸之助因病痊愈后为报恩首次捐赠并延续至今的传奇之作。";
                     photoInfo = "1. 雷门灯笼正下方仰拍；2. 浅草文化观光中心8楼免费展望台，可俯瞰整条仲见世商店街与远处的晴空塔同框。";
-                    shopInfo = "仲见世通里的“木村家总本店”人偶烧（始创于明治时期）以及香脆可口的雷门米花糖。";
+                    shopInfo = "仲见世通里老字号林立，强烈推荐“木村家总本店”的人偶烧与传统雷门米花糖。";
                 }
             } else if (name.includes("上野恩赐公园")) {
                 if (lang === 'en') {
                     basicInfo = "Established in 1873, Japan's first public park was formerly the vast grounds of Kanei-ji, the family temple of the Tokugawa Shogunate.";
                     anecdoteInfo = "When the bronze statue of Saigo Takamori was unveiled, his wife famously exclaimed 'That is not my husband at all!'";
                     photoInfo = "Shinobazu Pond with lotus leaves and Tokyo Skytree in the background.";
-                    shopInfo = "Panda-themed pastries near Ueno Station and traditional Anmitsu at Mitsuhashi.";
+                    shopInfo = "Panda-themed pastries near Ueno Station or traditional Anmitsu at Mitsuhashi.";
                 } else if (lang === 'ja') {
                     basicInfo = "1873年に開園した日本初の公園の一つ。元は徳川将軍家の菩提寺である寛永寺の広大な敷地でした。";
                     anecdoteInfo = "西郷隆盛像の除幕式で、妻が「うちの人はこんな人じゃなかった」と驚いた逸話が有名です。";
                     photoInfo = "不忍池の蓮とスカイツリーを収めるアングルが写真映え抜群です。";
-                    shopInfo = "上野駅のパンダモチーフのお菓子や老舗甘味処が人気です。";
+                    shopInfo = "上野駅周辺のパンダモチーフのお菓子や、老舗甘味処「みはし」がおすすめです。";
                 } else {
                     basicInfo = "日本第一座西式公园，前身是德川幕府家族菩提寺“宽永寺”的广阔领地，园内汇聚多座国家级博物馆，是东京的文化艺术心脏。";
                     anecdoteInfo = "园内西乡隆盛铜像揭幕时，其妻曾当场惊呼‘这根本不是我丈夫’，因为雕像把其打猎时的随性姿态永久定格了。";
                     photoInfo = "不忍池畔的木栈道，可将满池荷花与晴空塔同框；清水观音堂的“月之松”圆窗构图也是摄影师的最爱。";
-                    shopInfo = "上野车站内的限定熊猫年轮蛋糕及老字号甘味处“みはし”的豆乳凉粉。";
+                    shopInfo = "上野车站内可购买限定熊猫年轮蛋糕，附近还有百年甘味处“みはし”可品尝特色甜点。";
                 }
             } else {
-                // 所有普通公园或地方神社，统一配上生动统一的四大模块结构，杜绝空白
+                // 普通公园或地方景点：规范统一的通用推荐话术
                 basicInfo = lang === 'en' ? "An exquisite local landmark blending traditional neighborhood culture with serene urban landscapes." :
                             lang === 'ja' ? "地域の歴史と美しい街並みが調和する、趣のあるローカルスポットです。" :
                             "一处完美融合了当地街区风貌与人文印记的特色点位，静静诉说着属于这片土地的日常点滴。";
                 anecdoteInfo = lang === 'en' ? "According to local oral history, this site has served as a beloved communal gathering ground and spiritual anchor for generations of residents." :
                                lang === 'ja' ? "地域の人々に代々大切に守られてきた、心温まる伝承や歴史的背景が息づいています。" :
-                               "相传在当地社区建立之初，这里便是居民祈愿风调雨顺、邻里欢聚的核心场所，流传着不少温馨的坊间故事。";
+                               "相传在当地社区建立之初，这里便是居民休闲散步、邻里交流的核心场所，充满浓厚的生活气息。";
                 photoInfo = lang === 'en' ? "Capture the scenic pathway framed by seasonal foliage or the quiet neighborhood streetscape." :
                             lang === 'ja' ? "季節の移ろいを感じる木々と、美しい地元の街並みを背景にした撮影が最適です。" :
-                            "推荐以两侧充满生活气息的林荫小径或精致的鸟居/入口石碑为背景，拍出原汁原味的日式街景。";
-                shopInfo = lang === 'en' ? "Explore nearby family-owned traditional confectioneries and local artisan shops." :
-                           lang === 'ja' ? "周辺の老舗商店や、地元ならではの隠れた名店巡りがおすすめです。" :
-                           "周边极具地方人情味的特色杂货与手作伴手礼，非常适合作为探访纪念。";
+                            "推荐以两侧充满生活气息的林荫小径或精致的入口石碑为背景，随手取景即可拍出地道的日式街景。";
+                shopInfo = lang === 'en' ? "Explore nearby local convenience stores or family-run artisan shops for regional snacks." :
+                           lang === 'ja' ? "周辺の商店や、地元ならではの隠れた名店・特産品店をぜひ覗いてみてください。" :
+                           "附近通常设有特色商店或便利店，可留意搜寻当地限定的手作小点与伴手礼。";
             }
 
             return { basic: basicInfo, anecdote: anecdoteInfo, photo: photoInfo, shop: shopInfo };
@@ -759,7 +757,7 @@
 
                 let dist = 9999;
                 let distanceText = t.distancePrefix + " 远";
-                let isTriggered = false; // 是否在 30 米触发范围内
+                let isTriggered = false;
 
                 if (currentLat !== null && currentLon !== null && spotLat && spotLon) {
                     dist = calculateDistance(currentLat, currentLon, spotLat, spotLon);
@@ -788,7 +786,6 @@
                     <div class="spot-desc-section">${t.labelOverview} ${guideData.basic}</div>
                 `;
 
-                // 统一加上趣味典故、拍照机位、伴手礼模块（供用户自行查阅阅读）
                 if (guideData.anecdote) {
                     cardHtml += `<div class="spot-anecdote-section">${t.labelAnecdote} ${guideData.anecdote}</div>`;
                 }
@@ -799,7 +796,6 @@
                     cardHtml += `<div class="spot-shop-section">${t.labelShop} ${guideData.shop}</div>`;
                 }
 
-                // 核心按钮权限控制：30米以内正常激活讲解，30米以外显示“锁定”状态且不可点击播报
                 const audioBtnClass = isTriggered ? 'action-btn audio' : 'action-btn audio locked';
                 const audioBtnText = isTriggered ? t.audioBtn : t.lockedAudioBtn;
 
