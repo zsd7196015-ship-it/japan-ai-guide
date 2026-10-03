@@ -3,113 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 移动导览 / AI Mobile Tour Guide</title>
+    <title>AI 移动导览 | AI Mobile Tour Guide</title>
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --border-radius: 12px;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             margin: 0;
-            padding: 16px;
-            background-color: #f5f5f7;
-            color: #333;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
         h1 {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
+            font-size: 1.25rem;
+            margin: 0;
+            color: var(--primary-color);
         }
+
         .controls {
             display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
+            gap: 10px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
         }
+
         button, select {
             padding: 10px 16px;
-            font-size: 1rem;
-            border: 1px solid #ccc;
+            font-size: 0.95rem;
+            border: 1px solid #dcdde1;
             border-radius: 8px;
-            background-color: #fff;
+            background: #fff;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
+
         button.primary {
-            background-color: #0071e3;
+            background-color: var(--accent-color);
             color: white;
             border: none;
+            flex: 1;
+            font-weight: 600;
         }
+
         button.primary:hover {
-            background-color: #0077ed;
+            background-color: #2980b9;
         }
+
+        select {
+            background-color: #fff;
+        }
+
         .categories {
             display: flex;
-            gap: 6px;
-            margin-bottom: 16px;
+            gap: 8px;
+            margin-bottom: 20px;
             overflow-x: auto;
-            padding-bottom: 4px;
+            padding-bottom: 5px;
         }
+
         .cat-btn {
-            padding: 6px 12px;
-            font-size: 0.9rem;
-            border-radius: 16px;
-            border: 1px solid #ddd;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            border-radius: 20px;
+            border: 1px solid #dcdde1;
             background: #fff;
+            color: var(--text-secondary);
             white-space: nowrap;
         }
+
         .cat-btn.active {
-            background: #333;
+            background: var(--primary-color);
             color: #fff;
-            border-color: #333;
+            border-color: var(--primary-color);
         }
+
+        #status {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .spot-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
         .spot-card {
-            background: #fff;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            background: var(--card-bg);
+            padding: 18px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border-left: 4px solid var(--accent-color);
+            transition: transform 0.2s;
         }
+
+        .spot-card:hover {
+            transform: translateY(-2px);
+        }
+
         .spot-title {
             font-size: 1.1rem;
             font-weight: bold;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            color: var(--primary-color);
         }
-        .spot-type {
+
+        .spot-meta {
             font-size: 0.85rem;
-            color: #666;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
             margin-bottom: 8px;
         }
-        .spot-distance {
+
+        .spot-desc {
             font-size: 0.9rem;
-            color: #0071e3;
-            font-weight: 500;
-            margin-top: 6px;
+            line-height: 1.5;
+            color: #4f5d73;
         }
-        #status {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 12px;
+
+        .spot-distance {
+            font-size: 0.85rem;
+            color: #e67e22;
+            font-weight: 600;
+            margin-top: 8px;
         }
     </style>
 </head>
 <body>
 
-    <h1 id="ui-title">📍 AI 移动导览</h1>
-    
-    <div class="controls">
-        <button class="primary" id="btn-gps" onclick="getLocationAndSearch()">获取实时GPS并探索周边景点</button>
-        <select id="lang-select" onchange="changeLanguage()">
-            <option value="zh">中文</option>
-            <option value="en">English</option>
-            <option value="ja">日本語</option>
-        </select>
-    </div>
+    <div class="container">
+        <header>
+            <h1 id="ui-title">📍 AI 移动导览</h1>
+            <select id="lang-select" onchange="changeLanguage()">
+                <option value="zh">中文</option>
+                <option value="en">English</option>
+                <option value="ja">日本語</option>
+            </select>
+        </header>
 
-    <div class="categories">
-        <button class="cat-btn active" onclick="filterCategory('all', this)" id="cat-all">全部/热门</button>
-        <button class="cat-btn" onclick="filterCategory('historic', this)" id="cat-historic">历史古迹</button>
-        <button class="cat-btn" onclick="filterCategory('park', this)" id="cat-park">公园绿地</button>
-        <button class="cat-btn" onclick="filterCategory('museum', this)" id="cat-museum">博物馆/文化</button>
-    </div>
+        <div class="controls">
+            <button class="primary" id="btn-gps" onclick="getLocationAndSearch()">获取实时GPS并探索周边景点</button>
+        </div>
 
-    <div id="status">请点击上方按钮获取位置并加载周边景点...</div>
-    <div id="spots-container"></div>
+        <div class="categories">
+            <button class="cat-btn active" onclick="filterCategory('all', this)" id="cat-all">全部/热门</button>
+            <button class="cat-btn" onclick="filterCategory('historic', this)" id="cat-historic">历史古迹</button>
+            <button class="cat-btn" onclick="filterCategory('park', this)" id="cat-park">公园绿地</button>
+            <button class="cat-btn" onclick="filterCategory('museum', this)" id="cat-museum">博物馆/文化</button>
+        </div>
+
+        <div id="status">请点击上方按钮获取位置并加载周边景点...</div>
+        <div class="spot-list" id="spots-container"></div>
+    </div>
 
     <script>
         let currentLat = null;
@@ -164,7 +240,6 @@
             const statusEl = document.getElementById('status');
             statusEl.innerText = i18n[lang].statusLoading;
 
-            // 1.5公里范围内的 Overpass API 查询
             const query = `
                 [out:json][timeout:25];
                 (
@@ -185,13 +260,11 @@
                 });
                 const data = await response.json();
                 
-                // 严格过滤非游客实体（学校、办公楼、普通设施等）
                 allSpots = data.elements.filter(item => {
                     const tags = item.tags || {};
                     const name = tags.name || tags['name:en'] || tags['name:ja'] || tags['name:zh'];
-                    if (!name) return false; // 必须有名字
+                    if (!name) return false;
 
-                    // 排除学校、医院、政务机关、普通停车场等非景点
                     const amenity = tags.amenity;
                     const office = tags.office;
                     if (['school', 'university', 'kindergarten', 'hospital', 'parking', 'townhall', 'police', 'fire_station'].includes(amenity)) {
@@ -210,9 +283,8 @@
             }
         }
 
-        // Haversine 公式计算直线距离（单位：米）
         function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371e3; // 地球半径（米）
+            const R = 6371e3;
             const φ1 = lat1 * Math.PI / 180;
             const φ2 = lat2 * Math.PI / 180;
             const Δφ = (lat2 - lat1) * Math.PI / 180;
@@ -239,7 +311,7 @@
             container.innerHTML = '';
 
             if (allSpots.length === 0) {
-                container.innerHTML = `<p>${lang === 'en' ? 'No spots found nearby.' : lang === 'ja' ? '周辺にスポットが見つかりません。' : '附近暂无符合条件的景点。'}</p>`;
+                container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-secondary);">${lang === 'en' ? 'No spots found nearby.' : lang === 'ja' ? '周辺にスポットが見つかりません。' : '附近暂无符合条件的景点。'}</div>`;
                 return;
             }
 
@@ -247,26 +319,32 @@
                 const tags = spot.tags || {};
                 const name = tags.name || tags['name:en'] || tags['name:ja'] || tags['name:zh'] || '未知地点';
                 
-                // 分类匹配
                 let spotType = 'other';
-                if (tags.historic) spotType = 'historic';
-                else if (tags.leisure === 'park') spotType = 'park';
-                else if (tags.tourism === 'museum' || tags.tourism === 'attraction') spotType = 'museum';
+                let typeLabel = lang === 'en' ? 'Attraction' : lang === 'ja' ? '観光地' : '热门景点';
+                if (tags.historic) {
+                    spotType = 'historic';
+                    typeLabel = lang === 'en' ? 'Historic Site' : lang === 'ja' ? '歴史的スポット' : '历史古迹';
+                } else if (tags.leisure === 'park') {
+                    spotType = 'park';
+                    typeLabel = lang === 'en' ? 'Park' : lang === 'ja' ? '公園' : '公园绿地';
+                } else if (tags.tourism === 'museum') {
+                    spotType = 'museum';
+                    typeLabel = lang === 'en' ? 'Museum' : lang === 'ja' ? '博物館' : '博物馆/文化';
+                }
 
                 if (currentCategory !== 'all' && currentCategory !== spotType) {
-                    return; // 不符合当前分类则跳过
+                    return;
                 }
 
                 const spotLat = spot.lat || (spot.center && spot.center.lat);
                 const spotLon = spot.lon || (spot.center && spot.center.lon);
 
                 let distanceHtml = '';
-                // 防御性判断：只有当成功拿到当前坐标且 spot 坐标有效时才计算距离
                 if (currentLat !== null && currentLon !== null && spotLat && spotLon) {
                     const dist = calculateDistance(currentLat, currentLon, spotLat, spotLon);
-                    // 只有当距离大于 0 时才展示，绝不显示 0 米或错误数字
+                    // 严格过滤：只有距离大于 0 时才显示距离行，绝不显示 0 米
                     if (dist > 0) {
-                        distanceHtml = `<div class="spot-distance">${i18n[lang].distLabel}${dist} 米</div>`;
+                        distanceHtml = `<div class="spot-distance">📍 ${i18n[lang].distLabel}${dist} 米</div>`;
                     }
                 }
 
@@ -274,7 +352,9 @@
                 card.className = 'spot-card';
                 card.innerHTML = `
                     <div class="spot-title">${name}</div>
-                    <div class="spot-type">分类: ${spotType.toUpperCase()}</div>
+                    <div class="spot-meta">
+                        <span>${typeLabel}</span>
+                    </div>
                     ${distanceHtml}
                 `;
                 container.appendChild(card);
