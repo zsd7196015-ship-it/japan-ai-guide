@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 随身导游</title>
+    <title>AI 多语言随身导游</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -31,7 +31,6 @@
             max-width: 600px;
         }
 
-        /* 顶部的圆角大卡片框 */
         .top-card {
             background: var(--card-bg);
             padding: 16px;
@@ -51,20 +50,12 @@
             font-size: 1.15rem;
             margin: 0;
             color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
         .controls {
             display: flex;
             flex-direction: column;
             gap: 10px;
-        }
-
-        .row-controls {
-            display: flex;
-            gap: 8px;
         }
 
         button, select {
@@ -89,9 +80,29 @@
             background-color: #219653;
         }
 
-        select {
-            background-color: #fff;
-            flex: 1;
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .category-tab {
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            border-radius: 20px;
+            border: 1px solid #dcdde1;
+            background: #fff;
+            color: var(--text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .category-tab.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            font-weight: 600;
         }
 
         #status {
@@ -132,14 +143,8 @@
         .spot-desc {
             font-size: 0.9rem;
             color: #4b6584;
-            margin-bottom: 6px;
-            line-height: 1.5;
-        }
-
-        .spot-subdesc {
-            font-size: 0.85rem;
-            color: #a5b1c2;
             margin-bottom: 12px;
+            line-height: 1.5;
         }
 
         .spot-actions {
@@ -180,26 +185,25 @@
 <body>
 
     <div class="container">
-        <!-- 顶部卡片大框 -->
         <div class="top-card">
             <header>
                 <h1 id="ui-title">🧭 AI 随身导游</h1>
-                <select id="lang-select">
+                <!-- 三种语言切换选择框 -->
+                <select id="lang-select" onchange="changeLanguage()">
                     <option value="zh">中文 (简体)</option>
+                    <option value="en">English</option>
+                    <option value="ja">日本語</option>
                 </select>
             </header>
 
             <div class="controls">
-                <button class="primary" id="btn-gps" onclick="getLocationAndSearch()">📍 获取实时GPS并探索周边景点</button>
+                <button class="primary" id="btn-gps" onclick="getLocationAndExplore()">📍 获取实时GPS并探索周边景点</button>
                 
-                <div class="row-controls">
-                    <!-- 下拉菜单分类：完美对应您要求的四个不重复选项 -->
-                    <select id="category-select" onchange="renderSpots()">
-                        <option value="all">热门景点</option>
-                        <option value="historic">历史古迹与神社</option>
-                        <option value="park">公园与绿地</option>
-                        <option value="museum">博物馆与乡土馆</option>
-                    </select>
+                <div class="category-tabs">
+                    <button class="category-tab active" data-category="all" onclick="setCategory('all', this)">热门景点</button>
+                    <button class="category-tab" data-category="historic" onclick="setCategory('historic', this)">历史古迹与神社</button>
+                    <button class="category-tab" data-category="park" onclick="setCategory('park', this)">公园与绿地</button>
+                    <button class="category-tab" data-category="museum" onclick="setCategory('museum', this)">博物馆与乡土馆</button>
                 </div>
             </div>
 
@@ -213,16 +217,103 @@
         let currentLat = null;
         let currentLon = null;
         let allSpots = [];
+        let currentCategory = 'all';
+        let currentLang = 'zh';
 
-        function getLocationAndSearch() {
+        // 三种独立语言的文本配置与语音库映射
+        const i18n = {
+            zh: {
+                title: "🧭 AI 随身导游",
+                gpsBtn: "📍 获取实时GPS并探索周边景点",
+                statusInit: "请点击上方按钮获取位置并加载周边景点...",
+                statusLocating: "正在获取您的 GPS 位置...",
+                statusLoading: "正在查询周边优质景点...",
+                statusSuccess: "周边景点与语音解说已就绪！",
+                statusErrorGPS: "无法获取您的地理位置，请确保浏览器已授权定位。",
+                statusErrorFetch: "获取景点数据失败，请稍后重试。",
+                noSpots: "该分类下暂无符合条件的景点。",
+                cats: { all: "热门景点", historic: "历史古迹与神社", park: "公园与绿地", museum: "博物馆与乡土馆" },
+                distancePrefix: "距离您：约",
+                distanceWalk: "距离您：步行可达范围内",
+                descSuffix: "是当地极具代表性的重要人文地标，承载着丰富的历史文化与区域特色。",
+                audioBtn: "🎤 语音讲解",
+                mapBtn: "🗺️ 导航",
+                speechLang: "zh-CN"
+            },
+            en: {
+                title: "🧭 AI Tour Guide",
+                gpsBtn: "📍 Get GPS & Explore Nearby",
+                statusInit: "Click the button above to get location and load nearby spots...",
+                statusLocating: "Getting your GPS location...",
+                statusLoading: "Searching for nearby spots...",
+                statusSuccess: "Nearby spots and audio guides ready!",
+                statusErrorGPS: "Unable to get location. Please enable location permissions.",
+                statusErrorFetch: "Failed to fetch spots. Please try again later.",
+                noSpots: "No spots found in this category.",
+                cats: { all: "Hot Spots", historic: "History & Shrines", park: "Parks & Greenery", museum: "Museums" },
+                distancePrefix: "Distance: approx.",
+                distanceWalk: "Distance: within walking distance",
+                descSuffix: "is an important local landmark rich in cultural character and historical heritage.",
+                audioBtn: "🎤 Audio Guide",
+                mapBtn: "🗺️ Map",
+                speechLang: "en-US"
+            },
+            ja: {
+                title: "🧭 AI ガイド",
+                gpsBtn: "📍 GPS取得して周辺を探索",
+                statusInit: "上のボタンを押して位置情報を取得し、周辺スポットを読み込んでください...",
+                statusLocating: "GPS位置情報を取得中...",
+                statusLoading: "周辺のスポットを検索中...",
+                statusSuccess: "周辺のスポットと音声解説の準備ができました！",
+                statusErrorGPS: "位置情報を取得できません。位置情報の権限を確認してください。",
+                statusErrorFetch: "スポットデータの取得に失敗しました。後ほど再試行してください。",
+                noSpots: "このカテゴリに該当するスポットはありません。",
+                cats: { all: "人気スポット", historic: "歴史・神社", park: "公園・緑地", museum: "博物館" },
+                distancePrefix: "距離：約",
+                distanceWalk: "距離：徒歩圏内",
+                descSuffix: "はこの地域の歴史と文化を伝える重要な地域ランドマークです。",
+                audioBtn: "🎤 音声解説",
+                mapBtn: "🗺️ マップ",
+                speechLang: "ja-JP"
+            }
+        };
+
+        function changeLanguage() {
+            currentLang = document.getElementById('lang-select').value;
+            const t = i18n[currentLang];
+            
+            document.getElementById('ui-title').innerText = t.title;
+            document.getElementById('btn-gps').innerText = t.gpsBtn;
+            document.getElementById('status').innerText = t.statusInit;
+
+            const tabs = document.querySelectorAll('.category-tab');
+            tabs.forEach(tab => {
+                const catKey = tab.getAttribute('data-category');
+                tab.innerText = t.cats[catKey];
+            });
+
+            if (allSpots.length > 0) {
+                renderSpots();
+            }
+        }
+
+        function setCategory(category, element) {
+            currentCategory = category;
+            document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
+            element.classList.add('active');
+            renderSpots();
+        }
+
+        function getLocationAndExplore() {
+            const t = i18n[currentLang];
             const statusEl = document.getElementById('status');
             
             if (!navigator.geolocation) {
-                statusEl.innerText = "您的浏览器不支持地理定位";
+                statusEl.innerText = "Geolocation is not supported";
                 return;
             }
 
-            statusEl.innerText = "正在获取您的 GPS 位置...";
+            statusEl.innerText = t.statusLocating;
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -231,16 +322,16 @@
                     fetchSpots(currentLat, currentLon);
                 },
                 (error) => {
-                    statusEl.innerText = "无法获取您的地理位置，请确保浏览器已授权定位。";
-                    console.error(error);
+                    statusEl.innerText = t.statusErrorGPS;
                 },
                 { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
         }
 
         async function fetchSpots(lat, lon) {
+            const t = i18n[currentLang];
             const statusEl = document.getElementById('status');
-            statusEl.innerText = "正在查询周边优质景点...";
+            statusEl.innerText = t.statusLoading;
 
             const query = `
                 [out:json][timeout:25];
@@ -266,22 +357,14 @@
                     const tags = item.tags || {};
                     const name = tags.name || tags['name:ja'] || tags['name:en'] || tags['name:zh'];
                     if (!name) return false;
-
-                    const amenity = tags.amenity;
-                    const office = tags.office;
-                    if (['school', 'university', 'kindergarten', 'hospital', 'parking', 'townhall', 'police', 'fire_station'].includes(amenity)) {
-                        return false;
-                    }
-                    if (office) return false;
-
+                    if (['school', 'university', 'hospital', 'parking', 'police'].includes(tags.amenity)) return false;
                     return true;
                 });
 
-                statusEl.innerText = "周边地标与历史文化解说已加载成功！";
+                statusEl.innerText = t.statusSuccess;
                 renderSpots();
             } catch (err) {
-                statusEl.innerText = "获取景点数据失败，请稍后重试。";
-                console.error(err);
+                statusEl.innerText = t.statusErrorFetch;
             }
         }
 
@@ -296,32 +379,44 @@
                       Math.cos(φ1) * Math.cos(φ2) *
                       Math.sin(Δλ/2) * Math.sin(Δλ/2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
             return Math.round(R * c);
+        }
+
+        // 核心语音讲解功能：严格匹配当前选择的语种并调用浏览器免费语音播报
+        function speakAudio(titleText, descText) {
+            if (!('speechSynthesis' in window)) {
+                alert('您的浏览器不支持语音播报功能');
+                return;
+            }
+            
+            window.speechSynthesis.cancel(); // 停止当前正在播放的声音
+
+            const t = i18n[currentLang];
+            const textToSpeak = `${titleText}. ${descText}`;
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            
+            utterance.lang = t.speechLang; // 对应切换成中文 zh-CN、英文 en-US 或日语 ja-JP
+            utterance.rate = 1.0;
+
+            window.speechSynthesis.speak(utterance);
         }
 
         function renderSpots() {
             const container = document.getElementById('spots-container');
             container.innerHTML = '';
-
-            const currentCategory = document.getElementById('category-select').value;
+            const t = i18n[currentLang];
 
             let filteredSpots = allSpots.filter(spot => {
                 const tags = spot.tags || {};
                 let spotType = 'other';
-                if (tags.leisure === 'park') {
-                    spotType = 'park';
-                } else if (tags.historic) {
-                    spotType = 'historic';
-                } else if (tags.tourism === 'museum') {
-                    spotType = 'museum';
-                }
+                if (tags.leisure === 'park') spotType = 'park';
+                else if (tags.historic) spotType = 'historic';
+                else if (tags.tourism === 'museum') spotType = 'museum';
 
                 if (currentCategory === 'all') return true;
                 return spotType === currentCategory;
             });
 
-            // 由近及远精确排序
             if (currentLat !== null && currentLon !== null) {
                 filteredSpots.sort((a, b) => {
                     const latA = a.lat || (a.center && a.center.lat);
@@ -331,13 +426,12 @@
 
                     const distA = (latA && lonA) ? calculateDistance(currentLat, currentLon, latA, lonA) : 999999;
                     const distB = (latB && lonB) ? calculateDistance(currentLat, currentLon, latB, lonB) : 999999;
-
                     return distA - distB;
                 });
             }
 
             if (filteredSpots.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-secondary);">该分类下暂无符合条件的景点。</div>`;
+                container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-secondary);">${t.noSpots}</div>`;
                 return;
             }
 
@@ -348,27 +442,26 @@
                 const spotLat = spot.lat || (spot.center && spot.center.lat);
                 const spotLon = spot.lon || (spot.center && spot.center.lon);
 
-                let distanceText = "距离您：步行可达范围内";
+                let distanceText = t.distanceWalk;
                 if (currentLat !== null && currentLon !== null && spotLat && spotLon) {
                     const dist = calculateDistance(currentLat, currentLon, spotLat, spotLon);
-                    // 严格防错：只有当距离大于 0 时才显示具体米数，绝不显示 0 米
                     if (dist > 0) {
-                        distanceText = `距离您：约 ${dist} 米`;
+                        distanceText = `${t.distancePrefix} ${dist} 米`;
                     }
                 }
 
                 const mapUrl = (spotLat && spotLon) ? `https://www.google.com/maps/search/?api=1&query=${spotLat},${spotLon}` : '#';
+                const descText = `${name} ${t.descSuffix}`;
 
                 const card = document.createElement('div');
                 card.className = 'spot-card';
                 card.innerHTML = `
                     <div class="spot-title">${name}</div>
                     <div class="spot-meta">${distanceText}</div>
-                    <div class="spot-desc">历史与建筑解说：「${name}」是位于该区域内极具地方特色的重要人文地标。该建筑在布局上契合周边街区风貌，不仅在日常生活中发挥着重要功能，也见证了该片区多年来的城市发展与变迁。</div>
-                    <div class="spot-subdesc">参观导览：非常适合作为实地步行探索途中的特色坐标，细致观察其周边的街景与建筑特色。</div>
+                    <div class="spot-desc">${descText}</div>
                     <div class="spot-actions">
-                        <button class="action-btn audio" onclick="alert('正在生成 ${name} 的语音解说...')">🎤 语音讲解</button>
-                        <a class="action-btn map" href="${mapUrl}" target="_blank">🗺️ 导航</a>
+                        <button class="action-btn audio" onclick="speakAudio('${name.replace(/'/g, "\\'")}', '${descText.replace(/'/g, "\\'")}')">${t.audioBtn}</button>
+                        <a class="action-btn map" href="${mapUrl}" target="_blank">${t.mapBtn}</a>
                     </div>
                 `;
                 container.appendChild(card);
