@@ -169,7 +169,7 @@
                     <option value="all" id="optAll">🌟 全部推荐</option>
                     <option value="historic" id="optHistoric">⛩️ 历史古迹与神社</option>
                     <option value="park" id="optPark">🌳 公园与绿地</option>
-                    <option value="museum" id="optMuseum">🏛️ 博物馆与场馆</option>
+                    <option value="museum" id="optMuseum">🏛 博物馆与场馆</option>
                 </select>
                 <!-- 语言选择 -->
                 <select class="lang-select" id="langSelect" onchange="changeLanguage(this.value)">
@@ -203,10 +203,10 @@
             searching: "🔍 正在精细化检索周边旅游与文化地标...",
             locSuccess: "📍 周边热门景点加载成功！",
             locError: "❌ 暂时无法获取位置信息，请检查手机定位权限后重试。",
-            distPrefix: "距离您：",
+            distPrefix: "直线距离约：",
             historyLabel: "历史与文化解说：",
             tipsLabel: "参观导览：",
-            speakBtn: "🎙️ 语音讲解",
+            speakBtn: "🎙 语音讲解",
             stopBtn: "⏹ 停止播报",
             navBtn: "🗺 导航",
             langCode: "zh-CN",
@@ -226,7 +226,7 @@
             searching: "Searching nearby tourist spots...",
             locSuccess: "📍 Nearby spots loaded successfully!",
             locError: "❌ Unable to get GPS. Please check location permissions.",
-            distPrefix: "Distance: ",
+            distPrefix: "Straight-line distance: ",
             historyLabel: "History & Culture: ",
             tipsLabel: "Guide Tips: ",
             speakBtn: "🎙 Audio Guide",
@@ -249,17 +249,17 @@
             searching: "周辺のスポットを検索中...",
             locSuccess: "📍 周辺スポットの読み込みに成功しました！",
             locError: "❌ 位置情報を取得できませんでした。",
-            distPrefix: "現在地から：",
+            distPrefix: "直線距離：約 ",
             historyLabel: "歴史と文化の解説：",
             tipsLabel: "見どころ・散策のコツ：",
             speakBtn: "🎙️ 音声解説",
-            stopBtn: "⏹️ 停止",
+            stopBtn: "⏹️️ 停止",
             navBtn: "🗺 マップ",
             langCode: "ja-JP",
             optAll: "🌟 すべてのおすすめ",
             optHistoric: "⛩️ 史跡・神社仏閣",
             optPark: "🌳 公園・緑地",
-            optMuseum: "🏛️ 博物館・文化施設",
+            optMuseum: "🏛️️ 博物館・文化施設",
             emptyCat: "このカテゴリのスポットはありません。他のカテゴリに切り替えるか、再読み込みしてください。"
         }
     };
@@ -292,6 +292,46 @@
 
     function setStatus(text) {
         document.getElementById('statusTip').textContent = text;
+    }
+
+    // 计算两点之间的直线距离（返回米）
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371e3; // 地球半径（米）
+        const φ1 = lat1 * Math.PI / 180;
+        const φ2 = lat2 * Math.PI / 180;
+        const Δφ = (lat2 - lat1) * Math.PI / 180;
+        const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+        const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                  Math.cos(φ1) * Math.cos(φ2) *
+                  Math.sin(Δλ/2) * Math.sin(Δλ/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+        return R * c; 
+    }
+
+    // 格式化距离显示
+    function formatDistance(meters, lang) {
+        if (lang === 'en') {
+            if (meters < 1000) {
+                return `${Math.round(meters)} meters`;
+            } else {
+                return `${(meters / 1000).toFixed(1)} km`;
+            }
+        } else if (lang === 'ja') {
+            if (meters < 1000) {
+                return `${Math.round(meters)} m`;
+            } else {
+                return `${(meters / 1000).toFixed(1)} km`;
+            }
+        } else {
+            // 中文
+            if (meters < 1000) {
+                return `${Math.round(meters)} 米`;
+            } else {
+                return `${(meters / 1000).toFixed(1)} 公里`;
+            }
+        }
     }
 
     function classifySpot(name, tags) {
@@ -392,20 +432,20 @@
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
+                const userLat = position.coords.latitude;
+                const userLon = position.coords.longitude;
                 
                 setStatus(t.searching);
 
                 const query = `[out:json][timeout:15];(
-                  node["tourism"](around:1000,${lat},${lon});
-                  way["tourism"](around:1000,${lat},${lon});
-                  node["historic"](around:1000,${lat},${lon});
-                  way["historic"](around:1000,${lat},${lon});
-                  node["leisure"="park"](around:1000,${lat},${lon});
-                  way["leisure"="park"](around:1000,${lat},${lon});
-                  node["amenity"~"place_of_worship|museum|library|community_centre"](around:1000,${lat},${lon});
-                  way["amenity"~"place_of_worship|museum|library|community_centre"](around:1000,${lat},${lon});
+                  node["tourism"](around:1500,${userLat},${userLon});
+                  way["tourism"](around:1500,${userLat},${userLon});
+                  node["historic"](around:1500,${userLat},${userLon});
+                  way["historic"](around:1500,${userLat},${userLon});
+                  node["leisure"="park"](around:1500,${userLat},${userLon});
+                  way["leisure"="park"](around:1500,${userLat},${userLon});
+                  node["amenity"~"place_of_worship|museum|library|community_centre"](around:1500,${userLat},${userLon});
+                  way["amenity"~"place_of_worship|museum|library|community_centre"](around:1500,${userLat},${userLon});
                 );out body;>;out skel qt;`;
 
                 const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
@@ -419,11 +459,14 @@
                             data.elements.forEach((el, index) => {
                                 if (el.tags && (el.tags.name || el.tags["name:en"] || el.tags["name:ja"])) {
                                     let spotName = el.tags.name || el.tags["name:en"] || el.tags["name:ja"];
-                                    let spotLat = el.lat || (el.center && el.center.lat) || lat;
-                                    let spotLon = el.lon || (el.center && el.center.lon) || lon;
+                                    let spotLat = el.lat || (el.center && el.center.lat) || userLat;
+                                    let spotLon = el.lon || (el.center && el.center.lon) || userLon;
                                     
                                     let catKey = classifySpot(spotName, el.tags);
                                     if (catKey === "excluded") return; 
+
+                                    // 计算直线距离（米）
+                                    let distanceMeters = calculateDistance(userLat, userLon, spotLat, spotLon);
 
                                     let guideZh = generateProfessionalGuide(spotName, catKey, 'zh');
                                     let guideEn = generateProfessionalGuide(spotName, catKey, 'en');
@@ -432,15 +475,11 @@
                                     fetchedSpots.push({
                                         id: 100 + index,
                                         categoryKey: catKey,
+                                        distanceMeters: distanceMeters,
                                         name: {
                                             zh: spotName,
                                             en: el.tags["name:en"] || spotName,
                                             ja: el.tags["name:ja"] || spotName
-                                        },
-                                        dist: {
-                                            zh: "步行可达范围内",
-                                            en: "Within walking distance",
-                                            ja: "徒歩圏内"
                                         },
                                         mapUrl: `https://maps.google.com/?q=${spotLat},${spotLon}`,
                                         history: {
@@ -467,6 +506,9 @@
                                     }
                                 });
 
+                                // 按照距离从近到远自动排序
+                                uniqueSpots.sort((a, b) => a.distanceMeters - b.distanceMeters);
+
                                 allFetchedSpots = uniqueSpots;
                                 document.getElementById('categoryFilter').value = "all";
                                 currentSpots = [...allFetchedSpots];
@@ -475,7 +517,7 @@
                             } else {
                                 allFetchedSpots = [];
                                 currentSpots = [];
-                                setStatus("⚠️ 周边 1 公里内未检索到符合条件的旅游地标。");
+                                setStatus("⚠️ 周边 1.5 公里内未检索到符合条件的旅游地标。");
                             }
                         } else {
                             allFetchedSpots = [];
@@ -539,7 +581,7 @@
             const btnClass = isSpeaking ? "btn btn-speak speaking" : "btn btn-speak";
 
             const nameStr = spot.name[currentLang] || spot.name.zh;
-            const distStr = spot.dist[currentLang] || spot.dist.zh;
+            const distStr = formatDistance(spot.distanceMeters, currentLang);
             const historyStr = spot.history[currentLang] || spot.history.zh;
             const tipsStr = spot.tips[currentLang] || spot.tips.zh;
 
