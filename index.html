@@ -1,228 +1,447 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>Japan AI Guide Web V2.0</title>
-
-<style>
-
-body{
-    margin:0;
-    padding:12px;
-    background:#f4f6f8;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-}
-
-.container{
-    max-width:450px;
-    margin:auto;
-}
-
-.header{
-    background:#fff;
-    padding:14px;
-    border-radius:12px;
-    margin-bottom:12px;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
-}
-
-.title{
-    font-size:20px;
-    font-weight:bold;
-}
-
-.subtitle{
-    font-size:13px;
-    color:#666;
-    margin-top:4px;
-}
-
-.lang{
-    width:100%;
-    height:40px;
-    margin-top:10px;
-    border-radius:8px;
-    border:1px solid #ddd;
-}
-
-.refresh{
-    width:100%;
-    height:42px;
-    margin-top:10px;
-    border:none;
-    border-radius:8px;
-    background:#27ae60;
-    color:#fff;
-    font-weight:bold;
-}
-
-.status{
-    margin-top:10px;
-    color:#555;
-    font-size:13px;
-}
-
-.spot{
-    background:#fff;
-    border-radius:12px;
-    padding:14px;
-    margin-bottom:10px;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
-}
-
-.name{
-    font-size:16px;
-    font-weight:bold;
-}
-
-.distance{
-    color:#c0392b;
-    font-size:13px;
-    margin-top:4px;
-    margin-bottom:10px;
-}
-
-.actions{
-    display:flex;
-    gap:8px;
-}
-
-.btn{
-    flex:1;
-    height:40px;
-    border:none;
-    border-radius:8px;
-    color:white;
-    font-weight:bold;
-}
-
-.speak{
-    background:#27ae60;
-}
-
-.stop{
-    background:#e74c3c;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">AI 随身导游</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 12px;
+            color: #333;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        /* 顶部招牌与控制栏 */
+        .app-header {
+            background: #fff;
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .app-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .app-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .lang-select {
+            padding: 6px 10px;
+            font-size: 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            background: #fff;
+            outline: none;
+            cursor: pointer;
+        }
+        .control-row {
+            display: flex;
+            gap: 8px;
+        }
+        .gps-btn {
+            width: 100%;
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+        .gps-btn:active {
+            background: #219653;
+        }
+        /* 状态提示 */
+        .status-msg {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        /* 景点卡片样式 */
+        .spot-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-left: 4px solid #c0392b;
+        }
+        .spot-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        .spot-dist {
+            font-size: 12px;
+            color: #c0392b;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .spot-text {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 6px;
+        }
+        .spot-trivia {
+            font-size: 13px;
+            color: #b9770e;
+            line-height: 1.5;
+            margin-bottom: 6px;
+        }
+        .spot-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .btn {
+            flex: 1;
+            border: none;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            text-align: center;
+        }
+        .btn-speak { background: #27ae60; }
+        .btn-speak.speaking { background: #e67e22; }
+        .btn-nav { background: #2980b9; }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
+    <!-- 顶端招牌与操作区 -->
+    <div class="app-header">
+        <div class="app-title-row">
+            <div class="app-name" id="appNameText">🧭 AI 随身导游</div>
+            <select class="lang-select" id="langSelect" onchange="changeLanguage(this.value)">
+                <option value="zh">中文 (简体)</option>
+                <option value="en">English</option>
+                <option value="ja">日本語</option>
+            </select>
+        </div>
+        <div class="control-row">
+            <button class="gps-btn" id="gpsBtnText" onclick="refreshGPSLocation()">📍 获取实时GPS并查询周边景点</button>
+        </div>
+    </div>
 
-<div class="header">
+    <!-- 状态显示 -->
+    <div id="statusTip" class="status-msg"></div>
 
-<div class="title">
-🧭 Japan AI Guide
-</div>
-
-<div class="subtitle">
-GPS定位 → 附近景点 → Wikipedia讲解
-</div>
-
-<select
-id="langSelect"
-class="lang">
-
-<option value="zh">🇨🇳 中文</option>
-<option value="ja">🇯🇵 日本語</option>
-<option value="en">🇺🇸 English</option>
-
-</select>
-
-<button
-class="refresh"
-onclick="loadNearbySpots()">
-
-📍 获取附近500米景点
-
-</button>
-
-<div
-id="status"
-class="status">
-
-等待定位...
-
-</div>
-
-</div>
-
-<div id="spotList"></div>
-
+    <!-- 景点列表展示区 -->
+    <div id="spotList"></div>
 </div>
 
 <script>
+    const i18n = {
+        zh: {
+            title: "AI 随身导游",
+            appName: "🧭 AI 随身导游",
+            gpsBtn: "📍 获取实时GPS并查询周边景点",
+            locating: "📍 正在获取高精度 GPS 坐标，准备连接 OpenStreetMap...",
+            searching: "🤖 正在通过 Overpass API 检索 500 米内真实地标...",
+            locSuccess: "📍 实时景点加载成功！",
+            locError: "❌ 暂时无法获取 GPS 定位或网络超时，已为您展示标准演示地标。",
+            distPrefix: "距离您：",
+            descLabel: "景点简介：",
+            triviaLabel: "AI 提示：",
+            speakBtn: "🎙️ 语音讲解",
+            stopBtn: "⏹ 停止播报",
+            navBtn: "🗺 导航",
+            langCode: "zh-CN"
+        },
+        en: {
+            title: "AI Audio Guide",
+            appName: "🧭 AI Audio Guide",
+            gpsBtn: "📍 Get GPS & Search Nearby Spots",
+            locating: "📍 Acquiring high-precision GPS coordinates...",
+            searching: "🤖 Searching nearby landmarks via Overpass API...",
+            locSuccess: "📍 Real-time spots loaded successfully!",
+            locError: "❌ Unable to get GPS, loaded default demo spots.",
+            distPrefix: "Distance: ",
+            descLabel: "Overview: ",
+            triviaLabel: "AI Tip: ",
+            speakBtn: "🎙️️ Audio Guide",
+            stopBtn: "Stop",
+            navBtn: "🗺 Maps",
+            langCode: "en-US"
+        },
+        ja: {
+            title: "AI音声ガイド",
+            appName: "🧭 AI音声ガイド",
+            gpsBtn: "📍 現在地を取得して周辺スポットを検索",
+            locating: "📍 高精度GPS座標を取得中...",
+            searching: "🤖 Overpass APIで周辺のスポットを検索中...",
+            locSuccess: "📍 周辺スポットの読み込みに成功しました！",
+            locError: "❌ GPSを取得できませんでした。デモスポットを表示します。",
+            distPrefix: "現在地から：",
+            descLabel: "概要：",
+            triviaLabel: "AIヒント：",
+            speakBtn: "🎙️ 音声解説",
+            stopBtn: "⏹️ 停止",
+            navBtn: "🗺 マップ",
+            langCode: "ja-JP"
+        }
+    };
 
-let currentSpeech = null;
+    let currentLang = "zh";
+    let currentSpeakingId = null;
+    let currentSpots = []; 
 
-function stopSpeak(){
+    // 默认演示数据（浅草雷门）
+    let fallbackSpots = [
+        {
+            id: 1,
+            name: {
+                zh: "雷门（风雷神门）- 浅草寺正门",
+                en: "Kaminarimon Gate - Senso-ji",
+                ja: "雷門（風雷神門）- 浅草寺"
+            },
+            dist: {
+                zh: "约 50 米",
+                en: "approx. 50m",
+                ja: "約 50m"
+            },
+            mapUrl: "https://maps.google.com/?q=Kaminarimon+Asakusa",
+            desc: {
+                zh: "雷门是浅草寺的正门，正式名称为“风雷神门”。始建于公元942年，悬挂着重达700公斤的巨型红灯笼，是东京最具代表性的地标。",
+                en: "Built in 942 AD, the Kaminarimon is the iconic outer gate of Senso-ji, featuring a massive 700 kg red lantern.",
+                ja: "942年創建の浅草寺の総門。高さ約11メートル、重さ700キロの赤提灯がシンボルです。"
+            },
+            trivia: {
+                zh: "门背面悬挂着长4.5米、重达500公斤的巨型草鞋，象征镇守大门、驱邪避灾。",
+                en: "On the back hang massive straw sandals (4.5m long, 500kg) to ward off evil.",
+                ja: "裏面には長さ4.5メートル、重さ500キロの巨大な「大わらじ」が掛けられています。"
+            }
+        }
+    ];
 
-    speechSynthesis.cancel();
+    currentSpots = fallbackSpots;
 
-    currentSpeech = null;
-
-}
-
-function getSpeechLang(){
-
-    const lang =
-    document
-    .getElementById("langSelect")
-    .value;
-
-    if(lang==="ja"){
-        return "ja-JP";
+    function changeLanguage(lang) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+        }
+        currentSpeakingId = null;
+        currentLang = lang;
+        
+        const t = i18n[currentLang];
+        document.getElementById('pageTitle').textContent = t.title;
+        document.getElementById('appNameText').textContent = t.appName;
+        document.getElementById('gpsBtnText').textContent = t.gpsBtn;
+        
+        renderList();
     }
 
-    if(lang==="en"){
-        return "en-US";
+    function setStatus(text) {
+        document.getElementById('statusTip').textContent = text;
     }
 
-    return "zh-CN";
+    // 核心升级：结合真实 GPS 调取 Overpass API 免费查询 500 米内景点
+    function refreshGPSLocation() {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+        }
+        currentSpeakingId = null;
 
-}
+        const t = i18n[currentLang];
 
-function getWikiApi(){
-
-    const lang =
-    document
-    .getElementById("langSelect")
-    .value;
-
-    if(lang==="ja"){
-        return "https://ja.wikipedia.org/api/rest_v1/page/summary/";
-    }
-
-    if(lang==="en"){
-        return "https://en.wikipedia.org/api/rest_v1/page/summary/";
-    }
-
-    return "https://zh.wikipedia.org/api/rest_v1/page/summary/";
-
-}
-
-async function getWikipediaSummary(name){
-
-    try{
-
-        const url =
-        getWikiApi() +
-        encodeURIComponent(name);
-
-        const response =
-        await fetch(url);
-
-        const data =
-        await response.json();
-
-        if(data.extract){
-
-            return data.extract;
-
+        if (!navigator.geolocation) {
+            alert("Geolocation is not supported by your browser");
+            return;
         }
 
-        
+        setStatus(t.locating);
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                
+                setStatus(t.searching);
+
+                // 构建 Overpass API 查询语句（查询半径 500 米内的旅游、历史、景点等 POI）
+                const query = `[out:json][timeout:10];(
+                  node["tourism"~"attraction|museum|viewpoint"](around:500,${lat},${lon});
+                  way["tourism"~"attraction|museum|viewpoint"](around:500,${lat},${lon});
+                  node["historic"](around:500,${lat},${lon});
+                );out body;>;out skel qt;`;
+
+                const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.elements && data.elements.length > 0) {
+                            // 过滤并转换获取到的真实景点数据
+                            let fetchedSpots = [];
+                            data.elements.forEach((el, index) => {
+                                if (el.tags && (el.tags.name || el.tags["name:en"] || el.tags["name:ja"])) {
+                                    let spotName = el.tags.name || el.tags["name:en"] || el.tags["name:ja"];
+                                    let spotLat = el.lat || (el.center && el.center.lat) || lat;
+                                    let spotLon = el.lon || (el.center && el.center.lon) || lon;
+                                    
+                                    fetchedSpots.push({
+                                        id: 100 + index,
+                                        name: {
+                                            zh: spotName,
+                                            en: el.tags["name:en"] || spotName,
+                                            ja: el.tags["name:ja"] || spotName
+                                        },
+                                        dist: {
+                                            zh: "半径 500 米内实时捕获",
+                                            en: "Within 500m radius",
+                                            ja: "半径500m以内"
+                                        },
+                                        mapUrl: `https://maps.google.com/?q=${spotLat},${spotLon}`,
+                                        desc: {
+                                            zh: `该坐标位于您当前位置周边，是通过 OpenStreetMap 实时检索到的真实地理地标（类别: ${el.tags.tourism || el.tags.historic || '兴趣点'}）。`,
+                                            en: `Real-time landmark retrieved via OpenStreetMap near your location.`,
+                                            ja: `OpenStreetMapからリアルタイムで取得した周辺のスポットです。`
+                                        },
+                                        trivia: {
+                                            zh: "AI 提示：点击下方“导航”按钮可直接调用地图规划步行路线。",
+                                            en: "AI Tip: Click Maps to navigate.",
+                                            ja: "AIヒント：マップボタンでルートを確認できます。"
+                                        }
+                                    });
+                                }
+                            });
+
+                            if (fetchedSpots.length > 0) {
+                                currentSpots = fetchedSpots.slice(0, 10); // 最多展示前10个
+                                setStatus(t.locSuccess);
+                            } else {
+                                // 如果没找到具体标签，回退到默认
+                                currentSpots = fallbackSpots;
+                                setStatus("⚠️ 周边 500 米内未检索到明确地标标签，已展示默认演示。");
+                            }
+                        } else {
+                            currentSpots = fallbackSpots;
+                            setStatus("⚠️ 未能获取到周边 POI 数据，已展示默认演示。");
+                        }
+                        renderList();
+                    })
+                    .catch(err => {
+                        console.warn("Overpass API error:", err);
+                        currentSpots = fallbackSpots;
+                        setStatus("⚠️ 联网请求超时或受限，已切换至标准演示地标。");
+                        renderList();
+                    });
+
+            },
+            (error) => {
+                setStatus(t.locError);
+                currentSpots = fallbackSpots;
+                renderList();
+            },
+            { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+        );
+    }
+
+    function renderList() {
+        const t = i18n[currentLang];
+        const listContainer = document.getElementById('spotList');
+        listContainer.innerHTML = '';
+
+        currentSpots.forEach(spot => {
+            const isSpeaking = (currentSpeakingId === spot.id);
+            const btnText = isSpeaking ? t.stopBtn : t.speakBtn;
+            const btnClass = isSpeaking ? "btn btn-speak speaking" : "btn btn-speak";
+
+            const nameStr = spot.name[currentLang] || spot.name.zh;
+            const distStr = spot.dist[currentLang] || spot.dist.zh;
+            const descStr = spot.desc[currentLang] || spot.desc.zh;
+            const triviaStr = spot.trivia[currentLang] || spot.trivia.zh;
+
+            const triviaHtml = triviaStr ? `<div class="spot-trivia"><b>${t.triviaLabel}</b>${triviaStr}</div>` : '';
+
+            const card = document.createElement('div');
+            card.className = 'spot-card';
+            card.innerHTML = `
+                <div class="spot-name">${nameStr}</div>
+                <div class="spot-dist">${t.distPrefix}${distStr}</div>
+                <div class="spot-text"><b>${t.descLabel}</b>${descStr}</div>
+                ${triviaHtml}
+                <div class="spot-actions">
+                    <button class="${btnClass}" onclick="toggleSpeak(${spot.id})">${btnText}</button>
+                    <button class="btn btn-nav" onclick="window.open('${spot.mapUrl}', '_blank')">${t.navBtn}</button>
+                </div>
+            `;
+            listContainer.appendChild(card);
+        });
+    }
+
+    function toggleSpeak(id) {
+        if (!('speechSynthesis' in window)) {
+            alert("Speech synthesis not supported");
+            return;
+        }
+
+        window.speechSynthesis.cancel();
+
+        if (currentSpeakingId === id) {
+            currentSpeakingId = null;
+            renderList();
+            return;
+        }
+
+        currentSpeakingId = id;
+        renderList();
+
+        const spot = currentSpots.find(s => s.id === id);
+        if (!spot) return;
+
+        const nameStr = spot.name[currentLang] || spot.name.zh;
+        const descStr = spot.desc[currentLang] || spot.desc.zh;
+        const triviaStr = spot.trivia[currentLang] || spot.trivia.zh;
+
+        const textToSpeak = triviaStr ? `${nameStr}。${descStr}。${triviaStr}` : `${nameStr}${descStr}`;
+
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        utterance.lang = i18n[currentLang].langCode;
+        utterance.rate = 0.95;
+
+        utterance.onend = () => {
+            if (currentSpeakingId === id) {
+                currentSpeakingId = null;
+                renderList();
+            }
+        };
+        utterance.onerror = () => {
+            if (currentSpeakingId === id) {
+                currentSpeakingId = null;
+                renderList();
+            }
+        };
+
+        setTimeout(() => {
+            window.speechSynthesis.speak(utterance);
+        }, 50);
+    }
+
+    window.onload = () => {
+        renderList();
+    };
+</script>
+
+</body>
+</html>
