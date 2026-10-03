@@ -328,15 +328,15 @@
                 welcomeDesc: "系统在后台为您检索 1000 米内的地标，精选最近 20 个。图文故事与机位供您随时查阅，当您走近至 30 米范围内时方可解锁语音讲解。",
                 cats: { 
                     recommend: "🌟 景点推荐与地标", 
-                    historic: "⛩️️ 历史古迹与神社", 
+                    historic: "⛩ 历史古迹与神社", 
                     park: "🌳 公园与绿地", 
                     museum: "🏛️ 博物馆与乡土馆" 
                 },
                 distancePrefix: "距离您：约",
                 triggerBadge: "🟢 【已进入30米核心讲解区】",
-                lockedBadge: "🔒 【超出30米·仅可查阅图文】",
+                lockedBadge: "🔒 【30米外·图文阅读模式】",
                 audioBtn: "🎤 听讲解",
-                lockedAudioBtn: "🔒 30米外锁定",
+                lockedAudioBtn: "🔓 30米内解锁语音",
                 stopBtn: "⏹️ 停止播报",
                 mapBtn: "🗺️ 导航",
                 labelOverview: "🏛️ <b>简介：</b>",
@@ -366,15 +366,15 @@
                 },
                 distancePrefix: "Distance: approx.",
                 triggerBadge: "🟢 【Within 30m Core Guide Zone】",
-                lockedBadge: "🔒 【Beyond 30m - Reading Only】",
+                lockedBadge: "🔒 【Reading Mode (>30m)】",
                 audioBtn: "🎤 Listen",
-                lockedAudioBtn: "🔒 Locked (>30m)",
+                lockedAudioBtn: "🔓 Unlock Audio within 30m",
                 stopBtn: "⏹ Stop",
                 mapBtn: "🗺 Map",
                 labelOverview: "🏛 <b>Overview:</b>",
                 labelAnecdote: "📜 <b>Anecdotes:</b>",
                 labelPhoto: "📷 <b>Best Photo Spot:</b>",
-                labelShop: "🛍️ <b>Souvenirs & Shops:</b>",
+                labelShop: "🛍️️ <b>Souvenirs & Shops:</b>",
                 speechLang: "en-US"
             },
             ja: {
@@ -393,14 +393,14 @@
                 cats: { 
                     recommend: "🌟 おすすめ・ランドマーク", 
                     historic: "⛩ 歴史・神社", 
-                    park: "🌳 公園・緑地", 
+                    park: "🌳公園・緑地", 
                     museum: "🏛 博物館" 
                 },
                 distancePrefix: "距離：約",
                 triggerBadge: "🟢 【30m以内コア解説エリア】",
-                lockedBadge: "🔒 【30m以上・閲覧モード】",
+                lockedBadge: "🔒 【閲覧モード（30m外）】",
                 audioBtn: "🎤 解説を聴く",
-                lockedAudioBtn: "🔒 30m外ロック中",
+                lockedAudioBtn: "🔓 30m内で音声解放",
                 stopBtn: "⏹ 停止",
                 mapBtn: "🗺️ マップ",
                 labelOverview: "🏛️ <b>概要：</b>",
@@ -580,7 +580,6 @@
             return !!tags.tourism || !!tags.historic || !!tags.leisure;
         }
 
-        // 规范化且智能适配的文案生成函数
         function generateAIGuideContent(name, tags, lang) {
             let basicInfo = "";
             let anecdoteInfo = "";
@@ -622,7 +621,6 @@
                     shopInfo = "上野车站内可购买限定熊猫年轮蛋糕，附近还有百年甘味处“みはし”可品尝特色甜点。";
                 }
             } else {
-                // 普通公园或地方景点：规范统一的通用推荐话术
                 basicInfo = lang === 'en' ? "An exquisite local landmark blending traditional neighborhood culture with serene urban landscapes." :
                             lang === 'ja' ? "地域の歴史と美しい街並みが調和する、趣のあるローカルスポットです。" :
                             "一处完美融合了当地街区风貌与人文印记的特色点位，静静诉说着属于这片土地的日常点滴。";
