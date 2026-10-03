@@ -3,659 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">AI 随身导游</title>
+    <title>AI 移动导览 / AI Mobile Tour Guide</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f4f6f8;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: 12px;
+            padding: 16px;
+            background-color: #f5f5f7;
             color: #333;
         }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
         }
-        /* 顶部招牌与控制栏 */
-        .app-header {
-            background: #fff;
-            padding: 14px 16px;
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        button, select {
+            padding: 10px 16px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
             border-radius: 8px;
-            margin-bottom: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            background-color: #fff;
+            cursor: pointer;
         }
-        .app-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        button.primary {
+            background-color: #0071e3;
+            color: white;
+            border: none;
         }
-        .app-name {
-            font-size: 18px;
-            font-weight: bold;
-            color: #2c3e50;
+        button.primary:hover {
+            background-color: #0077ed;
         }
-        .header-selects {
+        .categories {
             display: flex;
             gap: 6px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 4px;
         }
-        .lang-select, .filter-select {
-            padding: 6px 8px;
-            font-size: 12px;
-            border-radius: 6px;
+        .cat-btn {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            border-radius: 16px;
             border: 1px solid #ddd;
             background: #fff;
-            outline: none;
-            cursor: pointer;
+            white-space: nowrap;
         }
-        .control-row {
-            display: flex;
-            gap: 8px;
+        .cat-btn.active {
+            background: #333;
+            color: #fff;
+            border-color: #333;
         }
-        .gps-btn {
-            width: 100%;
-            background: #27ae60;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(39, 174, 96, 0.2);
-        }
-        .gps-btn:active {
-            background: #219653;
-        }
-        /* 状态提示 */
-        .status-msg {
-            font-size: 13px;
-            color: #e67e22;
-            text-align: center;
-            margin-bottom: 12px;
-            font-weight: bold;
-        }
-        /* 欢迎引导页样式 */
-        .welcome-card {
-            background: #fff;
-            border-radius: 8px;
-            padding: 30px 20px;
-            text-align: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-top: 10px;
-        }
-        .welcome-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-        .welcome-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        .welcome-desc {
-            font-size: 14px;
-            color: #666;
-            line-height: 1.6;
-        }
-        /* 景点卡片样式 */
         .spot-card {
             background: #fff;
-            border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border-left: 4px solid #27ae60;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .spot-name {
-            font-size: 16px;
+        .spot-title {
+            font-size: 1.1rem;
             font-weight: bold;
-            margin-bottom: 2px;
-            color: #2c3e50;
+            margin-bottom: 4px;
         }
-        .spot-dist {
-            font-size: 12px;
-            color: #27ae60;
+        .spot-type {
+            font-size: 0.85rem;
+            color: #666;
             margin-bottom: 8px;
-            font-weight: bold;
         }
-        .spot-text {
-            font-size: 13px;
-            color: #444;
-            line-height: 1.6;
-            margin-bottom: 6px;
+        .spot-distance {
+            font-size: 0.9rem;
+            color: #0071e3;
+            font-weight: 500;
+            margin-top: 6px;
         }
-        .spot-trivia {
-            font-size: 13px;
-            color: #b9770e;
-            line-height: 1.5;
-            margin-bottom: 6px;
+        #status {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 12px;
         }
-        .spot-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        .btn {
-            flex: 1;
-            border: none;
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            color: white;
-            text-align: center;
-        }
-        .btn-speak { background: #27ae60; }
-        .btn-speak.speaking { background: #e67e22; }
-        .btn-nav { background: #2980b9; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- 顶端招牌与操作区 -->
-    <div class="app-header">
-        <div class="app-title-row">
-            <div class="app-name" id="appNameText">🧭 AI 随身导游</div>
-            <div class="header-selects">
-                <!-- 分类筛选下拉菜单 -->
-                <select class="filter-select" id="categoryFilter" onchange="filterSpotsByCategory()">
-                    <option value="all" id="optAll">🌟 全部推荐</option>
-                    <option value="historic" id="optHistoric">⛩️ 历史古迹与神社</option>
-                    <option value="park" id="optPark">🌳 公园与绿地</option>
-                    <option value="museum" id="optMuseum">🏛 博物馆与场馆</option>
-                </select>
-                <!-- 语言选择 -->
-                <select class="lang-select" id="langSelect" onchange="changeLanguage(this.value)">
-                    <option value="zh">中文</option>
-                    <option value="en">English</option>
-                    <option value="ja">日本語</option>
-                </select>
-            </div>
-        </div>
-        <div class="control-row">
-            <button class="gps-btn" id="gpsBtnText" onclick="refreshGPSLocation()">📍 获取实时GPS并探索周边景点</button>
-        </div>
+    <h1 id="ui-title">📍 AI 移动导览</h1>
+    
+    <div class="controls">
+        <button class="primary" id="btn-gps" onclick="getLocationAndSearch()">获取实时GPS并探索周边景点</button>
+        <select id="lang-select" onchange="changeLanguage()">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+            <option value="ja">日本語</option>
+        </select>
     </div>
 
-    <!-- 状态显示 -->
-    <div id="statusTip" class="status-msg"></div>
+    <div class="categories">
+        <button class="cat-btn active" onclick="filterCategory('all', this)" id="cat-all">全部/热门</button>
+        <button class="cat-btn" onclick="filterCategory('historic', this)" id="cat-historic">历史古迹</button>
+        <button class="cat-btn" onclick="filterCategory('park', this)" id="cat-park">公园绿地</button>
+        <button class="cat-btn" onclick="filterCategory('museum', this)" id="cat-museum">博物馆/文化</button>
+    </div>
 
-    <!-- 景点列表展示区 (初始为欢迎页) -->
-    <div id="spotList"></div>
-</div>
+    <div id="status">请点击上方按钮获取位置并加载周边景点...</div>
+    <div id="spots-container"></div>
 
-<script>
-    const i18n = {
-        zh: {
-            title: "AI 随身导游",
-            appName: "🧭 AI 随身导游",
-            gpsBtn: "📍 获取实时GPS并探索周边景点",
-            welcomeTitle: "欢迎使用 AI 随身导游",
-            welcomeDesc: "请点击上方绿色按钮**“获取实时GPS并探索周边景点”**。<br>系统将自动获取您的精确位置，并计算身边的历史名胜与公园绿地直线距离！",
-            locating: "📍 正在获取您周边的精准卫星定位...",
-            searching: "🔍 正在精细化检索周边旅游与文化地标...",
-            locSuccess: "📍 周边热门景点加载成功！",
-            locError: "❌ 暂时无法获取位置信息，请检查手机浏览器定位权限后重试。",
-            distPrefix: "直线距离约：",
-            historyLabel: "历史与文化解说：",
-            tipsLabel: "参观导览：",
-            speakBtn: "🎙 语音讲解",
-            stopBtn: "⏹ 停止播报",
-            navBtn: "🗺 导航",
-            langCode: "zh-CN",
-            optAll: "🌟 全部推荐",
-            optHistoric: "⛩️ 历史古迹与神社",
-            optPark: "🌳 公园与绿地",
-            optMuseum: "🏛️ 博物馆与场馆",
-            emptyCat: "当前分类下暂无景点，请尝试切换其他分类或重新获取定位。"
-        },
-        en: {
-            title: "AI Audio Guide",
-            appName: "🧭 AI Audio Guide",
-            gpsBtn: "📍 Get GPS & Explore Nearby",
-            welcomeTitle: "Welcome to AI Audio Guide",
-            welcomeDesc: "Please tap the green button above to get your GPS location.<br>It will automatically find nearby spots and calculate straight-line distances!",
-            locating: "📍 Acquiring your location...",
-            searching: "Searching nearby tourist spots...",
-            locSuccess: "📍 Nearby spots loaded successfully!",
-            locError: "❌ Unable to get GPS. Please check location permissions.",
-            distPrefix: "Straight-line distance: ",
-            historyLabel: "History & Culture: ",
-            tipsLabel: "Guide Tips: ",
-            speakBtn: "🎙 Audio Guide",
-            stopBtn: "Stop",
-            navBtn: "🗺 Maps",
-            langCode: "en-US",
-            optAll: "🌟 All Recommendations",
-            optHistoric: "⛩️ Historic Sites & Shrines",
-            optPark: "🌳 Parks & Greenery",
-            optMuseum: "🏛️ Museums & Venues",
-            emptyCat: "No spots found in this category. Try switching categories or refreshing."
-        },
-        ja: {
-            title: "AI音声ガイド",
-            appName: "🧭 AI音声ガイド",
-            gpsBtn: "📍 現在地を取得して周辺を探索",
-            welcomeTitle: "AI音声ガイドへようこそ",
-            welcomeDesc: "上の緑色のボタンを押して現在地を取得してください。<br>周辺のスポットと直線距離を自動で計算してご案内します！",
-            locating: "📍 現在地を取得中...",
-            searching: "周辺のスポットを検索中...",
-            locSuccess: "📍 周辺スポットの読み込みに成功しました！",
-            locError: "❌ 位置情報を取得できませんでした。位置情報の権限をご確認ください。",
-            distPrefix: "直線距離：約 ",
-            historyLabel: "歴史と文化の解説：",
-            tipsLabel: "見どころ・散策のコツ：",
-            speakBtn: "🎙️️ 音声解説",
-            stopBtn: "⏹ 停止",
-            navBtn: "🗺 マップ",
-            langCode: "ja-JP",
-            optAll: "🌟 すべてのおすすめ",
-            optHistoric: "⛩️ 史跡・神社仏閣",
-            optPark: "🌳 公園・緑地",
-            optMuseum: "🏛 博物館・文化施設",
-            emptyCat: "このカテゴリのスポットはありません。他のカテゴリに切り替えるか、再読み込みしてください。"
+    <script>
+        let currentLat = null;
+        let currentLon = null;
+        let currentCategory = 'all';
+        let allSpots = [];
+
+        const i18n = {
+            zh: { title: "📍 AI 移动导览", btn: "获取实时GPS并探索周边景点", statusLoc: "正在获取您的 GPS 位置...", statusLoading: "正在查询周边优质景点...", statusReady: "为您找到以下周边景点：", distLabel: "直线距离约：", errLoc: "无法获取您的地理位置，请确保浏览器已授权定位。", errApi: "获取景点数据失败，请稍后重试。", catAll: "全部/热门", catHist: "历史古迹", catPark: "公园绿地", catMuseum: "博物馆/文化" },
+            en: { title: "📍 AI Mobile Tour Guide", btn: "Get GPS & Explore", statusLoc: "Getting your GPS location...", statusLoading: "Searching nearby tourist spots...", statusReady: "Nearby spots found:", distLabel: "Straight-line distance approx: ", errLoc: "Unable to get your location. Please check GPS permissions.", errApi: "Failed to fetch spots. Please try again later.", catAll: "All/Popular", catHist: "Historic", catPark: "Parks", catMuseum: "Museums" },
+            ja: { title: "📍 AI モバイルガイド", btn: "GPSを取得して周辺を探索", statusLoc: "GPS位置情報を取得中...", statusLoading: "周辺の観光スポットを検索中...", statusReady: "周辺のスポットが見つかりました：", distLabel: "直線距離約：", errLoc: "位置情報を取得できませんでした。権限を確認してください。", errApi: "スポットの取得に失敗しました。後でお試しください。", catAll: "すべて/人気", catHist: "歴史的スポット", catPark: "公園", catMuseum: "美術館/博物館" }
+        };
+
+        function changeLanguage() {
+            const lang = document.getElementById('lang-select').value;
+            document.getElementById('ui-title').innerText = i18n[lang].title;
+            document.getElementById('btn-gps').innerText = i18n[lang].btn;
+            document.getElementById('cat-all').innerText = i18n[lang].catAll;
+            document.getElementById('cat-historic').innerText = i18n[lang].catHist;
+            document.getElementById('cat-park').innerText = i18n[lang].catPark;
+            document.getElementById('cat-museum').innerText = i18n[lang].catMuseum;
+            renderSpots();
         }
-    };
 
-    let currentLang = "zh";
-    let currentSpeakingId = null;
-    let allFetchedSpots = [];  
-    let currentSpots = [];     
-    let isInitialized = false;
-
-    function changeLanguage(lang) {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-        }
-        currentSpeakingId = null;
-        currentLang = lang;
-        
-        const t = i18n[currentLang];
-        document.getElementById('pageTitle').textContent = t.title;
-        document.getElementById('appNameText').textContent = t.appName;
-        document.getElementById('gpsBtnText').textContent = t.gpsBtn;
-        
-        document.getElementById('optAll').textContent = t.optAll;
-        document.getElementById('optHistoric').textContent = t.optHistoric;
-        document.getElementById('optPark').textContent = t.optPark;
-        document.getElementById('optMuseum').textContent = t.optMuseum;
-        
-        renderList();
-    }
-
-    function setStatus(text) {
-        document.getElementById('statusTip').textContent = text;
-    }
-
-    // 计算两点之间的直线距离（返回米）
-    function calculateDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371e3; // 地球半径（米）
-        const φ1 = lat1 * Math.PI / 180;
-        const φ2 = lat2 * Math.PI / 180;
-        const Δφ = (lat2 - lat1) * Math.PI / 180;
-        const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-        const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                  Math.cos(φ1) * Math.cos(φ2) *
-                  Math.sin(Δλ/2) * Math.sin(Δλ/2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-        return R * c; 
-    }
-
-    // 格式化距离显示
-    function formatDistance(meters, lang) {
-        if (meters === null || meters === undefined || isNaN(meters)) {
-            return lang === 'en' ? "Calculating..." : (lang === 'ja' ? "計算中..." : "正在计算距离...");
-        }
-        if (lang === 'en') {
-            if (meters < 1000) {
-                return `${Math.round(meters)} meters`;
-            } else {
-                return `${(meters / 1000).toFixed(1)} km`;
+        function getLocationAndSearch() {
+            const lang = document.getElementById('lang-select').value;
+            const statusEl = document.getElementById('status');
+            
+            if (!navigator.geolocation) {
+                statusEl.innerText = "您的浏览器不支持地理定位";
+                return;
             }
-        } else if (lang === 'ja') {
-            if (meters < 1000) {
-                return `${Math.round(meters)} m`;
-            } else {
-                return `${(meters / 1000).toFixed(1)} km`;
-            }
-        } else {
-            // 中文
-            if (meters < 1000) {
-                return `${Math.round(meters)} 米`;
-            } else {
-                return `${(meters / 1000).toFixed(1)} 公里`;
-            }
-        }
-    }
 
-    function classifySpot(name, tags) {
-        let rawType = (tags.tourism || tags.historic || tags.amenity || tags.leisure || "").toLowerCase();
-        
-        if (name.includes("児童館") || name.includes("図書館") || name.includes("保育園") || name.includes("学校") || name.includes("小学校") || name.includes("中学校") || name.includes("高等学校") || name.includes("役所") || name.includes("警察署") || name.includes("儿童馆") || name.includes("图书馆") || name.includes("学校") || name.includes("幼儿园")) {
-            return "excluded";
-        }
-        if (rawType.includes("school") || rawType.includes("kindergarten") || rawType.includes("library") || rawType.includes("university")) {
-            return "excluded";
+            statusEl.innerText = i18n[lang].statusLoc;
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    currentLat = position.coords.latitude;
+                    currentLon = position.coords.longitude;
+                    fetchSpots(currentLat, currentLon);
+                },
+                (error) => {
+                    statusEl.innerText = i18n[lang].errLoc;
+                    console.error(error);
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
         }
 
-        if (rawType.includes("historic") || name.includes("神社") || name.includes("寺") || name.includes("院") || name.includes("碑") || name.includes("旧址") || name.includes("宮")) {
-            return "historic";
-        }
-        if (rawType.includes("park") || rawType.includes("leisure") || name.includes("公园") || name.includes("緑地") || name.includes("庭園") || name.includes("公園")) {
-            return "park";
-        }
-        if (rawType.includes("museum") || name.includes("乡土") || name.includes("馆") || name.includes("资料") || name.includes("美术馆") || name.includes("博物館")) {
-            return "museum";
-        }
-        
-        return "historic"; 
-    }
+        async function fetchSpots(lat, lon) {
+            const lang = document.getElementById('lang-select').value;
+            const statusEl = document.getElementById('status');
+            statusEl.innerText = i18n[lang].statusLoading;
 
-    function generateProfessionalGuide(name, categoryKey, lang) {
-        if (lang === 'en') {
-            let historyDesc = "";
-            let tipsDesc = "";
-            if (categoryKey === "historic") {
-                historyDesc = `"${name}" is a notable local landmark steeped in traditional culture and history, featuring classic architectural craftsmanship and rich regional heritage.`;
-                tipsDesc = `Recommended to observe its traditional structure and enjoy the cultural ambiance.`;
-            } else if (categoryKey === "park") {
-                historyDesc = `"${name}" is a scenic public green space blending natural beauty with leisure facilities, perfect for experiencing local urban lifestyle.`;
-                tipsDesc = `Great for a relaxing stroll and enjoying the seasonal scenery.`;
-            } else {
-                historyDesc = `"${name}" is a cultural venue dedicated to preserving regional history, arts, and local folklore exhibits.`;
-                tipsDesc = `Explore the exhibitions to gain deep insights into local heritage.`;
-            }
-            return { history: historyDesc, tips: tipsDesc };
-        } 
-        else if (lang === 'ja') {
-            let historyDesc = "";
-            let tipsDesc = "";
-            if (categoryKey === "historic") {
-                historyDesc = `「${name}」は、伝統的な文化と歴史の底流を持つ地域の名所です。伝統的な建築様式や地域信仰が息づいています。`;
-                tipsDesc = `社殿や石碑などの伝統的なディテールをゆっくり観察しながら散策するのに最適です。`;
-            } else if (categoryKey === "park") {
-                historyDesc = `「${name}」は、豊かな自然とリラックスできる空間を兼ね備えた優れた公共緑地です。地元の穏やかな雰囲気を楽しめます。`;
-                tipsDesc = `季節ごとの景色を楽しみながら、リフレッシュするのに最適です。`;
-            } else {
-                historyDesc = `「${name}」は、地域の歴史や民俗、文化を保存・展示する重要な施設です。`;
-                tipsDesc = `常設展示を通じて、地元の豊かな文化や背景を深く知ることができます。`;
-            }
-            return { history: historyDesc, tips: tipsDesc };
-        } 
-        else {
-            let historyDesc = "";
-            let tipsDesc = "";
-            if (categoryKey === "historic") {
-                historyDesc = `「${name}」是当地极具历史底蕴与传统文化氛围的知名坐标。建筑结构多延续了传统的日式木作或石造工艺，细节处融合了岁时祭礼与地域信仰，是承载该片区重要历史文脉的旅游地标。`;
-                tipsDesc = `建议实地参观时细致观察其鸟居、石碑或社殿结构，感受其古朴典雅的传统韵味。`;
-            } else if (categoryKey === "park") {
-                historyDesc = `「${name}」是兼具自然生态与休闲功能的优质公共绿地。园内规划有精致的步道、绿植及休憩设施，不仅为游客提供了优美的漫步环境，也是体验当地都市慢生活的好去处。`;
-                tipsDesc = `四季风景各异，非常适合在步行探索途中在此放慢脚步、休憩片刻。`;
-            } else {
-                historyDesc = `「${name}」是专注于地域文化、历史民俗或艺术展陈的文化场馆。馆内系统保存了丰富的历史文献与实物展品，生动记录了该地区独特的风土人情。`;
-                tipsDesc = `常年设有精彩的主题展陈，适合驻足细品当地深厚的文化积淀。`;
-            }
-            return { history: historyDesc, tips: tipsDesc };
-        }
-    }
+            // 1.5公里范围内的 Overpass API 查询
+            const query = `
+                [out:json][timeout:25];
+                (
+                  node(around:1500,${lat},${lon})[historic];
+                  way(around:1500,${lat},${lon})[historic];
+                  node(around:1500,${lat},${lon})[tourism];
+                  way(around:1500,${lat},${lon})[tourism];
+                  node(around:1500,${lat},${lon})[leisure=park];
+                  way(around:1500,${lat},${lon})[leisure=park];
+                );
+                out center;
+            `;
 
-    function filterSpotsByCategory() {
-        const filterVal = document.getElementById('categoryFilter').value;
-        if (filterVal === "all") {
-            currentSpots = [...allFetchedSpots];
-        } else {
-            currentSpots = allFetchedSpots.filter(s => s.categoryKey === filterVal);
-        }
-        renderList();
-    }
-
-    function refreshGPSLocation() {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-        }
-        currentSpeakingId = null;
-
-        const t = i18n[currentLang];
-
-        if (!navigator.geolocation) {
-            alert("Geolocation is not supported by your browser");
-            return;
-        }
-
-        setStatus(t.locating);
-
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const userLat = position.coords.latitude;
-                const userLon = position.coords.longitude;
+            try {
+                const response = await fetch('https://overpass-api.de/api/interpreter', {
+                    method: 'POST',
+                    body: query
+                });
+                const data = await response.json();
                 
-                setStatus(t.searching);
+                // 严格过滤非游客实体（学校、办公楼、普通设施等）
+                allSpots = data.elements.filter(item => {
+                    const tags = item.tags || {};
+                    const name = tags.name || tags['name:en'] || tags['name:ja'] || tags['name:zh'];
+                    if (!name) return false; // 必须有名字
 
-                const query = `[out:json][timeout:15];(
-                  node["tourism"](around:1500,${userLat},${userLon});
-                  way["tourism"](around:1500,${userLat},${userLon});
-                  node["historic"](around:1500,${userLat},${userLon});
-                  way["historic"](around:1500,${userLat},${userLon});
-                  node["leisure"="park"](around:1500,${userLat},${userLon});
-                  way["leisure"="park"](around:1500,${userLat},${userLon});
-                  node["amenity"~"place_of_worship|museum|library|community_centre"](around:1500,${userLat},${userLon});
-                  way["amenity"~"place_of_worship|museum|library|community_centre"](around:1500,${userLat},${userLon});
-                );out body;>;out skel qt;`;
+                    // 排除学校、医院、政务机关、普通停车场等非景点
+                    const amenity = tags.amenity;
+                    const office = tags.office;
+                    if (['school', 'university', 'kindergarten', 'hospital', 'parking', 'townhall', 'police', 'fire_station'].includes(amenity)) {
+                        return false;
+                    }
+                    if (office) return false;
 
-                const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+                    return true;
+                });
 
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        isInitialized = true;
-                        if (data && data.elements && data.elements.length > 0) {
-                            let fetchedSpots = [];
-                            data.elements.forEach((el, index) => {
-                                if (el.tags && (el.tags.name || el.tags["name:en"] || el.tags["name:ja"])) {
-                                    let spotName = el.tags.name || el.tags["name:en"] || el.tags["name:ja"];
-                                    let spotLat = el.lat || (el.center && el.center.lat) || userLat;
-                                    let spotLon = el.lon || (el.center && el.center.lon) || userLon;
-                                    
-                                    let catKey = classifySpot(spotName, el.tags);
-                                    if (catKey === "excluded") return; 
-
-                                    // 计算直线距离（米）
-                                    let distanceMeters = calculateDistance(userLat, userLon, spotLat, spotLon);
-
-                                    let guideZh = generateProfessionalGuide(spotName, catKey, 'zh');
-                                    let guideEn = generateProfessionalGuide(spotName, catKey, 'en');
-                                    let guideJa = generateProfessionalGuide(spotName, catKey, 'ja');
-
-                                    fetchedSpots.push({
-                                        id: 100 + index,
-                                        categoryKey: catKey,
-                                        distanceMeters: distanceMeters,
-                                        name: {
-                                            zh: spotName,
-                                            en: el.tags["name:en"] || spotName,
-                                            ja: el.tags["name:ja"] || spotName
-                                        },
-                                        mapUrl: `https://maps.google.com/?q=${spotLat},${spotLon}`,
-                                        history: {
-                                            zh: guideZh.history,
-                                            en: guideEn.history,
-                                            ja: guideJa.history
-                                        },
-                                        tips: {
-                                            zh: guideZh.tips,
-                                            en: guideEn.tips,
-                                            ja: guideJa.tips
-                                        }
-                                    });
-                                }
-                            });
-
-                            if (fetchedSpots.length > 0) {
-                                let uniqueSpots = [];
-                                let seenNames = new Set();
-                                fetchedSpots.forEach(s => {
-                                    if (!seenNames.has(s.name.zh)) {
-                                        seenNames.add(s.name.zh);
-                                        uniqueSpots.push(s);
-                                    }
-                                });
-
-                                // 按照距离从近到远自动排序
-                                uniqueSpots.sort((a, b) => a.distanceMeters - b.distanceMeters);
-
-                                allFetchedSpots = uniqueSpots;
-                                document.getElementById('categoryFilter').value = "all";
-                                currentSpots = [...allFetchedSpots];
-
-                                setStatus(t.locSuccess);
-                            } else {
-                                allFetchedSpots = [];
-                                currentSpots = [];
-                                setStatus("⚠️ 周边 1.5 公里内未检索到符合条件的旅游地标。");
-                            }
-                        } else {
-                            allFetchedSpots = [];
-                            currentSpots = [];
-                            setStatus("⚠️ 未能获取到地点数据，请稍后重试。");
-                        }
-                        renderList();
-                    })
-                    .catch(err => {
-                        console.warn("API error:", err);
-                        isInitialized = true;
-                        allFetchedSpots = [];
-                        currentSpots = [];
-                        setStatus("⚠️ 网络连接超时，请检查网络。");
-                        renderList();
-                    });
-
-            },
-            (error) => {
-                isInitialized = true;
-                setStatus(t.locError);
-                allFetchedSpots = [];
-                currentSpots = [];
-                renderList();
-            },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-        );
-    }
-
-    function renderList() {
-        const t = i18n[currentLang];
-        const listContainer = document.getElementById('spotList');
-        listContainer.innerHTML = '';
-
-        if (!isInitialized) {
-            const welcomeDiv = document.createElement('div');
-            welcomeDiv.className = 'welcome-card';
-            welcomeDiv.innerHTML = `
-                <div class="welcome-icon">📍</div>
-                <div class="welcome-title">${t.welcomeTitle}</div>
-                <div class="welcome-desc">${t.welcomeDesc}</div>
-            `;
-            listContainer.appendChild(welcomeDiv);
-            return;
-        }
-
-        if (currentSpots.length === 0) {
-            const emptyDiv = document.createElement('div');
-            emptyDiv.className = 'welcome-card';
-            emptyDiv.innerHTML = `
-                <div class="welcome-icon">🔍</div>
-                <div class="welcome-title">${t.emptyCat}</div>
-            `;
-            listContainer.appendChild(emptyDiv);
-            return;
-        }
-
-        currentSpots.forEach(spot => {
-            const isSpeaking = (currentSpeakingId === spot.id);
-            const btnText = isSpeaking ? t.stopBtn : t.speakBtn;
-            const btnClass = isSpeaking ? "btn btn-speak speaking" : "btn btn-speak";
-
-            const nameStr = spot.name[currentLang] || spot.name.zh;
-            const distStr = formatDistance(spot.distanceMeters, currentLang);
-            const historyStr = spot.history[currentLang] || spot.history.zh;
-            const tipsStr = spot.tips[currentLang] || spot.tips.zh;
-
-            const card = document.createElement('div');
-            card.className = 'spot-card';
-            card.innerHTML = `
-                <div class="spot-name">${nameStr}</div>
-                <div class="spot-dist">${t.distPrefix}${distStr}</div>
-                <div class="spot-text"><b>${t.historyLabel}</b>${historyStr}</div>
-                <div class="spot-trivia"><b>${t.tipsLabel}</b>${tipsStr}</div>
-                <div class="spot-actions">
-                    <button class="${btnClass}" onclick="toggleSpeak(${spot.id})">${btnText}</button>
-                    <button class="btn btn-nav" onclick="window.open('${spot.mapUrl}', '_blank')">${t.navBtn}</button>
-                </div>
-            `;
-            listContainer.appendChild(card);
-        });
-    }
-
-    function toggleSpeak(id) {
-        if (!('speechSynthesis' in window)) {
-            alert("Speech synthesis not supported");
-            return;
-        }
-
-        window.speechSynthesis.cancel();
-
-        if (currentSpeakingId === id) {
-            currentSpeakingId = null;
-            renderList();
-            return;
-        }
-
-        currentSpeakingId = id;
-        renderList();
-
-        const spot = currentSpots.find(s => s.id === id);
-        if (!spot) return;
-
-        const nameStr = spot.name[currentLang] || spot.name.zh;
-        const historyStr = spot.history[currentLang] || spot.history.zh;
-        const tipsStr = spot.tips[currentLang] || spot.tips.zh;
-
-        const textToSpeak = `${nameStr}。${historyStr}。${tipsStr}`;
-
-        const utterance = new SpeechSynthesisUtterance(textToSpeak);
-        utterance.lang = i18n[currentLang].langCode;
-        utterance.rate = 0.95;
-
-        utterance.onend = () => {
-            if (currentSpeakingId === id) {
-                currentSpeakingId = null;
-                renderList();
+                statusEl.innerText = i18n[lang].statusReady;
+                renderSpots();
+            } catch (err) {
+                statusEl.innerText = i18n[lang].errApi;
+                console.error(err);
             }
-        };
-        utterance.onerror = () => {
-            if (currentSpeakingId === id) {
-                currentSpeakingId = null;
-                renderList();
+        }
+
+        // Haversine 公式计算直线距离（单位：米）
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // 地球半径（米）
+            const φ1 = lat1 * Math.PI / 180;
+            const φ2 = lat2 * Math.PI / 180;
+            const Δφ = (lat2 - lat1) * Math.PI / 180;
+            const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return Math.round(R * c);
+        }
+
+        function filterCategory(category, btnElement) {
+            currentCategory = category;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderSpots();
+        }
+
+        function renderSpots() {
+            const container = document.getElementById('spots-container');
+            const lang = document.getElementById('lang-select').value;
+            container.innerHTML = '';
+
+            if (allSpots.length === 0) {
+                container.innerHTML = `<p>${lang === 'en' ? 'No spots found nearby.' : lang === 'ja' ? '周辺にスポットが見つかりません。' : '附近暂无符合条件的景点。'}</p>`;
+                return;
             }
-        };
 
-        setTimeout(() => {
-            window.speechSynthesis.speak(utterance);
-        }, 50);
-    }
+            allSpots.forEach(spot => {
+                const tags = spot.tags || {};
+                const name = tags.name || tags['name:en'] || tags['name:ja'] || tags['name:zh'] || '未知地点';
+                
+                // 分类匹配
+                let spotType = 'other';
+                if (tags.historic) spotType = 'historic';
+                else if (tags.leisure === 'park') spotType = 'park';
+                else if (tags.tourism === 'museum' || tags.tourism === 'attraction') spotType = 'museum';
 
-    window.onload = () => {
-        renderList();
-    };
-</script>
+                if (currentCategory !== 'all' && currentCategory !== spotType) {
+                    return; // 不符合当前分类则跳过
+                }
 
+                const spotLat = spot.lat || (spot.center && spot.center.lat);
+                const spotLon = spot.lon || (spot.center && spot.center.lon);
+
+                let distanceHtml = '';
+                // 防御性判断：只有当成功拿到当前坐标且 spot 坐标有效时才计算距离
+                if (currentLat !== null && currentLon !== null && spotLat && spotLon) {
+                    const dist = calculateDistance(currentLat, currentLon, spotLat, spotLon);
+                    // 只有当距离大于 0 时才展示，绝不显示 0 米或错误数字
+                    if (dist > 0) {
+                        distanceHtml = `<div class="spot-distance">${i18n[lang].distLabel}${dist} 米</div>`;
+                    }
+                }
+
+                const card = document.createElement('div');
+                card.className = 'spot-card';
+                card.innerHTML = `
+                    <div class="spot-title">${name}</div>
+                    <div class="spot-type">分类: ${spotType.toUpperCase()}</div>
+                    ${distanceHtml}
+                `;
+                container.appendChild(card);
+            });
+        }
+    </script>
 </body>
 </html>
