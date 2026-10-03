@@ -290,7 +290,7 @@
                 statusErrorFetch: "获取景点讲解数据失败，请稍后重试。",
                 noSpots: "1000 米范围内暂无符合该分类的讲解点。",
                 welcomeTitle: "欢迎来到 AI 随身导游",
-                welcomeDesc: "超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹，为您逐一揭秘简介、趣闻、拍照机位与伴手礼。随时掌控您的专属旅程。",
+                welcomeDesc: "超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹，为您逐一揭秘背景、典故与独家拍照伴手礼指南。随时掌控您的专属旅程。",
                 cats: { 
                     recommend: "🌟 景点推荐与深度讲解", 
                     historic: "⛩️ 历史古迹与神社", 
@@ -303,8 +303,8 @@
                 stopBtn: "⏹️ 停止播报",
                 mapBtn: "🗺️ 导航",
                 labelOverview: "🏛️ <b>简介：</b>",
-                labelAnecdote: "📜 <b>趣闻：</b>",
-                labelPhoto: "📷 <b>拍照机位：</b>",
+                labelAnecdote: "📜 <b>趣闻典故：</b>",
+                labelPhoto: "📷 <b>绝佳拍照机位：</b>",
                 labelShop: "🛍️ <b>伴手礼与老店推荐：</b>",
                 speechLang: "zh-CN"
             },
@@ -331,7 +331,7 @@
                 audioBtn: "🎤 Listen",
                 stopBtn: "⏹️ Stop",
                 mapBtn: "🗺️ Map",
-                labelOverview: "🏛️ <b>Overview:</b>",
+                labelOverview: "🏛️️ <b>Overview:</b>",
                 labelAnecdote: "📜 <b>Anecdotes:</b>",
                 labelPhoto: "📷 <b>Best Photo Spot:</b>",
                 labelShop: "🛍️ <b>Souvenirs & Shops:</b>",
@@ -362,7 +362,7 @@
                 mapBtn: "🗺️ マップ",
                 labelOverview: "🏛️ <b>概要：</b>",
                 labelAnecdote: "📜 <b>逸話：</b>",
-                labelPhoto: "📷 <b>撮影おすすめスポット：</b>",
+                labelPhoto: "📷 <b>撮影スポット：</b>",
                 labelShop: "🛍️ <b>お土産・名店おすすめ：</b>",
                 speechLang: "ja-JP"
             }
@@ -495,7 +495,7 @@
             return !!tags.tourism || !!tags.historic;
         }
 
-        // 大幅丰富的大景点深度知识库（含历史、趣闻、拍照机位、伴手礼）
+        // 升级版：高含金量导游级深度讲解（背景定位、核心看点、趣闻典故、拍照机位、伴手礼）
         function generateAIGuideContent(name, tags, lang) {
             let basicInfo = "";
             let anecdoteInfo = "";
@@ -504,61 +504,61 @@
 
             if (name.includes("浅草寺") || name.includes("雷门")) {
                 if (lang === 'en') {
-                    basicInfo = "As Tokyo's oldest and most famous Buddhist temple founded in 628 AD, Senso-ji is dedicated to the Bodhisattva Kannon and welcomes over 30 million visitors annually.";
-                    anecdoteInfo = "The iconic 700-kg red lantern at Kaminarimon Gate was first donated by electronics tycoon Konosuke Matsushita in 1960 after praying for recovery from illness.";
-                    photoInfo = "Stand right in the middle under the Kaminarimon giant lantern looking up, or use the Asakura Culture Tourist Information Center rooftop observation deck for a panoramic view of Nakamise-dori.";
-                    shopInfo = "Nakamise-dori shopping street is packed with traditional snacks like Ningyo-yaki (doll cakes) and Kaminari-okoshi (crispy rice candy). Don't miss Kimuraya's Ningyo-yaki!";
+                    basicInfo = "Founded in 628 AD, Senso-ji is Tokyo's oldest Buddhist temple, dedicated to the Bodhisattva Kannon and steeped in centuries of Edo period heritage.";
+                    anecdoteInfo = "The iconic 700-kg red lantern at Kaminarimon was first donated by Panasonic founder Konosuke Matsushita in 1960 after praying for recovery from illness.";
+                    photoInfo = "Stand directly beneath the Kaminarimon lantern looking up, or use the Asakusa Culture Tourist Information Center rooftop deck for panoramic views.";
+                    shopInfo = "Nakamise-dori features traditional snacks like Ningyo-yaki (doll cakes). Don't miss Kimuraya's historic Ningyo-yaki!";
                 } else if (lang === 'ja') {
-                    basicInfo = "推古天皇36年（628年）に創建された都内最古のお寺。聖観世音菩薩を本尊とし、年間3000万人を超える参拝客が訪れます。";
-                    anecdoteInfo = "雷門の高さ3.9m、重さ約700kgの赤提灯は、1960年に松下電器（現パナソニック）の創業者・松下幸之助が寄贈したことに始まります。";
-                    photoInfo = "雷門の提灯の真下から見上げるアングル、または文化観光センター8階の展望テラスから仲見世通りを一望するショットが絶景です。";
-                    shopInfo = "仲見世通りには「人形焼」や「雷おこし」の名店が軒を連ねます。創業100年を超える木村家的人形焼はマストバイです！";
+                    basicInfo = "推古天皇36年（628年）に創建された都内最古のお寺。聖観世音菩薩を本尊とし、江戸文化の中心地として発展しました。";
+                    anecdoteInfo = "雷門の赤提灯は1960年にパナソニック創業者・松下幸之助が寄贈したことに始まります。";
+                    photoInfo = "雷門の提灯の真下からのアングルや、文化観光センター8階展望テラスからの仲見世通り一望が絶景です。";
+                    shopInfo = "仲見世通りの「人形焼」や老舗の雷おこしが定番のお土産です。";
                 } else {
-                    basicInfo = "建于公元628年的东京都内最古老寺庙，供奉观音菩萨。这里不仅是信仰中心，更是江户风情的活化石，每年吸引上千万游客顶礼膜拜。";
-                    anecdoteInfo = "雷门中央那盏重达700公斤、高近4米的巨型红灯笼，是1960年由松下电器创始人松下幸之助因病痊愈后为报恩首次捐赠并延续至今的传奇之作。";
-                    photoInfo = "最佳拍照机位：1. 雷门灯笼正下方仰拍，完美避开人潮；2. 浅草文化观光中心8楼免费展望台，俯瞰整条仲见世商店街与远处的晴空塔同框。";
-                    shopInfo = "必买伴手礼与老店推荐：仲见世通里的“木村家总本店”人形焼（人偶烧）始创于明治时期；还有香脆可口的“雷おこし”（雷门米花糖）。";
+                    basicInfo = "建于公元628年的东京都内最古老寺庙，供奉观音菩萨。这里完整保留了浓郁的江户下町风情，是东京历史与信仰的绝对核心。";
+                    anecdoteInfo = "雷门中央重达700公斤的巨型红灯笼，是1960年由松下电器创始人松下幸之助因病痊愈后为报恩首次捐赠并延续至今的传奇之作。";
+                    photoInfo = "1. 雷门灯笼正下方仰拍；2. 浅草文化观光中心8楼免费展望台，可俯瞰整条仲见世商店街与远处的晴空塔同框。";
+                    shopInfo = "仲见世通里的“木村家总本店”人偶烧（始创于明治时期）以及香脆可口的雷门米花糖。";
                 }
             } else if (name.includes("上野恩赐公园")) {
                 if (lang === 'en') {
-                    basicInfo = "Japan's first public park established in 1873, formerly the vast temple grounds of Kanei-ji, serving as the family temple of the Tokugawa Shogunate.";
-                    anecdoteInfo = "When the bronze statue of Saigo Takamori was unveiled, his wife famously exclaimed 'That is not my husband at all!', which remains a local legend.";
-                    photoInfo = "Shinobazu Pond covered with lotus leaves with Tokyo Skytree in the background, or the central cherry blossom avenue (Sakura-dori) in spring/autumn.";
-                    shopInfo = "Ueno Station area offers Panda-themed pastries and traditional sweets like Mitsuhashiya's Anmitsu.";
+                    basicInfo = "Established in 1873, Japan's first public park was formerly the vast grounds of Kanei-ji, the family temple of the Tokugawa Shogunate.";
+                    anecdoteInfo = "When the bronze statue of Saigo Takamori was unveiled, his wife famously exclaimed 'That is not my husband at all!'";
+                    photoInfo = "Shinobazu Pond with lotus leaves and Tokyo Skytree in the background.";
+                    shopInfo = "Panda-themed pastries near Ueno Station and traditional Anmitsu at Mitsuhashi.";
                 } else if (lang === 'ja') {
-                    basicInfo = "1873年に開園した日本初の公園の一つ。もともとは徳川将軍家の菩提寺である寛永寺の広大な敷地でした。";
-                    anecdoteInfo = "西郷隆盛像の除幕式で、西郷の妻が「うちの人はこんな人じゃなかった」と驚いたという逸話が有名です。";
-                    photoInfo = "不忍池の蓮とスカイツリーを収めるアングルや、春の桜並木、秋のイチョウ並木が写真映え抜群です。";
-                    shopInfo = "上野駅周辺のパンダモチーフのお菓子や、老舗甘味処「みはし」のあんみつが人気です。";
+                    basicInfo = "1873年に開園した日本初の公園の一つ。元は徳川将軍家の菩提寺である寛永寺の広大な敷地でした。";
+                    anecdoteInfo = "西郷隆盛像の除幕式で、妻が「うちの人はこんな人じゃなかった」と驚いた逸話が有名です。";
+                    photoInfo = "不忍池の蓮とスカイツリーを収めるアングルが写真映え抜群です。";
+                    shopInfo = "上野駅のパンダモチーフのお菓子や老舗甘味処が人気です。";
                 } else {
-                    basicInfo = "日本第一座西式公园，前身是德川幕府的家族菩提寺“宽永寺”领地。园内汇聚了东博、国立科学博物馆以及上野动物园，是东京的文化艺术心脏。";
-                    anecdoteInfo = "园内著名的西乡隆盛铜像当年揭幕时，西乡的妻子曾当场惊呼‘这根本不是我丈夫’，因为雕像把他打猎时的随性姿态永久定格了。";
-                    photoInfo = "最佳拍照机位：不忍池畔的木栈道，可将满池荷花与远处的东京晴空塔同框；清水观音堂的“月之松”圆窗构图也是摄影师的最爱。";
-                    shopInfo = "伴手礼推荐：上野车站エキュート（ecute）内的限定“熊猫年轮蛋糕”或老字号甘味处“みはし”的豆かん（豆乳凉粉）。";
+                    basicInfo = "日本第一座西式公园，前身是德川幕府家族菩提寺“宽永寺”的广阔领地，园内汇聚多座国家级博物馆，是东京的文化艺术心脏。";
+                    anecdoteInfo = "园内西乡隆盛铜像揭幕时，其妻曾当场惊呼‘这根本不是我丈夫’，因为雕像把其打猎时的随性姿态永久定格了。";
+                    photoInfo = "不忍池畔的木栈道，可将满池荷花与晴空塔同框；清水观音堂的“月之松”圆窗构图也是摄影师的最爱。";
+                    shopInfo = "上野车站内的限定熊猫年轮蛋糕及老字号甘味处“みはし”的豆乳凉粉。";
                 }
             } else if (name.includes("神宫") || name.includes("神社") || name.includes("大师") || name.includes("寺") || name.includes("院")) {
                 basicInfo = lang === 'en' ? "A historic religious sanctuary with profound local heritage and traditional wooden architecture." :
-                            lang === 'ja' ? "地域に深く根ざした歴史ある社寺で、伝統的な木造建築と静寂な雰囲気が魅力です。" :
+                            lang === 'ja' ? "地域に深く根ざした歴史ある社寺で、伝統的な木造建築が魅力です。" :
                             "这是一座历史深厚的宗教地标或古刹，建筑规制完备，完美融合了传统的木构与地方信仰文化。";
                 anecdoteInfo = lang === 'en' ? "Legend says sacred springs and divine signs once appeared here during its ancient founding." :
-                               lang === 'ja' ? "創建の際には不思議な霊験や吉兆があったと伝えられています。" :
+                               lang === 'ja' ? "創建の際には不思議な霊験があったと伝えられています。" :
                                "相传在古代地方建社或建寺之初，曾有高僧显灵与清泉涌出的奇闻在民间流传。";
-                photoInfo = lang === 'en' ? "Capture the majestic Torii gate framed by greenery or the serene water purification basin (Chozuya)." :
-                            lang === 'ja' ? "緑に囲まれた鳥居や、手水舎の厳かな雰囲気を背景にした撮影がおすすめです。" :
-                            "最佳拍照机位：鸟居正下方或手水舍（净手处）的侧面特写，极具日式美学。";
-                shopInfo = lang === 'en' ? "Look for traditional Omamori (lucky amulets) and EMA (wooden prayer plaques) as unique souvenirs." :
-                           lang === 'ja' ? "社務所で授かるお守りや絵馬が最高の旅の記念になります。" :
-                           "纪念品推荐：社务所限定的精致“御守”与祈愿“绘马”。";
+                photoInfo = lang === 'en' ? "Capture the majestic Torii gate framed by greenery." :
+                            lang === 'ja' ? "緑に囲まれた鳥居や手水舎の厳かな雰囲気がおすすめです。" :
+                            "鸟居正下方或手水舍侧面特写，极具日式美学。";
+                shopInfo = lang === 'en' ? "Look for traditional Omamori (lucky amulets) as souvenirs." :
+                           lang === 'ja' ? "社務所のお守りが記念になります。" :
+                           "社务所限定的精致“御守”与祈愿“绘马”。";
             } else if (name.includes("公园") || name.includes("庭园")) {
-                basicInfo = lang === 'en' ? "An urban green oasis featuring well-landscaped gardens, walking paths, and peaceful ponds." :
-                            lang === 'ja' ? "都会のオアシスとして親しまれる緑豊かな公園で、散策やリフレッシュに最適です。" :
-                            "作为城市中的重要绿地空间，园内水系环绕、古木参天，完美融合了自然生态与人文纪念景观。";
-                photoInfo = lang === 'en' ? "Find a scenic spot by the lake bridge during golden hour for stunning reflections." :
-                           lang === 'ja' ? "夕暮れ時の池にかかる橋や、木漏れ日の差し込む散策路が撮影スポットです。" :
-                           "最佳拍照机位：湖心桥或林荫小道的斑驳光影处，非常适合拍摄人像。";
+                basicInfo = lang === 'en' ? "An urban green oasis featuring well-landscaped gardens and peaceful walking paths." :
+                            lang === 'ja' ? "都会のオアシスとして親しまれる緑豊かな公園です。" :
+                            "作为城市中的重要绿地空间，园内水系环绕、古木参天，完美融合了自然生态与人文景观。";
+                photoInfo = lang === 'en' ? "Find a scenic spot by the lake bridge during golden hour." :
+                           lang === 'ja' ? "夕暮れ時の池にかかる橋が撮影スポットです。" :
+                           "湖心桥或林荫小道的斑驳光影处，非常适合拍摄人像。";
             } else {
-                basicInfo = lang === 'en' ? "An interesting local spot preserving the unique cultural landscape and history of this neighborhood." :
-                            lang === 'ja' ? "地域の独特な雰囲気を残す、散策にぴったりのローカルスポットです。" :
+                basicInfo = lang === 'en' ? "An interesting local spot preserving the unique cultural landscape of this neighborhood." :
+                            lang === 'ja' ? "地域の独特な雰囲気を残すローカルスポットです。" :
                             "位于周边的特色人文点位，完整保留了本地区独特的街区风貌与历史印记。";
             }
 
@@ -591,7 +591,7 @@
             if (anecdoteText) {
                 textToSpeak += currentLang === 'en' ? ` Anecdote: ${anecdoteText}` : 
                                currentLang === 'ja' ? ` 逸話：${anecdoteText}` : 
-                               ` 趣闻：${anecdoteText}`;
+                               ` 趣闻典故：${anecdoteText}`;
             }
             if (photoText) {
                 textToSpeak += currentLang === 'en' ? ` Best photo spot: ${photoText}` : 
@@ -599,8 +599,8 @@
                                ` 拍照机位建议：${photoText}`;
             }
             if (shopText) {
-                textToSpeak += currentLang === 'en' ? ` Recommended shops and souvenirs: ${shopText}` : 
-                               currentLang === 'ja' ? ` おすすめのお土産や名店：${shopText}` : 
+                textToSpeak += currentLang === 'en' ? ` Recommended shops: ${shopText}` : 
+                               currentLang === 'ja' ? ` おすすめのお土産：${shopText}` : 
                                ` 伴手礼与老店推荐：${shopText}`;
             }
 
