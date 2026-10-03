@@ -143,7 +143,7 @@
             padding: 18px;
             border-radius: var(--border-radius);
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border-left: 4px solid #bdc3c7; /* 默认远距离：灰色边框 */
+            border-left: 4px solid #bdc3c7; 
             opacity: 0.85;
         }
 
@@ -151,7 +151,7 @@
             border-left: 4px solid #e74c3c;
         }
 
-        /* 核心逻辑：当用户走到 30 米以内时的专属高亮讲解样式 */
+        /* 核心逻辑：30米以内高亮讲解区 */
         .spot-card.active-trigger {
             border-left: 4px solid var(--accent-color);
             background: #f4fcf7;
@@ -278,21 +278,21 @@
                 
                 <div class="filter-row">
                     <select id="category-select" onchange="onCategoryChange()">
-                        <option value="recommend" id="opt-recommend">🌟 景点推荐</option>
+                        <option value="all" id="opt-all">🌟 全部周边地点</option>
                         <option value="historic" id="opt-historic">⛩️ 历史古迹与神社</option>
                         <option value="park" id="opt-park">🌳 公园与绿地</option>
-                        <option value="museum" id="opt-museum">🏛️ 博物馆与乡土馆</option>
+                        <option value="museum" id="opt-museum">🏛️ 博物馆与设施</option>
                     </select>
                 </div>
             </div>
 
-            <div id="status">已就绪：搜索周边1000米，走近至30米内为您自动触发讲解...</div>
+            <div id="status">已就绪：点击上方按钮获取位置，平铺显示1000米内所有地点...</div>
         </div>
 
         <div class="spot-list" id="spots-container">
             <div class="welcome-banner">
                 <h3 id="welcome-title">欢迎来到 AI 随身导游</h3>
-                <p id="welcome-desc">后台为您搜索 1000 米以内的所有景点。当您移动并走进某个景点 30 米范围内时，系统将为您自动高亮并开启深度讲解。</p>
+                <p id="welcome-desc">点击上方按钮后，系统将为您平铺列出 1000 米以内的所有周边地点。当您走近至 30 米内时将自动触发高亮讲解。</p>
             </div>
         </div>
     </div>
@@ -301,7 +301,7 @@
         let currentLat = null;
         let currentLon = null;
         let allSpots = [];
-        let currentCategory = 'recommend';
+        let currentCategory = 'all';
         let currentLang = 'zh';
         let activeSpeechButton = null;
 
@@ -310,20 +310,20 @@
                 title: "🧭 AI 随身导游",
                 langLabel: "语言:",
                 gpsBtn: "📍 获取实时GPS并开启 1000米搜索 / 30米触发讲解",
-                statusInit: "已就绪：搜索周边1000米，走近至30米内为您自动触发讲解...",
+                statusInit: "已就绪：点击获取GPS，平铺显示1000米内周边地点...",
                 statusLocating: "正在获取您的 GPS 位置...",
-                statusLoading: "正在搜寻周边 1000 米内的景点数据...",
-                statusSuccess: "GPS 获取成功！已列出1000米内景点（进入30米内将自动触发深度讲解）。",
+                statusLoading: "正在搜寻周边 1000 米内的所有地点...",
+                statusSuccess: "获取成功！已为您平铺列出1000米内所有地点（进入30米内将自动高亮讲解）。",
                 statusErrorGPS: "无法获取您的地理位置，请确保浏览器已授权定位。",
-                statusErrorFetch: "获取景点讲解数据失败，请稍后重试。",
-                noSpots: "目前该分类下暂无符合条件的景点。",
+                statusErrorFetch: "获取数据失败，请稍后重试。",
+                noSpots: "目前该范围内暂无符合条件的地点。",
                 welcomeTitle: "欢迎来到 AI 随身导游",
-                welcomeDesc: "系统在后台为您搜寻 1000 米内的所有地标，当您走近至 30 米范围内时，将为您触发专属的深度讲解。",
+                welcomeDesc: "系统为您平铺展示 1000 米内的所有周边地点，走近至 30 米范围内时将触发专属讲解。",
                 cats: { 
-                    recommend: "🌟 景点推荐", 
+                    all: "🌟 全部周边地点", 
                     historic: "⛩️ 历史古迹与神社", 
                     park: "🌳 公园与绿地", 
-                    museum: "🏛️ 博物馆与乡土馆" 
+                    museum: "🏛️ 博物馆与设施" 
                 },
                 distancePrefix: "距离您：约",
                 triggerBadge: "🟢 【已进入30米核心讲解区】",
@@ -333,27 +333,27 @@
                 labelOverview: "🏛️ <b>简介：</b>",
                 labelAnecdote: "📜 <b>趣闻典故：</b>",
                 labelPhoto: "📷 <b>绝佳拍照机位：</b>",
-                labelShop: "🛍 <b>伴手礼与老店推荐：</b>",
+                labelShop: "🛍 <b>伴手礼与周边推荐：</b>",
                 speechLang: "zh-CN"
             },
             en: {
                 title: "🧭 AI Tour Guide",
                 langLabel: "Language:",
                 gpsBtn: "📍 Get GPS (1000m Search / 30m Trigger)",
-                statusInit: "Ready: 1000m search, auto-trigger within 30m...",
+                statusInit: "Ready: Click to load 1000m spots...",
                 statusLocating: "Getting your GPS location...",
                 statusLoading: "Searching spots within 1000m...",
-                statusSuccess: "GPS loaded! 1000m spots listed (entering 30m triggers guide).",
+                statusSuccess: "Loaded successfully! 1000m spots listed (entering 30m triggers guide).",
                 statusErrorGPS: "Unable to get location. Please enable location permissions.",
-                statusErrorFetch: "Failed to fetch spot data. Please try again later.",
+                statusErrorFetch: "Failed to fetch spot data.",
                 noSpots: "No sites found in this category.",
                 welcomeTitle: "Welcome to AI Tour Guide",
-                welcomeDesc: "Background searches 1000m. Narration triggers when you are within 30 meters.",
+                welcomeDesc: "Displays all spots within 1000m. Narration triggers within 30 meters.",
                 cats: { 
-                    recommend: "🌟 Recommended", 
+                    all: "🌟 All Nearby Spots", 
                     historic: "⛩ History & Shrines", 
                     park: "🌳 Parks & Greenery", 
-                    museum: "🏛️ Museums" 
+                    museum: "🏛️ Museums & Facilities" 
                 },
                 distancePrefix: "Distance: approx.",
                 triggerBadge: "🟢 【Within 30m Core Guide Zone】",
@@ -363,27 +363,27 @@
                 labelOverview: "🏛 <b>Overview:</b>",
                 labelAnecdote: "📜 <b>Anecdotes:</b>",
                 labelPhoto: "📷 <b>Best Photo Spot:</b>",
-                labelShop: "🛍️ <b>Souvenirs & Shops:</b>",
+                labelShop: "🛍️ <b>Nearby Recommendation:</b>",
                 speechLang: "en-US"
             },
             ja: {
                 title: "🧭 AI 随身ガイド",
                 langLabel: "言語:",
                 gpsBtn: "📍 GPS取得 (1000m検索 / 30m内解説)",
-                statusInit: "準備完了：1000m検索、30m以内で自動解説...",
+                statusInit: "準備完了：1000m以内のスポットを一覧表示...",
                 statusLocating: "GPS位置情報を取得中...",
                 statusLoading: "1000m以内のスポットを検索中...",
-                statusSuccess: "GPS取得成功！1000m内のスポット一覧（30m以内で解説開始）。",
-                statusErrorGPS: "位置情報を取得できません。権限を確認してください。",
-                statusErrorFetch: "スポットデータの取得に失敗しました。",
+                statusSuccess: "取得成功！1000m内のスポット一覧（30m以内で解説開始）。",
+                statusErrorGPS: "位置情報を取得できません。",
+                statusErrorFetch: "データの取得に失敗しました。",
                 noSpots: "該当するスポットはありません。",
                 welcomeTitle: "AI随身ガイドへようこそ",
-                welcomeDesc: "1000m以内のデータを取得し、30m以内に近づいたスポットの解説を起動します。",
+                welcomeDesc: "1000m以内のスポットを一覧表示し、30m以内に近づくと解説を起動します。",
                 cats: { 
-                    recommend: "🌟 おすすめスポット", 
+                    all: "🌟 すべてのスポット", 
                     historic: "⛩ 歴史・神社", 
                     park: "🌳 公園・緑地", 
-                    museum: "🏛 博物館" 
+                    museum: "🏛 博物館・施設" 
                 },
                 distancePrefix: "距離：約",
                 triggerBadge: "🟢 【30m以内コア解説エリア】",
@@ -393,7 +393,7 @@
                 labelOverview: "🏛️ <b>概要：</b>",
                 labelAnecdote: "📜 <b>逸話：</b>",
                 labelPhoto: "📷 <b>撮影スポット：</b>",
-                labelShop: "🛍️ <b>お土産・名店おすすめ：</b>",
+                labelShop: "🛍️ <b>おすすめ：</b>",
                 speechLang: "ja-JP"
             }
         };
@@ -407,7 +407,7 @@
             document.getElementById('btn-gps').innerText = t.gpsBtn;
             document.getElementById('status').innerText = t.statusInit;
 
-            document.getElementById('opt-recommend').innerText = t.cats.recommend;
+            document.getElementById('opt-all').innerText = t.cats.all;
             document.getElementById('opt-historic').innerText = t.cats.historic;
             document.getElementById('opt-park').innerText = t.cats.park;
             document.getElementById('opt-museum').innerText = t.cats.museum;
@@ -456,39 +456,35 @@
             const statusEl = document.getElementById('status');
             statusEl.innerText = t.statusLoading;
 
-            // 保持 1000 米搜索范围，确保能够正常搜到周边的景点
+            // 扩大查询范围与标签容错，确保一定能抓取到数据
             const query = `
                 [out:json][timeout:25];
                 (
-                  node(around:1000,${lat},${lon})[historic];
-                  way(around:1000,${lat},${lon})[historic];
-                  node(around:1000,${lat},${lon})[tourism];
-                  way(around:1000,${lat},${lon})[tourism];
-                  node(around:1000,${lat},${lon})[leisure=park];
-                  way(around:1000,${lat},${lon})[leisure=park];
-                  node(around:1000,${lat},${lon})[amenity=place_of_worship];
-                  way(around:1000,${lat},${lon})[amenity=place_of_worship];
+                  node(around:1000,${lat},${lon})[name];
+                  way(around:1000,${lat},${lon})[name];
                 );
                 out center;
             `;
 
             try {
-                const response = await fetch('https://overpass-api.de/api/interpreter', {
+                const response = `https://overpass-api.de/api/interpreter`;
+                const res = await fetch(response, {
                     method: 'POST',
                     body: query
                 });
-                const data = await response.json();
+                const data = await res.json();
                 
-                allSpots = data.elements.filter(item => {
+                // 仅过滤掉明显的住宅和公寓，保留所有其他有名称的地点
+                allSpots = (data.elements || []).filter(item => {
                     const tags = item.tags || {};
                     const name = tags.name || tags['name:ja'] || tags['name:en'] || tags['name:zh'] || '';
                     if (!name) return false;
                     
-                    const blacklist = ['团地', '団地', 'アパート', 'マンション', 'ハイツ', 'コーポ', '住宅', 'parkings', 'school', 'hospital', 'university', 'parking', 'police', 'apartments', 'supermarket'];
+                    const blacklist = ['公寓', 'マンション', 'ハイツ', 'コーポ', '住宅', 'parking', 'apartments'];
                     for (let word of blacklist) {
                         if (name.toLowerCase().includes(word.toLowerCase())) return false;
                     }
-                    if (tags.residential || tags.landuse === 'residential' || tags.building === 'apartments' || tags.building === 'residential') {
+                    if (tags.residential || tags.landuse === 'residential' || tags.building === 'apartments') {
                         return false;
                     }
                     return true;
@@ -515,78 +511,24 @@
             return Math.round(R * c);
         }
 
-        function isLandmarkSpot(name, tags) {
-            const keywords = ['浅草寺', '雷门', '上野恩赐公园', '东京晴空塔', '浅草神社', '西新井大师', '公园', '神社', '寺', '涩谷'];
-            for (let kw of keywords) {
-                if (name.includes(kw)) return true;
-            }
-            return !!tags.tourism || !!tags.historic;
-        }
-
         function generateAIGuideContent(name, tags, lang) {
-            let basicInfo = "";
+            let basicInfo = lang === 'en' ? "A local point of interest in this area." : lang === 'ja' ? "この地域の周辺スポットです。" : "位于该区域内的特色周边地点，拥有独特的街区风貌。";
             let anecdoteInfo = "";
             let photoInfo = "";
             let shopInfo = "";
 
             if (name.includes("浅草寺") || name.includes("雷门")) {
-                if (lang === 'en') {
-                    basicInfo = "Founded in 628 AD, Senso-ji is Tokyo's oldest Buddhist temple, dedicated to the Bodhisattva Kannon and steeped in centuries of Edo period heritage.";
-                    anecdoteInfo = "The iconic 700-kg red lantern at Kaminarimon was first donated by Panasonic founder Konosuke Matsushita in 1960 after praying for recovery from illness.";
-                    photoInfo = "Stand directly beneath the Kaminarimon lantern looking up, or use the Asakusa Culture Tourist Information Center rooftop deck for panoramic views.";
-                    shopInfo = "Nakamise-dori features traditional snacks like Ningyo-yaki (doll cakes). Don't miss Kimuraya's historic Ningyo-yaki!";
-                } else if (lang === 'ja') {
-                    basicInfo = "推古天皇36年（628年）に創建された都内最古のお寺。聖観世音菩薩を本尊とし、江戸文化の中心地として発展しました。";
-                    anecdoteInfo = "雷門の赤提灯は1960年にパナソニック創業者・松下幸之助が寄贈したことに始まります。";
-                    photoInfo = "雷門の提灯の真下からのアングルや、文化観光センター8階展望テラスからの仲見世通り一望が絶景です。";
-                    shopInfo = "仲見世通りの「人形焼」や老舗の雷おこしが定番のお土産です。";
-                } else {
-                    basicInfo = "建于公元628年的东京都内最古老寺庙，供奉观音菩萨。这里完整保留了浓郁的江户下町风情，是东京历史与信仰的绝对核心。";
-                    anecdoteInfo = "雷门中央重达700公斤的巨型红灯笼，是1960年由松下电器创始人松下幸之助因病痊愈后为报恩首次捐赠并延续至今的传奇之作。";
-                    photoInfo = "1. 雷门灯笼正下方仰拍；2. 浅草文化观光中心8楼免费展望台，可俯瞰整条仲见世商店街与远处的晴空塔同框。";
-                    shopInfo = "仲见世通里的“木村家总本店”人偶烧（始创于明治时期）以及香脆可口的雷门米花糖。";
-                }
-            } else if (name.includes("上野恩赐公园")) {
-                if (lang === 'en') {
-                    basicInfo = "Established in 1873, Japan's first public park was formerly the vast grounds of Kanei-ji, the family temple of the Tokugawa Shogunate.";
-                    anecdoteInfo = "When the bronze statue of Saigo Takamori was unveiled, his wife famously exclaimed 'That is not my husband at all!'";
-                    photoInfo = "Shinobazu Pond with lotus leaves and Tokyo Skytree in the background.";
-                    shopInfo = "Panda-themed pastries near Ueno Station and traditional Anmitsu at Mitsuhashi.";
-                } else if (lang === 'ja') {
-                    basicInfo = "1873年に開園した日本初の公園の一つ。元は徳川将軍家の菩提寺である寛永寺の広大な敷地でした。";
-                    anecdoteInfo = "西郷隆盛像の除幕式で、妻が「うちの人はこんな人じゃなかった」と驚いた逸話が有名です。";
-                    photoInfo = "不忍池の蓮とスカイツリーを収めるアングルが写真映え抜群です。";
-                    shopInfo = "上野駅のパンダモチーフのお菓子や老舗甘味処が人気です。";
-                } else {
-                    basicInfo = "日本第一座西式公园，前身是德川幕府家族菩提寺“宽永寺”的广阔领地，园内汇聚多座国家级博物馆，是东京的文化艺术心脏。";
-                    anecdoteInfo = "园内西乡隆盛铜像揭幕时，其妻曾当场惊呼‘这根本不是我丈夫’，因为雕像把其打猎时的随性姿态永久定格了。";
-                    photoInfo = "不忍池畔的木栈道，可将满池荷花与晴空塔同框；清水观音堂的“月之松”圆窗构图也是摄影师的最爱。";
-                    shopInfo = "上野车站内的限定熊猫年轮蛋糕及老字号甘味处“みはし”的豆乳凉粉。";
-                }
-            } else if (name.includes("神宫") || name.includes("神社") || name.includes("大师") || name.includes("寺") || name.includes("院")) {
-                basicInfo = lang === 'en' ? "A historic religious sanctuary with profound local heritage and traditional wooden architecture." :
-                            lang === 'ja' ? "地域に深く根ざした歴史ある社寺で、伝統的な木造建築が魅力です。" :
-                            "这是一座历史深厚的宗教地标或古刹，建筑规制完备，完美融合了传统的木构与地方信仰文化。";
-                anecdoteInfo = lang === 'en' ? "Legend says sacred springs and divine signs once appeared here during its ancient founding." :
-                               lang === 'ja' ? "創建の際には不思議な霊験があったと伝えられています。" :
-                               "相传在古代地方建社或建寺之初，曾有高僧显灵与清泉涌出的奇闻在民间流传。";
-                photoInfo = lang === 'en' ? "Capture the majestic Torii gate framed by greenery." :
-                            lang === 'ja' ? "緑に囲まれた鳥居や手水舎の厳かな雰囲気がおすすめです。" :
-                            "鸟居正下方或手水舍侧面特写，极具日式美学。";
-                shopInfo = lang === 'en' ? "Look for traditional Omamori (lucky amulets) as souvenirs." :
-                           lang === 'ja' ? "社務所のお守りが記念になります。" :
-                           "社务所限定的精致“御守”与祈愿“绘马”。";
-            } else if (name.includes("公园") || name.includes("庭园")) {
-                basicInfo = lang === 'en' ? "An urban green oasis featuring well-landscaped gardens and peaceful walking paths." :
-                            lang === 'ja' ? "都会のオアシスとして親しまれる緑豊かな公園です。" :
-                            "作为城市中的重要绿地空间，园内水系环绕、古木参天，完美融合了自然生态与人文景观。";
-                photoInfo = lang === 'en' ? "Find a scenic spot by the lake bridge during golden hour." :
-                           lang === 'ja' ? "夕暮れ時の池にかかる橋が撮影スポットです。" :
-                           "湖心桥或林荫小道的斑驳光影处，非常适合拍摄人像。";
-            } else {
-                basicInfo = lang === 'en' ? "An interesting local spot preserving the unique cultural landscape of this neighborhood." :
-                            lang === 'ja' ? "地域の独特な雰囲気を残すローカルスポットです。" :
-                            "位于周边的特色人文点位，完整保留了本地区独特的街区风貌与历史印记。";
+                basicInfo = "建于公元628年的东京都内最古老寺庙，供奉观音菩萨。这里完美保留了浓郁的江户下町风情。";
+                anecdoteInfo = "雷门中央重达700公斤的巨型红灯笼，由松下电器创始人松下幸之助首次捐赠并延续至今。";
+                photoInfo = "1. 雷门灯笼正下方仰拍；2. 浅草文化观光中心8楼免费展望台俯瞰。";
+                shopInfo = "仲见世通里的“木村家总本店”人偶烧。";
+            } else if (name.includes("公园") || name.includes("庭园") || tags.leisure === 'park') {
+                basicInfo = "城市中的重要绿地空间，园内环境优美，是散步和放松的绝佳去处。";
+                photoInfo = "林荫小道或长椅周边，非常适合拍摄自然光影。";
+            } else if (name.includes("神社") || name.includes("神宫") || name.includes("寺") || tags.historic) {
+                basicInfo = "历史深厚的宗教地标或古刹，完美融合了传统的木构建筑与地方信仰文化。";
+                photoInfo = "鸟居正下方或手水舍侧面特写，极具日式美学。";
+                shopInfo = "社务所限定的精致御守与祈愿绘马。";
             }
 
             return { basic: basicInfo, anecdote: anecdoteInfo, photo: photoInfo, shop: shopInfo };
@@ -594,7 +536,7 @@
 
         function toggleAudio(buttonElement, titleText, basicText, anecdoteText, photoText, shopText) {
             if (!('speechSynthesis' in window)) {
-                alert('您的浏览器不支持语音播报功能');
+                alert('您的浏览器不支持语音播报');
                 return;
             }
 
@@ -611,25 +553,8 @@
                 resetAudioButton(activeSpeechButton);
             }
 
-            let textToSpeak = currentLang === 'en' ? `Now introducing: ${titleText}. Overview: ${basicText}` : 
-                              currentLang === 'ja' ? `${titleText}についてご案内します。概要：${basicText}` : 
-                              `现在为您深度讲解：${titleText}。简介：${basicText}`;
-            
-            if (anecdoteText) {
-                textToSpeak += currentLang === 'en' ? ` Anecdote: ${anecdoteText}` : 
-                               currentLang === 'ja' ? ` 逸話：${anecdoteText}` : 
-                               ` 趣闻典故：${anecdoteText}`;
-            }
-            if (photoText) {
-                textToSpeak += currentLang === 'en' ? ` Best photo spot: ${photoText}` : 
-                               currentLang === 'ja' ? ` 撮影スポット：${photoText}` : 
-                               ` 拍照机位建议：${photoText}`;
-            }
-            if (shopText) {
-                textToSpeak += currentLang === 'en' ? ` Recommended shops: ${shopText}` : 
-                               currentLang === 'ja' ? ` おすすめのお土産：${shopText}` : 
-                               ` 伴手礼与老店推荐：${shopText}`;
-            }
+            let textToSpeak = `现在为您讲解：${titleText}。简介：${basicText}`;
+            if (anecdoteText) textToSpeak += ` 趣闻：${anecdoteText}`;
 
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
             utterance.lang = t.speechLang; 
@@ -660,25 +585,16 @@
             container.innerHTML = '';
             const t = i18n[currentLang];
 
-            // 1. 过滤 1000 米内的所有候选点
             let filteredSpots = allSpots.filter(spot => {
                 const tags = spot.tags || {};
-                let name = tags.name || tags['name:ja'] || tags['name:en'] || tags['name:zh'] || '';
+                const spotType = tags.leisure === 'park' ? 'park' : tags.historic ? 'historic' : tags.tourism ? 'museum' : 'other';
                 
-                let spotType = 'other';
-                if (tags.leisure === 'park') spotType = 'park';
-                else if (tags.historic) spotType = 'historic';
-                else if (tags.tourism === 'museum') spotType = 'museum';
-
-                if (currentCategory === 'recommend') {
-                    if (!isLandmarkSpot(name, tags)) return false;
-                } else {
-                    if (spotType !== currentCategory) return false;
+                if (currentCategory !== 'all' && spotType !== currentCategory) {
+                    return false;
                 }
                 return true;
             });
 
-            // 2. 按照距离由近到远排序
             if (currentLat !== null && currentLon !== null) {
                 filteredSpots.sort((a, b) => {
                     const latA = a.lat || (a.center && a.center.lat);
@@ -697,33 +613,22 @@
                 return;
             }
 
-            // 3. 渲染 1000 米内的所有点，并精准判断：若距离 <= 30 米，则触发“核心讲解区”高亮
             filteredSpots.forEach(spot => {
                 const tags = spot.tags || {};
-                
-                let name = tags.name || tags['name:ja'] || tags['name:zh'] || 'Location';
-                if (currentLang === 'en') {
-                    name = tags['name:en'] || tags.name || tags['name:ja'] || 'Location';
-                } else if (currentLang === 'ja') {
-                    name = tags['name:ja'] || tags.name || 'スポット';
-                } else {
-                    name = tags['name:zh'] || tags.name || tags['name:ja'] || '景点';
-                }
+                let name = tags.name || tags['name:ja'] || tags['name:zh'] || tags['name:en'] || '周边地点';
                 
                 const spotLat = spot.lat || (spot.center && spot.center.lat);
                 const spotLon = spot.lon || (spot.center && spot.center.lon);
 
                 let dist = 9999;
                 let distanceText = t.distancePrefix + " 远";
-                let isTriggered = false; // 是否触发 30 米讲解
+                let isTriggered = false; // 是否在 30 米触发范围内
 
                 if (currentLat !== null && currentLon !== null && spotLat && spotLon) {
                     dist = calculateDistance(currentLat, currentLon, spotLat, spotLon);
                     distanceText = `${t.distancePrefix} ${dist} 米`;
-                    if (currentLang === 'en') distanceText = `Distance: approx. ${dist}m`;
-                    if (currentLang === 'ja') distanceText = `距離：約 ${dist}m`;
 
-                    // 核心判定：只有距离小于等于 30 米时，才触发自动讲解高亮
+                    // 核心判定：小于等于 30 米触发讲解高亮
                     if (dist <= 30) {
                         isTriggered = true;
                         distanceText += ` ${t.triggerBadge}`;
@@ -731,13 +636,10 @@
                 }
 
                 const mapUrl = (spotLat && spotLon) ? `https://www.google.com/maps/search/?api=1&query=${spotLat},${spotLon}` : '#';
-                
-                const isLandmark = isLandmarkSpot(name, tags);
                 const guideData = generateAIGuideContent(name, tags, currentLang);
 
                 const card = document.createElement('div');
-                // 如果在 30 米内，赋予 active-trigger 高亮样式；否则为普通备用样式
-                card.className = isTriggered ? 'spot-card active-trigger' : (isLandmark ? 'spot-card landmark' : 'spot-card');
+                card.className = isTriggered ? 'spot-card active-trigger' : 'spot-card';
                 
                 let cardHtml = `
                     <div class="spot-title">${name}</div>
@@ -748,11 +650,9 @@
                 if (guideData.anecdote) {
                     cardHtml += `<div class="spot-anecdote-section">${t.labelAnecdote} ${guideData.anecdote}</div>`;
                 }
-
                 if (guideData.photo) {
                     cardHtml += `<div class="spot-photo-section">${t.labelPhoto} ${guideData.photo}</div>`;
                 }
-
                 if (guideData.shop) {
                     cardHtml += `<div class="spot-shop-section">${t.labelShop} ${guideData.shop}</div>`;
                 }
