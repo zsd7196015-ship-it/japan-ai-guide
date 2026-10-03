@@ -287,13 +287,13 @@
                 </div>
             </div>
 
-            <div id="status">已就绪：搜索周边1000米，走近至30米内为您自动触发讲解...</div>
+            <div id="status">已就绪：搜索周边1000米，最近20个景点，走近至30米内为您自动触发讲解...</div>
         </div>
 
         <div class="spot-list" id="spots-container">
             <div class="welcome-banner">
                 <h3 id="welcome-title">欢迎来到 AI 随身导游</h3>
-                <p id="welcome-desc">后台为您搜索 1000 米以内的所有景点并平铺展示。当您移动并走进某个景点 30 米范围内时，系统将为您自动高亮并开启深度讲解。</p>
+                <p id="welcome-desc">后台为您搜索 1000 米以内的所有景点，最多为您平铺展示最近的 20 个。当您移动并走进某个景点 30 米范围内时，系统将为您自动高亮并开启深度讲解。</p>
             </div>
         </div>
     </div>
@@ -311,15 +311,15 @@
                 title: "🧭 AI 随身导游",
                 langLabel: "语言:",
                 gpsBtn: "📍 获取实时GPS并开启 1000米搜索 / 30米触发讲解",
-                statusInit: "已就绪：搜索周边1000米，走近至30米内为您自动触发讲解...",
+                statusInit: "已就绪：搜索周边1000米，最近20个景点，走近至30米内为您自动触发讲解...",
                 statusLocating: "正在获取您的 GPS 位置...",
                 statusLoading: "正在搜寻周边 1000 米内的景点数据...",
-                statusSuccess: "GPS 获取成功！已平铺1000米内所有景点（进入30米内将自动触发深度讲解）。",
+                statusSuccess: "GPS 获取成功！已为您平铺展示最近的 20 个景点（进入30米内将自动触发深度讲解）。",
                 statusErrorGPS: "无法获取您的地理位置，请确保浏览器已授权定位。",
                 statusErrorFetch: "获取景点讲解数据失败，请稍后重试。",
                 noSpots: "目前该分类下暂无符合条件的景点。",
                 welcomeTitle: "欢迎来到 AI 随身导游",
-                welcomeDesc: "系统在后台为您平铺搜寻 1000 米内的所有地标，当您走近至 30 米范围内时，将为您触发专属的深度讲解。",
+                welcomeDesc: "系统在后台为您平铺搜寻 1000 米内的地标，最多展示最近 20 个。当您走近至 30 米范围内时，将为您触发专属的深度讲解。",
                 cats: { 
                     recommend: "🌟 景点推荐与地标", 
                     historic: "⛩️ 历史古迹与神社", 
@@ -341,15 +341,15 @@
                 title: "🧭 AI Tour Guide",
                 langLabel: "Language:",
                 gpsBtn: "📍 Get GPS (1000m Search / 30m Trigger)",
-                statusInit: "Ready: 1000m search, auto-trigger within 30m...",
+                statusInit: "Ready: 1000m search, top 20 spots, auto-trigger within 30m...",
                 statusLocating: "Getting your GPS location...",
                 statusLoading: "Searching spots within 1000m...",
-                statusSuccess: "GPS loaded! 1000m spots listed (entering 30m triggers guide).",
+                statusSuccess: "GPS loaded! Showing top 20 nearest spots (entering 30m triggers guide).",
                 statusErrorGPS: "Unable to get location. Please enable location permissions.",
                 statusErrorFetch: "Failed to fetch spot data. Please try again later.",
                 noSpots: "No sites found in this category.",
                 welcomeTitle: "Welcome to AI Tour Guide",
-                welcomeDesc: "Background searches 1000m and lists spots. Narration triggers when you are within 30 meters.",
+                welcomeDesc: "Background searches 1000m and lists up to 20 nearest spots. Narration triggers when within 30 meters.",
                 cats: { 
                     recommend: "🌟 Recommended & Landmarks", 
                     historic: "⛩ History & Shrines", 
@@ -371,15 +371,15 @@
                 title: "🧭 AI 随身ガイド",
                 langLabel: "言語:",
                 gpsBtn: "📍 GPS取得 (1000m検索 / 30m内解説)",
-                statusInit: "準備完了：1000m検索、30m以内で自動解説...",
+                statusInit: "準備完了：1000m検索、上位20スポット、30m以内で自動解説...",
                 statusLocating: "GPS位置情報を取得中...",
                 statusLoading: "1000m以内のスポットを検索中...",
-                statusSuccess: "GPS取得成功！1000m内のスポット一覧（30m以内で解説開始）。",
+                statusSuccess: "GPS取得成功！最寄りの20スポットを表示中（30m以内で解説開始）。",
                 statusErrorGPS: "位置情報を取得できません。権限を確認してください。",
                 statusErrorFetch: "スポットデータの取得に失敗しました。",
                 noSpots: "該当するスポットはありません。",
                 welcomeTitle: "AI随身ガイドへようこそ",
-                welcomeDesc: "1000m以内のデータを取得して一覧表示し、30m以内に近づいたスポットの解説を起動します。",
+                welcomeDesc: "1000m以内のデータを取得し、最も近い20件を表示します。30m以内に近づいたスポットの解説を起動します。",
                 cats: { 
                     recommend: "🌟 おすすめ・ランドマーク", 
                     historic: "⛩ 歴史・神社", 
@@ -457,18 +457,11 @@
             const statusEl = document.getElementById('status');
             statusEl.innerText = t.statusLoading;
 
-            // 严格保持 1000 米搜索范围
             const query = `
                 [out:json][timeout:25];
                 (
-                  node(around:1000,${lat},${lon})[historic];
-                  way(around:1000,${lat},${lon})[historic];
-                  node(around:1000,${lat},${lon})[tourism];
-                  way(around:1000,${lat},${lon})[tourism];
-                  node(around:1000,${lat},${lon})[leisure=park];
-                  way(around:1000,${lat},${lon})[leisure=park];
-                  node(around:1000,${lat},${lon})[amenity=place_of_worship];
-                  way(around:1000,${lat},${lon})[amenity=place_of_worship];
+                  node(around:1000,${lat},${lon})[name];
+                  way(around:1000,${lat},${lon})[name];
                 );
                 out center;
             `;
@@ -480,16 +473,16 @@
                 });
                 const data = await response.json();
                 
-                allSpots = data.elements.filter(item => {
+                allSpots = (data.elements || []).filter(item => {
                     const tags = item.tags || {};
                     const name = tags.name || tags['name:ja'] || tags['name:en'] || tags['name:zh'] || '';
                     if (!name) return false;
                     
-                    const blacklist = ['团地', '団地', 'アパート', 'マンション', 'ハイツ', 'コーポ', '住宅', 'parkings', 'school', 'hospital', 'university', 'parking', 'police', 'apartments', 'supermarket'];
+                    const blacklist = ['団地', 'アパート', 'マンション', 'ハイツ', 'コーポ', '住宅', 'parking', 'apartments'];
                     for (let word of blacklist) {
                         if (name.toLowerCase().includes(word.toLowerCase())) return false;
                     }
-                    if (tags.residential || tags.landuse === 'residential' || tags.building === 'apartments' || tags.building === 'residential') {
+                    if (tags.residential || tags.landuse === 'residential' || tags.building === 'apartments') {
                         return false;
                     }
                     return true;
@@ -521,7 +514,7 @@
             for (let kw of keywords) {
                 if (name.includes(kw)) return true;
             }
-            return !!tags.tourism || !!tags.historic;
+            return !!tags.tourism || !!tags.historic || !!tags.leisure;
         }
 
         function generateAIGuideContent(name, tags, lang) {
@@ -572,7 +565,7 @@
                                lang === 'ja' ? "創建の際には不思議な霊験があったと伝えられています。" :
                                "相传在古代地方建社或建寺之初，曾有高僧显灵与清泉涌出的奇闻在民间流传。";
                 photoInfo = lang === 'en' ? "Capture the majestic Torii gate framed by greenery." :
-                            lang === 'ja' ? "緑に囲まれた鳥居や手水舎の厳かな雰囲気がおすすめです。" :
+                            lang === 'ja' ? "緑に囲まれた鳥居や手水舍の厳かな雰囲気がおすすめです。" :
                             "鸟居正下方或手水舍侧面特写，极具日式美学。";
                 shopInfo = lang === 'en' ? "Look for traditional Omamori (lucky amulets) as souvenirs." :
                            lang === 'ja' ? "社務所のお守りが記念になります。" :
@@ -661,7 +654,6 @@
             container.innerHTML = '';
             const t = i18n[currentLang];
 
-            // 1. 过滤 1000 米内的所有候选点并平铺
             let filteredSpots = allSpots.filter(spot => {
                 const tags = spot.tags || {};
                 let name = tags.name || tags['name:ja'] || tags['name:en'] || tags['name:zh'] || '';
@@ -679,7 +671,6 @@
                 return true;
             });
 
-            // 2. 按照距离由近到远排序
             if (currentLat !== null && currentLon !== null) {
                 filteredSpots.sort((a, b) => {
                     const latA = a.lat || (a.center && a.center.lat);
@@ -693,12 +684,14 @@
                 });
             }
 
+            // 限制最多只展示最近的 20 个
+            filteredSpots = filteredSpots.slice(0, 20);
+
             if (filteredSpots.length === 0) {
                 container.innerHTML = `<div style="text-align:center; padding: 25px; color: var(--text-secondary); background: white; border-radius: var(--border-radius); box-shadow: 0 2px 8px rgba(0,0,0,0.04);">${t.noSpots}</div>`;
                 return;
             }
 
-            // 3. 平铺渲染 1000 米内的所有点：只有距离 <= 30 米时才激活高亮讲解区
             filteredSpots.forEach(spot => {
                 const tags = spot.tags || {};
                 
@@ -737,7 +730,6 @@
                 const guideData = generateAIGuideContent(name, tags, currentLang);
 
                 const card = document.createElement('div');
-                // 如果在 30 米内，赋予 active-trigger 高亮样式；否则正常平铺展示
                 card.className = isTriggered ? 'spot-card active-trigger' : (isLandmark ? 'spot-card landmark' : 'spot-card');
                 
                 let cardHtml = `
