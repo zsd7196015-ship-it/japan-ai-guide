@@ -205,6 +205,16 @@
             border-left: 3px solid #1abc9c;
         }
 
+        .proximity-notice {
+            font-size: 0.82rem;
+            color: #c0392b;
+            background: #ffadad26;
+            padding: 6px 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
         .spot-actions {
             display: flex;
             gap: 10px;
@@ -266,8 +276,8 @@
                 
                 <div class="filter-row">
                     <select id="category-select" onchange="onCategoryChange()">
-                        <option value="recommend" id="opt-recommend">🌟 景点推荐</option>
-                        <option value="historic" id="opt-historic">⛩️ 历史古迹与神社</option>
+                        <option value="recommend" id="opt-recommend">🌟 景点推荐（综合精选）</option>
+                        <option value="historic" id="opt-historic">⛩️ 历史古迹与神社寺庙</option>
                         <option value="park" id="opt-park">🌳 公园与绿地</option>
                         <option value="museum" id="opt-museum">🏛️ 博物馆与乡土馆</option>
                     </select>
@@ -280,7 +290,7 @@
         <div class="spot-list" id="spots-container">
             <div class="welcome-banner">
                 <h3 id="welcome-title">欢迎来到 AI 随身导游</h3>
-                <p id="welcome-desc">超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹。无论远近均可了解基本梗概，走近景点 20 米以内即可自动解锁深度秘闻与拍照机位！</p>
+                <p id="welcome-desc">超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹。远距离可查看基本简介与提示，走近景点 20 米以内即可自动解锁深度秘闻与拍照机位！</p>
             </div>
         </div>
     </div>
@@ -306,10 +316,10 @@
                 statusErrorFetch: "获取景点讲解数据失败，请稍后重试。",
                 noSpots: "1000 米范围内暂无符合该分类的讲解点。",
                 welcomeTitle: "欢迎来到 AI 随身导游",
-                welcomeDesc: "超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹。无论远近均可了解基本梗概，走近景点 20 米以内即可自动解锁深度秘闻与拍照机位。",
+                welcomeDesc: "超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹。远距离可查看基本简介，走近 20 米以内自动解锁深度秘闻。",
                 cats: { 
-                    recommend: "🌟 景点推荐", 
-                    historic: "⛩️ 历史古迹与神社", 
+                    recommend: "🌟 景点推荐（综合精选）", 
+                    historic: "⛩️ 历史古迹与神社寺庙", 
                     park: "🌳 公园与绿地", 
                     museum: "🏛️ 博物馆与乡土馆" 
                 },
@@ -322,6 +332,7 @@
                 labelAnecdote: "📜 <b>趣闻典故：</b>",
                 labelPhoto: "📷 <b>绝佳拍照机位：</b>",
                 labelShop: "🛍 <b>伴手礼与老店推荐：</b>",
+                nearbyNotice: "🔒 提示：您距离该景点超过 20 米，走近后将自动解锁全部秘闻与深度导游讲解！",
                 speechLang: "zh-CN"
             },
             en: {
@@ -336,10 +347,10 @@
                 statusErrorFetch: "Failed to fetch spot data. Please try again later.",
                 noSpots: "No sites found within 1000 meters in this category.",
                 welcomeTitle: "Welcome to AI Tour Guide",
-                welcomeDesc: "Your ultimate AI knowledge base. View overviews from afar, and get within 20 meters to unlock secret anecdotes!",
+                welcomeDesc: "View overviews from afar, and get within 20 meters to unlock secret anecdotes!",
                 cats: { 
-                    recommend: "🌟 Recommended", 
-                    historic: "⛩ History & Shrines", 
+                    recommend: "🌟 Recommended (All)", 
+                    historic: "⛩ History & Shrines/Temples", 
                     park: "🌳 Parks & Greenery", 
                     museum: "🏛️ Museums" 
                 },
@@ -352,6 +363,7 @@
                 labelAnecdote: "📜 <b>Anecdotes:</b>",
                 labelPhoto: "📷 <b>Best Photo Spot:</b>",
                 labelShop: "🛍️ <b>Souvenirs & Shops:</b>",
+                nearbyNotice: "🔒 Notice: You are more than 20m away. Approach closer to unlock deep secrets and full stories!",
                 speechLang: "en-US"
             },
             ja: {
@@ -366,10 +378,10 @@
                 statusErrorFetch: "スポットデータの取得に失敗しました。後ほど再試行してください。",
                 noSpots: "1000m以内に該当するスポットはありません。",
                 welcomeTitle: "AI随身ガイドへようこそ",
-                welcomeDesc: "遠くからは概要を確認でき、スポットに20m以内まで近づくと秘話や撮影スポットが自動で展開されます。",
+                welcomeDesc: "遠くからは概要を確認でき、スポットに20m以内まで近づくと秘話が自動で展開されます。",
                 cats: { 
-                    recommend: "🌟 おすすめスポット", 
-                    historic: "⛩ 歴史・神社", 
+                    recommend: "🌟 おすすめスポット（総合）", 
+                    historic: "⛩ 歴史・神社仏閣", 
                     park: "🌳 公園・緑地", 
                     museum: "🏛 博物館" 
                 },
@@ -382,6 +394,7 @@
                 labelAnecdote: "📜 <b>逸話：</b>",
                 labelPhoto: "📷 <b>撮影スポット：</b>",
                 labelShop: "🛍️ <b>お土産・名店おすすめ：</b>",
+                nearbyNotice: "🔒 お知らせ：スポットから20m以上離れています。近づくと詳細な逸話が解放されます！",
                 speechLang: "ja-JP"
             }
         };
@@ -507,11 +520,11 @@
         }
 
         function isLandmarkSpot(name, tags) {
-            const keywords = ['浅草寺', '雷门', '上野恩赐公园', '东京晴空塔', '浅草神社', '西新井大师', '公园', '神社', '寺', '涩谷'];
+            const keywords = ['浅草寺', '雷门', '上野恩赐公园', '东京晴空塔', '浅草神社', '西新井大师', '公园', '神社', '寺', '院', '宫', '涩谷'];
             for (let kw of keywords) {
                 if (name.includes(kw)) return true;
             }
-            return !!tags.tourism || !!tags.historic;
+            return !!tags.tourism || !!tags.historic || !!tags.amenity;
         }
 
         function generateAIGuideContent(name, tags, lang) {
@@ -554,7 +567,7 @@
                     photoInfo = "不忍池畔的木栈道，可将满池荷花与晴空塔同框；清水观音堂的“月之松”圆窗构图也是摄影师的最爱。";
                     shopInfo = "上野车站内的限定熊猫年轮蛋糕及老字号甘味处“みはし”的豆乳凉粉。";
                 }
-            } else if (name.includes("神宫") || name.includes("神社") || name.includes("大师") || name.includes("寺") || name.includes("院")) {
+            } else if (name.includes("神宫") || name.includes("神社") || name.includes("大师") || name.includes("寺") || name.includes("院") || name.includes("宫")) {
                 basicInfo = lang === 'en' ? "A historic religious sanctuary with profound local heritage and traditional wooden architecture." :
                             lang === 'ja' ? "地域に深く根ざした歴史ある社寺で、伝統的な木造建築が魅力です。" :
                             "这是一座历史深厚的宗教地标或古刹，建筑规制完备，完美融合了传统的木构与地方信仰文化。";
@@ -602,12 +615,12 @@
                 resetAudioButton(activeSpeechButton);
             }
 
-            // 核心修改：语音播报始终包含【基本简介】
+            // 语音播报严格只读名称和简介，绝不朗读任何距离提示语！
             let textToSpeak = currentLang === 'en' ? `${titleText}. Overview: ${basicText}` : 
                                     currentLang === 'ja' ? `${titleText}。概要：${basicText}` : 
                                     `${titleText}。简介：${basicText}`;
             
-            // 如果距离在 20 米以内，语音额外追加深度趣闻与推荐（不在远处读啰嗦提示）
+            // 只有走到 20 米以内时，语音才追加深度的趣闻与推荐
             if (isNearby) {
                 if (anecdoteText) {
                     textToSpeak += currentLang === 'en' ? ` Anecdote: ${anecdoteText}` : 
@@ -659,15 +672,22 @@
                 const tags = spot.tags || {};
                 let name = tags.name || tags['name:ja'] || tags['name:en'] || tags['name:zh'] || '';
                 
-                let spotType = 'other';
-                if (tags.leisure === 'park') spotType = 'park';
-                else if (tags.historic) spotType = 'historic';
-                else if (tags.tourism === 'museum') spotType = 'museum';
+                // 修复分类逻辑：
+                // historic 或 amenity=place_of_worship 或 名字里带寺/神社/宫/院 的，全部归入 historic
+                let isHistoric = !!tags.historic || tags.amenity === 'place_of_worship' || name.includes('寺') || name.includes('神社') || name.includes('宫') || name.includes('院');
+                let isPark = tags.leisure === 'park' || name.includes('公园');
+                let isMuseum = tags.tourism === 'museum' || name.includes('博物馆') || name.includes('乡土馆');
 
-                if (currentCategory === 'recommend') {
-                    return isLandmarkSpot(name, tags);
+                if (currentCategory === 'historic') {
+                    return isHistoric;
+                } else if (currentCategory === 'park') {
+                    return isPark;
+                } else if (currentCategory === 'museum') {
+                    return isMuseum;
+                } else {
+                    // recommend（综合精选）：展示全部优质景点
+                    return true;
                 }
-                return spotType === currentCategory;
             });
 
             if (currentLat !== null && currentLon !== null) {
@@ -725,15 +745,14 @@
                 const card = document.createElement('div');
                 card.className = isLandmark ? 'spot-card landmark' : 'spot-card';
                 
-                // 无论远近，卡片上始终展示【标题、距离、基本简介】
                 let cardHtml = `
                     <div class="spot-title">${name}</div>
                     <div class="spot-meta">${distanceText}</div>
                     <div class="spot-desc-section">${t.labelOverview} ${guideData.basic}</div>
                 `;
 
-                // 只有当用户走到 20 米以内时，卡片才会自动展开并显示“趣闻典故、拍照机位、伴手礼”
                 if (isNearby) {
+                    // 20米以内：展示全部深度秘闻、拍照、伴手礼
                     if (guideData.anecdote) {
                         cardHtml += `<div class="spot-anecdote-section">${t.labelAnecdote} ${guideData.anecdote}</div>`;
                     }
@@ -743,6 +762,9 @@
                     if (guideData.shop) {
                         cardHtml += `<div class="spot-shop-section">${t.labelShop} ${guideData.shop}</div>`;
                     }
+                } else {
+                    // 20米以外：在卡片上显示提示（告诉用户走近可解锁），但语音绝对不读它！
+                    cardHtml += `<div class="proximity-notice">${t.nearbyNotice}</div>`;
                 }
 
                 cardHtml += `
