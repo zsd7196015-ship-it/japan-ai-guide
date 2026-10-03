@@ -205,16 +205,6 @@
             border-left: 3px solid #1abc9c;
         }
 
-        .proximity-notice {
-            font-size: 0.82rem;
-            color: #c0392b;
-            background: #ffadad26;
-            padding: 6px 10px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-
         .spot-actions {
             display: flex;
             gap: 10px;
@@ -290,7 +280,7 @@
         <div class="spot-list" id="spots-container">
             <div class="welcome-banner">
                 <h3 id="welcome-title">欢迎来到 AI 随身导游</h3>
-                <p id="welcome-desc">超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹。走近景点 20 米以内，即可自动解锁秘闻、拍照机位与独家伴手礼指南！</p>
+                <p id="welcome-desc">超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹。无论远近均可了解基本梗概，走近景点 20 米以内即可自动解锁深度秘闻与拍照机位！</p>
             </div>
         </div>
     </div>
@@ -316,7 +306,7 @@
                 statusErrorFetch: "获取景点讲解数据失败，请稍后重试。",
                 noSpots: "1000 米范围内暂无符合该分类的讲解点。",
                 welcomeTitle: "欢迎来到 AI 随身导游",
-                welcomeDesc: "超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹。走近景点 20 米以内，即可自动解锁深度秘闻与拍照机位。",
+                welcomeDesc: "超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹。无论远近均可了解基本梗概，走近景点 20 米以内即可自动解锁深度秘闻与拍照机位。",
                 cats: { 
                     recommend: "🌟 景点推荐", 
                     historic: "⛩️ 历史古迹与神社", 
@@ -332,7 +322,6 @@
                 labelAnecdote: "📜 <b>趣闻典故：</b>",
                 labelPhoto: "📷 <b>绝佳拍照机位：</b>",
                 labelShop: "🛍 <b>伴手礼与老店推荐：</b>",
-                nearbyNotice: "🔒 提示：您距离该景点大于 20 米，走近后将自动解锁全部秘闻与深度导游讲解！",
                 speechLang: "zh-CN"
             },
             en: {
@@ -347,7 +336,7 @@
                 statusErrorFetch: "Failed to fetch spot data. Please try again later.",
                 noSpots: "No sites found within 1000 meters in this category.",
                 welcomeTitle: "Welcome to AI Tour Guide",
-                welcomeDesc: "Your ultimate AI knowledge base. Get within 20 meters of a site to unlock secret anecdotes and photo spots!",
+                welcomeDesc: "Your ultimate AI knowledge base. View overviews from afar, and get within 20 meters to unlock secret anecdotes!",
                 cats: { 
                     recommend: "🌟 Recommended", 
                     historic: "⛩ History & Shrines", 
@@ -363,7 +352,6 @@
                 labelAnecdote: "📜 <b>Anecdotes:</b>",
                 labelPhoto: "📷 <b>Best Photo Spot:</b>",
                 labelShop: "🛍️ <b>Souvenirs & Shops:</b>",
-                nearbyNotice: "🔒 Notice: You are more than 20m away. Approach closer to unlock deep secrets and full stories!",
                 speechLang: "en-US"
             },
             ja: {
@@ -378,7 +366,7 @@
                 statusErrorFetch: "スポットデータの取得に失敗しました。後ほど再試行してください。",
                 noSpots: "1000m以内に該当するスポットはありません。",
                 welcomeTitle: "AI随身ガイドへようこそ",
-                welcomeDesc: "スポットに20m以内まで近づくと、秘話や撮影スポットが自動でアンロックされます。",
+                welcomeDesc: "遠くからは概要を確認でき、スポットに20m以内まで近づくと秘話や撮影スポットが自動で展開されます。",
                 cats: { 
                     recommend: "🌟 おすすめスポット", 
                     historic: "⛩ 歴史・神社", 
@@ -394,7 +382,6 @@
                 labelAnecdote: "📜 <b>逸話：</b>",
                 labelPhoto: "📷 <b>撮影スポット：</b>",
                 labelShop: "🛍️ <b>お土産・名店おすすめ：</b>",
-                nearbyNotice: "🔒 お知らせ：スポットから20m以上離れています。近づくと詳細な逸話やガイドが解放されます！",
                 speechLang: "ja-JP"
             }
         };
@@ -615,13 +602,13 @@
                 resetAudioButton(activeSpeechButton);
             }
 
-            // 如果距离大于 20 米，语音只播报梗概，提示用户走近可听详细秘闻
+            // 核心修改：语音播报始终包含【基本简介】
             let textToSpeak = currentLang === 'en' ? `${titleText}. Overview: ${basicText}` : 
                                     currentLang === 'ja' ? `${titleText}。概要：${basicText}` : 
                                     `${titleText}。简介：${basicText}`;
             
+            // 如果距离在 20 米以内，语音额外追加深度趣闻与推荐（不在远处读啰嗦提示）
             if (isNearby) {
-                // 20米以内：解锁全部秘闻、拍照、伴手礼
                 if (anecdoteText) {
                     textToSpeak += currentLang === 'en' ? ` Anecdote: ${anecdoteText}` : 
                                    currentLang === 'ja' ? ` 逸話：${anecdoteText}` : 
@@ -637,11 +624,6 @@
                                    currentLang === 'ja' ? ` おすすめのお土産：${shopText}` : 
                                    ` 伴手礼与老店推荐：${shopText}`;
                 }
-            } else {
-                // 20米以外：提示用户
-                textToSpeak += currentLang === 'en' ? `. You are more than 20 meters away. Walk closer to unlock full secret stories.` : 
-                               currentLang === 'ja' ? `。現在20m以上離れています。近づくと詳細な秘密の解説が流れます。` : 
-                               `。您当前距离该景点超过 20 米，走近后将自动解锁深度秘闻讲解。`;
             }
 
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
@@ -721,7 +703,7 @@
                 const spotLat = spot.lat || (spot.center && spot.center.lat);
                 const spotLon = spot.lon || (spot.center && spot.center.lon);
 
-                let distanceVal = 999; // 默认较远
+                let distanceVal = 999;
                 let distanceText = t.distanceWalk;
                 if (currentLat !== null && currentLon !== null && spotLat && spotLon) {
                     distanceVal = calculateDistance(currentLat, currentLon, spotLat, spotLon);
@@ -743,14 +725,15 @@
                 const card = document.createElement('div');
                 card.className = isLandmark ? 'spot-card landmark' : 'spot-card';
                 
+                // 无论远近，卡片上始终展示【标题、距离、基本简介】
                 let cardHtml = `
                     <div class="spot-title">${name}</div>
                     <div class="spot-meta">${distanceText}</div>
                     <div class="spot-desc-section">${t.labelOverview} ${guideData.basic}</div>
                 `;
 
+                // 只有当用户走到 20 米以内时，卡片才会自动展开并显示“趣闻典故、拍照机位、伴手礼”
                 if (isNearby) {
-                    // 20米以内：展示全部深度秘闻、拍照、伴手礼
                     if (guideData.anecdote) {
                         cardHtml += `<div class="spot-anecdote-section">${t.labelAnecdote} ${guideData.anecdote}</div>`;
                     }
@@ -760,9 +743,6 @@
                     if (guideData.shop) {
                         cardHtml += `<div class="spot-shop-section">${t.labelShop} ${guideData.shop}</div>`;
                     }
-                } else {
-                    // 20米以外：提示用户走近解锁
-                    cardHtml += `<div class="proximity-notice">${t.nearbyNotice}</div>`;
                 }
 
                 cardHtml += `
