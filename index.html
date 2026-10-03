@@ -293,7 +293,7 @@
                 </div>
             </div>
 
-            <div id="status">已就绪：搜索周边1000米内的最近20个景点，走近至30米内为您解锁语音讲解...</div>
+            <div id="status">已就绪：搜索周边1000米内的最近20个景点，走近至30米内解锁语音播报...</div>
         </div>
 
         <div class="spot-list" id="spots-container">
@@ -334,7 +334,7 @@
                 },
                 distancePrefix: "距离您：约",
                 triggerBadge: "🟢 【已进入30米核心讲解区】",
-                lockedBadge: "🔒 【30米外·图文阅读模式】",
+                lockedBadge: "🔒 【30米内解锁语音】",
                 audioBtn: "🎤 听讲解",
                 lockedAudioBtn: "🔓 30米内解锁语音",
                 stopBtn: "⏹️ 停止播报",
@@ -366,7 +366,7 @@
                 },
                 distancePrefix: "Distance: approx.",
                 triggerBadge: "🟢 【Within 30m Core Guide Zone】",
-                lockedBadge: "🔒 【Reading Mode (>30m)】",
+                lockedBadge: "🔒 【Unlock Audio within 30m】",
                 audioBtn: "🎤 Listen",
                 lockedAudioBtn: "🔓 Unlock Audio within 30m",
                 stopBtn: "⏹ Stop",
@@ -374,7 +374,7 @@
                 labelOverview: "🏛 <b>Overview:</b>",
                 labelAnecdote: "📜 <b>Anecdotes:</b>",
                 labelPhoto: "📷 <b>Best Photo Spot:</b>",
-                labelShop: "🛍️️ <b>Souvenirs & Shops:</b>",
+                labelShop: "🛍 <b>Souvenirs & Shops:</b>",
                 speechLang: "en-US"
             },
             ja: {
@@ -398,7 +398,7 @@
                 },
                 distancePrefix: "距離：約",
                 triggerBadge: "🟢 【30m以内コア解説エリア】",
-                lockedBadge: "🔒 【閲覧モード（30m外）】",
+                lockedBadge: "🔒 【30m内で音声解放】",
                 audioBtn: "🎤 解説を聴く",
                 lockedAudioBtn: "🔓 30m内で音声解放",
                 stopBtn: "⏹ 停止",
@@ -586,53 +586,75 @@
             let photoInfo = "";
             let shopInfo = "";
 
+            // 1. 专属深度简介（拒绝千篇一律）
             if (name.includes("浅草寺") || name.includes("雷门")) {
-                if (lang === 'en') {
-                    basicInfo = "Founded in 628 AD, Senso-ji is Tokyo's oldest Buddhist temple, dedicated to the Bodhisattva Kannon and steeped in centuries of Edo period heritage.";
-                    anecdoteInfo = "The iconic 700-kg red lantern at Kaminarimon was first donated by Panasonic founder Konosuke Matsushita in 1960 after praying for recovery from illness.";
-                    photoInfo = "Stand directly beneath the Kaminarimon lantern looking up, or use the Asakusa Culture Tourist Information Center rooftop deck for panoramic views.";
-                    shopInfo = "Nakamise-dori features traditional snacks like Ningyo-yaki. Recommended shop: Kimuraya's historic Ningyo-yaki.";
-                } else if (lang === 'ja') {
-                    basicInfo = "推古天皇36年（628年）に創建された都内最古のお寺。聖観世音菩薩を本尊とし、江戸文化の中心地として発展しました。";
-                    anecdoteInfo = "雷門の赤提灯は1960年にパナソニック創業者・松下幸之助が寄贈したことに始まります。";
-                    photoInfo = "雷門の提灯の真下からのアングルや、文化観光センター8階展望テラスからの仲見世通り一望が絶景です。";
-                    shopInfo = "仲見世通りの「人形焼」や老舗の雷おこしが定番のお土産です。おすすめ店：木村家本店。";
-                } else {
-                    basicInfo = "建于公元628年的东京都内最古老寺庙，供奉观音菩萨。这里完整保留了浓郁的江户下町风情，是东京历史与信仰的绝对核心。";
-                    anecdoteInfo = "雷门中央重达700公斤的巨型红灯笼，是1960年由松下电器创始人松下幸之助因病痊愈后为报恩首次捐赠并延续至今的传奇之作。";
-                    photoInfo = "1. 雷门灯笼正下方仰拍；2. 浅草文化观光中心8楼免费展望台，可俯瞰整条仲见世商店街与远处的晴空塔同框。";
-                    shopInfo = "仲见世通里老字号林立，强烈推荐“木村家总本店”的人偶烧与传统雷门米花糖。";
-                }
+                basicInfo = lang === 'en' ? "Founded in 628 AD, Senso-ji is Tokyo's oldest Buddhist temple, dedicated to the Bodhisattva Kannon and steeped in centuries of Edo period heritage." :
+                            lang === 'ja' ? "推古天皇36年（628年）に創建された都内最古のお寺。聖観世音菩薩を本尊とし、江戸文化の中心地として発展しました。" :
+                            "建于公元628年的东京都内最古老寺庙，供奉观音菩萨。这里完整保留了浓郁的江户下町风情，是东京历史与信仰的绝对核心。";
+                
+                anecdoteInfo = lang === 'en' ? "The iconic 700-kg red lantern at Kaminarimon was first donated by Panasonic founder Konosuke Matsushita in 1960." :
+                               lang === 'ja' ? "雷門の赤提灯は1960年にパナソニック創業者・松下幸之助が寄贈したことに始まります。" :
+                               "雷门中央重达700公斤的巨型红灯笼，是1960年由松下电器创始人松下幸之助因病痊愈后为报恩首次捐赠并延续至今的传奇之作。";
+                
+                photoInfo = lang === 'en' ? "Stand directly beneath the Kaminarimon lantern looking up, or use the Asakusa Culture Tourist Information Center rooftop deck." :
+                            lang === 'ja' ? "雷門の提灯の真下からのアングルや、文化観光センター8階展望テラスからの仲見世通り一望が絶景です。" :
+                            "雷门灯笼正下方仰拍，或者去浅草文化观光中心8楼展望台俯瞰仲见世全景。";
+                
+                shopInfo = lang === 'en' ? "Nakamise-dori features traditional snacks like Ningyo-yaki. Recommended: Kimuraya's historic Ningyo-yaki." :
+                           lang === 'ja' ? "仲見世通りの「人形焼」や老舗の雷おこしが定番。おすすめ店：木村家本店。" :
+                           "仲见世通里老字号林立，推荐去“木村家总本店”买点人偶烧或传统雷门米花糖。";
+
             } else if (name.includes("上野恩赐公园")) {
-                if (lang === 'en') {
-                    basicInfo = "Established in 1873, Japan's first public park was formerly the vast grounds of Kanei-ji, the family temple of the Tokugawa Shogunate.";
-                    anecdoteInfo = "When the bronze statue of Saigo Takamori was unveiled, his wife famously exclaimed 'That is not my husband at all!'";
-                    photoInfo = "Shinobazu Pond with lotus leaves and Tokyo Skytree in the background.";
-                    shopInfo = "Panda-themed pastries near Ueno Station or traditional Anmitsu at Mitsuhashi.";
-                } else if (lang === 'ja') {
-                    basicInfo = "1873年に開園した日本初の公園の一つ。元は徳川将軍家の菩提寺である寛永寺の広大な敷地でした。";
-                    anecdoteInfo = "西郷隆盛像の除幕式で、妻が「うちの人はこんな人じゃなかった」と驚いた逸話が有名です。";
-                    photoInfo = "不忍池の蓮とスカイツリーを収めるアングルが写真映え抜群です。";
-                    shopInfo = "上野駅周辺のパンダモチーフのお菓子や、老舗甘味処「みはし」がおすすめです。";
-                } else {
-                    basicInfo = "日本第一座西式公园，前身是德川幕府家族菩提寺“宽永寺”的广阔领地，园内汇聚多座国家级博物馆，是东京的文化艺术心脏。";
-                    anecdoteInfo = "园内西乡隆盛铜像揭幕时，其妻曾当场惊呼‘这根本不是我丈夫’，因为雕像把其打猎时的随性姿态永久定格了。";
-                    photoInfo = "不忍池畔的木栈道，可将满池荷花与晴空塔同框；清水观音堂的“月之松”圆窗构图也是摄影师的最爱。";
-                    shopInfo = "上野车站内可购买限定熊猫年轮蛋糕，附近还有百年甘味处“みはし”可品尝特色甜点。";
-                }
+                basicInfo = lang === 'en' ? "Established in 1873, Japan's first public park was formerly the vast grounds of Kanei-ji, the family temple of the Tokugawa Shogunate." :
+                            lang === 'ja' ? "1873年に開園した日本初の公園の一つ。元は徳川将軍家の菩提寺である寛永寺の広大な敷地でした。" :
+                            "日本第一座西式公园，前身是德川幕府家族菩提寺“宽永寺”的广阔领地，园内汇聚多座国家级博物馆，是东京的文化艺术心脏。";
+                
+                anecdoteInfo = lang === 'en' ? "When the bronze statue of Saigo Takamori was unveiled, his wife famously exclaimed 'That is not my husband at all!'" :
+                               lang === 'ja' ? "西郷隆盛像の除幕式で、妻が「うちの人はこんな人じゃなかった」と驚いた逸話が有名です。" :
+                               "园内西乡隆盛铜像揭幕时，其妻曾当场惊呼‘这根本不是我丈夫’，因为雕像把其打猎时的随性姿态永久定格了。";
+                
+                photoInfo = lang === 'en' ? "Shinobazu Pond with lotus leaves and Tokyo Skytree in the background." :
+                            lang === 'ja' ? "不忍池の蓮とスカイツリーを収めるアングルが写真映え抜群です。" :
+                            "不忍池畔的木栈道，可将满池荷花与晴空塔同框。";
+                
+                shopInfo = lang === 'en' ? "Panda-themed pastries near Ueno Station or traditional Anmitsu at Mitsuhashi." :
+                           lang === 'ja' ? "上野駅周辺のパンダモチーフのお菓子や、老舗甘味処「みはし」がおすすめです。" :
+                           "上野车站内可购买限定熊猫点心，或去百年甘味处“みはし”品尝甜点。";
+
             } else {
-                basicInfo = lang === 'en' ? "An exquisite local landmark blending traditional neighborhood culture with serene urban landscapes." :
-                            lang === 'ja' ? "地域の歴史と美しい街並みが調和する、趣のあるローカルスポットです。" :
-                            "一处完美融合了当地街区风貌与人文印记的特色点位，静静诉说着属于这片土地的日常点滴。";
-                anecdoteInfo = lang === 'en' ? "According to local oral history, this site has served as a beloved communal gathering ground and spiritual anchor for generations of residents." :
-                               lang === 'ja' ? "地域の人々に代々大切に守られてきた、心温まる伝承や歴史的背景が息づいています。" :
-                               "相传在当地社区建立之初，这里便是居民休闲散步、邻里交流的核心场所，充满浓厚的生活气息。";
-                photoInfo = lang === 'en' ? "Capture the scenic pathway framed by seasonal foliage or the quiet neighborhood streetscape." :
-                            lang === 'ja' ? "季節の移ろいを感じる木々と、美しい地元の街並みを背景にした撮影が最適です。" :
-                            "推荐以两侧充满生活气息的林荫小径或精致的入口石碑为背景，随手取景即可拍出地道的日式街景。";
-                shopInfo = lang === 'en' ? "Explore nearby local convenience stores or family-run artisan shops for regional snacks." :
-                           lang === 'ja' ? "周辺の商店や、地元ならではの隠れた名店・特産品店をぜひ覗いてみてください。" :
-                           "附近通常设有特色商店或便利店，可留意搜寻当地限定的手作小点与伴手礼。";
+                // 动态生成的普通景点：根据名称和标签生成差异化简介、趣味幽默兜底、通用拍照及商店指引
+                let spotTypeDesc = "这是一处藏在城市街角、充满在地生活气息的特色点位。";
+                if (tags.leisure === 'park') {
+                    spotTypeDesc = `“${name}”是周边难得的城市绿色休憩空间，草木葱郁，微风不燥。`;
+                } else if (tags.historic || tags.historic === 'yes') {
+                    spotTypeDesc = `“${name}”带有厚重的人文印记，静静承载着这片街区岁月的变迁。`;
+                } else if (tags.tourism === 'museum') {
+                    spotTypeDesc = `“${name}”陈列着丰富的历史展品与地方文化资料，是深度了解本地风貌的好去处。`;
+                } else {
+                    spotTypeDesc = `“${name}”是本地居民日常生活中经常路过、极具地道东京市井风味的一处坐标。`;
+                }
+
+                basicInfo = spotTypeDesc + (lang === 'en' ? " A wonderful spot to experience local vibes." : lang === 'ja' ? "地域の魅力を肌で感じられる場所です。" : "非常适合放慢脚步细细体味。");
+
+                // 趣味幽默兜底（搞笑话带过）
+                const humorousJokes = [
+                    "虽然没有查到惊天动地的历史大瓜，但绝对是您散步发呆、假装自己是本地人的绝佳摸鱼圣地！",
+                    "据说只要在这个地方转三圈，今天的步行步数就会自动清零（开玩笑的，请放心前行）。",
+                    "虽然历史上没有在这里发生过什么拯救地球的大事件，但这里的空气闻起来格外有‘路过’的味道。",
+                    "历史书上对这里惜墨如金，不过没关系，您的脚底板就是最好的历史考证仪！"
+                ];
+                // 用名字的哈希值或固定方式随机匹配一句搞笑话，确保每个地方不同且有趣
+                let jokeIdx = name.length % humorousJokes.length;
+                anecdoteInfo = humorousJokes[jokeIdx];
+
+                // 拍照机位与伴手礼（按用户要求：怎么拍都行，去附近便利店或土特产店买）
+                photoInfo = lang === 'en' ? "Any angle here screams authentic street photography. Just point and shoot!" :
+                            lang === 'ja' ? "どこを切り取っても自然な街の雰囲気が写せます。お好みの角度で気軽にシャッターをどうぞ！" :
+                            "怎么拍都自带日式街景氛围感，找个顺眼的视角随手一按就是大片！";
+                
+                shopInfo = lang === 'en' ? "Check out nearby convenience stores or local Omiyage shops for regional snacks." :
+                           lang === 'ja' ? "近くのコンビニや、周辺の土産物店（お土産屋さん）を覗いてみると、面白い発見がありますよ。" :
+                           "去附近的便利店或周边的土特产商店（Omiyage店）转转，总能淘到当地限定的小零食。";
             }
 
             return { basic: basicInfo, anecdote: anecdoteInfo, photo: photoInfo, shop: shopInfo };
