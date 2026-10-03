@@ -143,12 +143,20 @@
             padding: 18px;
             border-radius: var(--border-radius);
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border-left: 4px solid var(--accent-color);
+            border-left: 4px solid #bdc3c7; /* 默认远距离：灰色边框 */
+            opacity: 0.85;
         }
 
         .spot-card.landmark {
             border-left: 4px solid #e74c3c;
-            background: #fffdfd;
+        }
+
+        /* 核心逻辑：当用户走到 30 米以内时的专属高亮讲解样式 */
+        .spot-card.active-trigger {
+            border-left: 4px solid var(--accent-color);
+            background: #f4fcf7;
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.15);
+            opacity: 1;
         }
 
         .spot-title {
@@ -160,9 +168,13 @@
 
         .spot-meta {
             font-size: 0.85rem;
-            color: var(--accent-color);
+            color: var(--text-secondary);
             font-weight: 600;
             margin-bottom: 10px;
+        }
+
+        .spot-card.active-trigger .spot-meta {
+            color: var(--accent-color);
         }
 
         .spot-desc-section {
@@ -262,7 +274,7 @@
             </header>
 
             <div class="controls">
-                <button class="primary" id="btn-gps" onclick="getLocationAndExplore()">📍 获取实时GPS并开启 30 米内 AI 讲解</button>
+                <button class="primary" id="btn-gps" onclick="getLocationAndExplore()">📍 获取实时GPS并开启 1000米搜索 / 30米触发讲解</button>
                 
                 <div class="filter-row">
                     <select id="category-select" onchange="onCategoryChange()">
@@ -274,13 +286,13 @@
                 </div>
             </div>
 
-            <div id="status">您的专属 AI 导游已就绪，走到 30 米范围内为您自动讲解...</div>
+            <div id="status">已就绪：搜索周边1000米，走近至30米内为您自动触发讲解...</div>
         </div>
 
         <div class="spot-list" id="spots-container">
             <div class="welcome-banner">
                 <h3 id="welcome-title">欢迎来到 AI 随身导游</h3>
-                <p id="welcome-desc">超越传统导游的超级知识库！后台将为您搜寻 1000 米以内的地标，当您走近至 30 米范围内时，系统将为您逐一揭秘背景与典故。随时掌控您的专属旅程。</p>
+                <p id="welcome-desc">后台为您搜索 1000 米以内的所有景点。当您移动并走进某个景点 30 米范围内时，系统将为您自动高亮并开启深度讲解。</p>
             </div>
         </div>
     </div>
@@ -297,16 +309,16 @@
             zh: {
                 title: "🧭 AI 随身导游",
                 langLabel: "语言:",
-                gpsBtn: "📍 获取实时GPS并开启 30 米内 AI 讲解",
-                statusInit: "您的专属 AI 导游已就绪，走到 30 米范围内为您讲解...",
+                gpsBtn: "📍 获取实时GPS并开启 1000米搜索 / 30米触发讲解",
+                statusInit: "已就绪：搜索周边1000米，走近至30米内为您自动触发讲解...",
                 statusLocating: "正在获取您的 GPS 位置...",
-                statusLoading: "正在搜寻周边 1000 米内的数据，并筛选 30 米内的讲解点...",
-                statusSuccess: "已为您过滤出 30 米范围内的精彩讲解点！",
+                statusLoading: "正在搜寻周边 1000 米内的景点数据...",
+                statusSuccess: "GPS 获取成功！已列出1000米内景点（进入30米内将自动触发深度讲解）。",
                 statusErrorGPS: "无法获取您的地理位置，请确保浏览器已授权定位。",
                 statusErrorFetch: "获取景点讲解数据失败，请稍后重试。",
-                noSpots: "目前 30 米范围内暂无符合该分类的讲解点（继续移动靠近景点即可触发）。",
+                noSpots: "目前该分类下暂无符合条件的景点。",
                 welcomeTitle: "欢迎来到 AI 随身导游",
-                welcomeDesc: "系统在后台为您监控 1000 米范围内的地标，当您靠近至 30 米以内时，将为您实时触发深度背景、典故与拍照指南。",
+                welcomeDesc: "系统在后台为您搜寻 1000 米内的所有地标，当您走近至 30 米范围内时，将为您触发专属的深度讲解。",
                 cats: { 
                     recommend: "🌟 景点推荐", 
                     historic: "⛩️ 历史古迹与神社", 
@@ -314,7 +326,7 @@
                     museum: "🏛️ 博物馆与乡土馆" 
                 },
                 distancePrefix: "距离您：约",
-                distanceWalk: "距离您：步行可达范围内",
+                triggerBadge: "🟢 【已进入30米核心讲解区】",
                 audioBtn: "🎤 听讲解",
                 stopBtn: "⏹️ 停止播报",
                 mapBtn: "🗺️ 导航",
@@ -327,16 +339,16 @@
             en: {
                 title: "🧭 AI Tour Guide",
                 langLabel: "Language:",
-                gpsBtn: "📍 Get GPS & Start AI Guide within 30m",
-                statusInit: "Your personal AI guide is ready, narrating within 30m...",
+                gpsBtn: "📍 Get GPS (1000m Search / 30m Trigger)",
+                statusInit: "Ready: 1000m search, auto-trigger within 30m...",
                 statusLocating: "Getting your GPS location...",
-                statusLoading: "Searching nearby within 1000m, filtering for 30m...",
-                statusSuccess: "AI narration ready for spots within 30m!",
+                statusLoading: "Searching spots within 1000m...",
+                statusSuccess: "GPS loaded! 1000m spots listed (entering 30m triggers guide).",
                 statusErrorGPS: "Unable to get location. Please enable location permissions.",
                 statusErrorFetch: "Failed to fetch spot data. Please try again later.",
-                noSpots: "No sites found within 30 meters in this category.",
+                noSpots: "No sites found in this category.",
                 welcomeTitle: "Welcome to AI Tour Guide",
-                welcomeDesc: "Background scans 1000m, and narration triggers when you are within 30 meters.",
+                welcomeDesc: "Background searches 1000m. Narration triggers when you are within 30 meters.",
                 cats: { 
                     recommend: "🌟 Recommended", 
                     historic: "⛩ History & Shrines", 
@@ -344,10 +356,10 @@
                     museum: "🏛️ Museums" 
                 },
                 distancePrefix: "Distance: approx.",
-                distanceWalk: "Distance: within walking distance",
+                triggerBadge: "🟢 【Within 30m Core Guide Zone】",
                 audioBtn: "🎤 Listen",
                 stopBtn: "⏹ Stop",
-                mapBtn: "🗺️️ Map",
+                mapBtn: "🗺 Map",
                 labelOverview: "🏛 <b>Overview:</b>",
                 labelAnecdote: "📜 <b>Anecdotes:</b>",
                 labelPhoto: "📷 <b>Best Photo Spot:</b>",
@@ -357,16 +369,16 @@
             ja: {
                 title: "🧭 AI 随身ガイド",
                 langLabel: "言語:",
-                gpsBtn: "📍 GPS取得して30m内のAI解説を開始",
-                statusInit: "あなたの専属AIガイドがスタンバイ中（30m圏内）...",
+                gpsBtn: "📍 GPS取得 (1000m検索 / 30m内解説)",
+                statusInit: "準備完了：1000m検索、30m以内で自動解説...",
                 statusLocating: "GPS位置情報を取得中...",
-                statusLoading: "1000m以内を検索し、30m以内のスポットを抽出中...",
-                statusSuccess: "30m以内のスポット解説の準備ができました！",
-                statusErrorGPS: "位置情報を取得できません。位置情報の権限を確認してください。",
-                statusErrorFetch: "スポットデータの取得に失敗しました。後ほど再試行してください。",
-                noSpots: "30m以内に該当するスポットはありません。",
+                statusLoading: "1000m以内のスポットを検索中...",
+                statusSuccess: "GPS取得成功！1000m内のスポット一覧（30m以内で解説開始）。",
+                statusErrorGPS: "位置情報を取得できません。権限を確認してください。",
+                statusErrorFetch: "スポットデータの取得に失敗しました。",
+                noSpots: "該当するスポットはありません。",
                 welcomeTitle: "AI随身ガイドへようこそ",
-                welcomeDesc: "1000m以内のデータを取得し、30m以内に近づいたスポットの解説を自動で立ち上げます。",
+                welcomeDesc: "1000m以内のデータを取得し、30m以内に近づいたスポットの解説を起動します。",
                 cats: { 
                     recommend: "🌟 おすすめスポット", 
                     historic: "⛩ 歴史・神社", 
@@ -374,7 +386,7 @@
                     museum: "🏛 博物館" 
                 },
                 distancePrefix: "距離：約",
-                distanceWalk: "距離：徒歩圏内",
+                triggerBadge: "🟢 【30m以内コア解説エリア】",
                 audioBtn: "🎤 解説を聴く",
                 stopBtn: "⏹ 停止",
                 mapBtn: "🗺️ マップ",
@@ -444,7 +456,7 @@
             const statusEl = document.getElementById('status');
             statusEl.innerText = t.statusLoading;
 
-            // 保持原本的 1000 米 API 范围检索不变
+            // 保持 1000 米搜索范围，确保能够正常搜到周边的景点
             const query = `
                 [out:json][timeout:25];
                 (
@@ -470,19 +482,15 @@
                 allSpots = data.elements.filter(item => {
                     const tags = item.tags || {};
                     const name = tags.name || tags['name:ja'] || tags['name:en'] || tags['name:zh'] || '';
-                    
                     if (!name) return false;
                     
                     const blacklist = ['团地', '団地', 'アパート', 'マンション', 'ハイツ', 'コーポ', '住宅', 'parkings', 'school', 'hospital', 'university', 'parking', 'police', 'apartments', 'supermarket'];
                     for (let word of blacklist) {
-                        if (name.toLowerCase().includes(word.toLowerCase())) {
-                            return false;
-                        }
+                        if (name.toLowerCase().includes(word.toLowerCase())) return false;
                     }
                     if (tags.residential || tags.landuse === 'residential' || tags.building === 'apartments' || tags.building === 'residential') {
                         return false;
                     }
-                    
                     return true;
                 });
 
@@ -652,6 +660,7 @@
             container.innerHTML = '';
             const t = i18n[currentLang];
 
+            // 1. 过滤 1000 米内的所有候选点
             let filteredSpots = allSpots.filter(spot => {
                 const tags = spot.tags || {};
                 let name = tags.name || tags['name:ja'] || tags['name:en'] || tags['name:zh'] || '';
@@ -666,19 +675,10 @@
                 } else {
                     if (spotType !== currentCategory) return false;
                 }
-
-                // 核心修改：精准过滤距离，只保留 30 米（<= 30）范围内的景点进行讲解展示
-                if (currentLat !== null && currentLon !== null) {
-                    const spotLat = spot.lat || (spot.center && spot.center.lat);
-                    const spotLon = spot.lon || (spot.center && spot.center.lon);
-                    if (spotLat && spotLon) {
-                        const dist = calculateDistance(currentLat, currentLon, spotLat, spotLon);
-                        return dist <= 30; // 仅触发 30 米以内的讲解点
-                    }
-                }
-                return false;
+                return true;
             });
 
+            // 2. 按照距离由近到远排序
             if (currentLat !== null && currentLon !== null) {
                 filteredSpots.sort((a, b) => {
                     const latA = a.lat || (a.center && a.center.lat);
@@ -697,6 +697,7 @@
                 return;
             }
 
+            // 3. 渲染 1000 米内的所有点，并精准判断：若距离 <= 30 米，则触发“核心讲解区”高亮
             filteredSpots.forEach(spot => {
                 const tags = spot.tags || {};
                 
@@ -712,13 +713,20 @@
                 const spotLat = spot.lat || (spot.center && spot.center.lat);
                 const spotLon = spot.lon || (spot.center && spot.center.lon);
 
-                let distanceText = t.distanceWalk;
+                let dist = 9999;
+                let distanceText = t.distancePrefix + " 远";
+                let isTriggered = false; // 是否触发 30 米讲解
+
                 if (currentLat !== null && currentLon !== null && spotLat && spotLon) {
-                    const dist = calculateDistance(currentLat, currentLon, spotLat, spotLon);
-                    if (dist >= 0) {
-                        distanceText = `${t.distancePrefix} ${dist} 米`;
-                        if (currentLang === 'en') distanceText = `Distance: approx. ${dist}m`;
-                        if (currentLang === 'ja') distanceText = `距離：約 ${dist}m`;
+                    dist = calculateDistance(currentLat, currentLon, spotLat, spotLon);
+                    distanceText = `${t.distancePrefix} ${dist} 米`;
+                    if (currentLang === 'en') distanceText = `Distance: approx. ${dist}m`;
+                    if (currentLang === 'ja') distanceText = `距離：約 ${dist}m`;
+
+                    // 核心判定：只有距离小于等于 30 米时，才触发自动讲解高亮
+                    if (dist <= 30) {
+                        isTriggered = true;
+                        distanceText += ` ${t.triggerBadge}`;
                     }
                 }
 
@@ -728,7 +736,8 @@
                 const guideData = generateAIGuideContent(name, tags, currentLang);
 
                 const card = document.createElement('div');
-                card.className = isLandmark ? 'spot-card landmark' : 'spot-card';
+                // 如果在 30 米内，赋予 active-trigger 高亮样式；否则为普通备用样式
+                card.className = isTriggered ? 'spot-card active-trigger' : (isLandmark ? 'spot-card landmark' : 'spot-card');
                 
                 let cardHtml = `
                     <div class="spot-title">${name}</div>
