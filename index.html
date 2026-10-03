@@ -268,7 +268,7 @@
             </header>
 
             <div class="controls">
-                <button class="primary" id="btn-gps" onclick="getLocationAndExplore()">📍 获取实时GPS并开启 30 米内 AI 讲解</button>
+                <button class="primary" id="btn-gps" onclick="getLocationAndExplore()">📍 获取实时GPS并搜索周边 1000 米景点</button>
                 
                 <div class="filter-row">
                     <select id="category-select" onchange="onCategoryChange()">
@@ -280,13 +280,13 @@
                 </div>
             </div>
 
-            <div id="status">您的专属 AI 导游已就绪，走到 30 米内为您开启讲解...</div>
+            <div id="status">已准备就绪，搜索 1000 米内景点，走到 30 米以内可解锁语音讲解...</div>
         </div>
 
         <div class="spot-list" id="spots-container">
             <div class="welcome-banner">
                 <h3 id="welcome-title">欢迎来到 AI 随身导游</h3>
-                <p id="welcome-desc">超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 30 米以内的地标与古迹，走进 30 米内即可解锁语音播报，为您逐一揭秘背景与典故。</p>
+                <p id="welcome-desc">点击上方按钮，系统将为您检索方圆 1000 米内的所有精彩地标与古迹。列表支持查看详情与导航，当您步行靠近至景点 30 米以内时，将自动解锁语音播报为您深度讲解！</p>
             </div>
         </div>
     </div>
@@ -303,16 +303,16 @@
             zh: {
                 title: "🧭 AI 随身导游",
                 langLabel: "语言:",
-                gpsBtn: "📍 获取实时GPS并开启 30 米内 AI 讲解",
-                statusInit: "您的专属 AI 导游已就绪，走到 30 米内为您开启讲解...",
+                gpsBtn: "📍 获取实时GPS并搜索周边 1000 米景点",
+                statusInit: "已准备就绪，搜索 1000 米内景点，走到 30 米以内可解锁语音讲解...",
                 statusLocating: "正在获取您的 GPS 位置...",
-                statusLoading: "正在搜寻周边 1000 米内的精彩讲解点...",
-                statusSuccess: "周边景点已加载，靠近至 30 米内即可收听语音讲解！",
+                statusLoading: "正在搜寻周边 1000 米内的精彩景点...",
+                statusSuccess: "周边 1000 米景点已加载！靠近至 30 米以内即可收听语音讲解。",
                 statusErrorGPS: "无法获取您的地理位置，请确保浏览器已授权定位。",
-                statusErrorFetch: "获取景点讲解数据失败，请稍后重试。",
-                noSpots: "1000 米范围内暂无符合该分类的讲解点。",
+                statusErrorFetch: "获取景点讲解数据失败，请检查网络或稍后重试。",
+                noSpots: "1000 米范围内暂无符合该分类的讲解点（您可以切换上方分类标签试试）。",
                 welcomeTitle: "欢迎来到 AI 随身导游",
-                welcomeDesc: "超越传统导游的超级知识库！点击上方按钮，系统将自动定位并计算距离。靠近景点 30 米以内即可解锁语音播报，随时掌控您的专属旅程。",
+                welcomeDesc: "点击上方按钮，系统将为您检索方圆 1000 米内的所有精彩地标与古迹。列表支持查看详情与导航，当您步行靠近至景点 30 米以内时，将自动解锁语音播报为您深度讲解！",
                 cats: { 
                     recommend: "🌟 景点推荐", 
                     historic: "⛩️ 历史古迹与神社", 
@@ -322,7 +322,7 @@
                 distancePrefix: "距离您：约",
                 distanceWalk: "距离您：计算中...",
                 audioBtn: "🎤 听讲解 (需在30米内)",
-                audioLocked: "🔒 需在30米内解锁",
+                audioLocked: "🔒 需走近至30米内解锁",
                 stopBtn: "⏹️ 停止播报",
                 mapBtn: "🗺️ 导航",
                 labelOverview: "🏛️ <b>简介：</b>",
@@ -334,47 +334,47 @@
             en: {
                 title: "🧭 AI Tour Guide",
                 langLabel: "Language:",
-                gpsBtn: "📍 Get GPS & Start AI Guide within 30m",
-                statusInit: "Your personal AI guide is ready, narrating within 30m...",
+                gpsBtn: "📍 Get GPS & Search 1000m Radius",
+                statusInit: "Ready. Searching 1000m range; audio unlocks within 30m...",
                 statusLocating: "Getting your GPS location...",
-                statusLoading: "Searching for nearby sites...",
-                statusSuccess: "Sites loaded! Audio narration unlocks within 30 meters.",
+                statusLoading: "Searching for sites within 1000 meters...",
+                statusSuccess: "Sites within 1000m loaded! Audio unlocks within 30 meters.",
                 statusErrorGPS: "Unable to get location. Please enable location permissions.",
                 statusErrorFetch: "Failed to fetch spot data. Please try again later.",
                 noSpots: "No sites found within 1000 meters in this category.",
                 welcomeTitle: "Welcome to AI Tour Guide",
-                welcomeDesc: "Your ultimate AI knowledge base. Click above and move within 30 meters of a site to unlock audio narration.",
+                welcomeDesc: "Explore sites within a 1000-meter radius. Move within 30 meters of any site to unlock its audio narration.",
                 cats: { 
                     recommend: "🌟 Recommended", 
                     historic: "⛩ History & Shrines", 
                     park: "🌳 Parks & Greenery", 
-                    museum: "🏛️️ Museums" 
+                    museum: "🏛 Museums" 
                 },
                 distancePrefix: "Distance: approx.",
                 distanceWalk: "Distance: calculating...",
                 audioBtn: "🎤 Listen (Within 30m)",
-                audioLocked: "🔒 Locked (>30m)",
+                audioLocked: "🔒 Locked (Need <30m)",
                 stopBtn: "⏹ Stop",
                 mapBtn: "🗺️ Map",
                 labelOverview: "🏛 <b>Overview:</b>",
                 labelAnecdote: "📜 <b>Anecdotes:</b>",
                 labelPhoto: "📷 <b>Best Photo Spot:</b>",
-                labelShop: "🛍️ <b>Souvenirs & Shops:</b>",
+                labelShop: "🛍 <b>Souvenirs & Shops:</b>",
                 speechLang: "en-US"
             },
             ja: {
                 title: "🧭 AI 随身ガイド",
                 langLabel: "言語:",
-                gpsBtn: "📍 GPS取得して30m内のAI解説を開始",
-                statusInit: "あなたの専属AIガイドがスタンバイ中...",
+                gpsBtn: "📍 GPS取得して1000m以内のスポットを検索",
+                statusInit: "スタンバイ中。1000m内を検索、30m以内で音声解説が解放されます...",
                 statusLocating: "GPS位置情報を取得中...",
-                statusLoading: "スポット解説を検索中...",
-                statusSuccess: "スポットを読み込みました。30m以内で音声解説が解放されます！",
+                statusLoading: "半径1000m以内のスポットを検索中...",
+                statusSuccess: "1000m以内のスポットを読み込みました！30m以内で音声解説が解放されます。",
                 statusErrorGPS: "位置情報を取得できません。位置情報の権限を確認してください。",
                 statusErrorFetch: "スポットデータの取得に失敗しました。後ほど再試行してください。",
                 noSpots: "1000m以内に該当するスポットはありません。",
                 welcomeTitle: "AI随身ガイドへようこそ",
-                welcomeDesc: "従来のガイドを凌駕する豊富な知識量。スポットの30m以内に近づくと音声解説が自動で解放されます。",
+                welcomeDesc: "半径1000m以内のスポットを幅広く検索できます。スポットの30m以内に近づくと音声解説が自動で解放されます。",
                 cats: { 
                     recommend: "🌟 おすすめスポット", 
                     historic: "⛩ 歴史・神社", 
@@ -384,7 +384,7 @@
                 distancePrefix: "距離：約",
                 distanceWalk: "距離：計算中...",
                 audioBtn: "🎤 解説を聴く (30m以内)",
-                audioLocked: "🔒 30m外のためロック",
+                audioLocked: "🔒 30m以内で解放",
                 stopBtn: "⏹ 停止",
                 mapBtn: "🗺️ マップ",
                 labelOverview: "🏛️ <b>概要：</b>",
@@ -442,6 +442,7 @@
                     fetchSpots(currentLat, currentLon);
                 },
                 (error) => {
+                    console.error("GPS Error:", error);
                     statusEl.innerText = t.statusErrorGPS;
                 },
                 { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -473,12 +474,16 @@
                     method: 'POST',
                     body: query
                 });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const data = await response.json();
                 
-                allSpots = data.elements.filter(item => {
+                allSpots = (data.elements || []).filter(item => {
                     const tags = item.tags || {};
                     const name = tags.name || tags['name:ja'] || tags['name:en'] || tags['name:zh'] || '';
-                    
                     if (!name) return false;
                     
                     const blacklist = ['团地', '団地', 'アパート', 'マンション', 'ハイツ', 'コーポ', '住宅', 'parkings', 'school', 'hospital', 'university', 'parking', 'police', 'apartments', 'supermarket'];
@@ -490,13 +495,13 @@
                     if (tags.residential || tags.landuse === 'residential' || tags.building === 'apartments' || tags.building === 'residential') {
                         return false;
                     }
-                    
                     return true;
                 });
 
                 statusEl.innerText = t.statusSuccess;
                 renderSpots();
             } catch (err) {
+                console.error("Fetch Error:", err);
                 statusEl.innerText = t.statusErrorFetch;
             }
         }
@@ -719,7 +724,7 @@
                     }
                 }
 
-                // 判断是否在 30 米以内
+                // 核心判定：只有当距离存在且 <= 30米时才允许语音播报
                 const isWithin30Meters = (dist !== null && dist <= 30);
 
                 const mapUrl = (spotLat && spotLon) ? `https://www.google.com/maps/search/?api=1&query=${spotLat},${spotLon}` : '#';
@@ -748,7 +753,6 @@
                     cardHtml += `<div class="spot-shop-section">${t.labelShop} ${guideData.shop}</div>`;
                 }
 
-                // 核心逻辑：30米以内可以点击语音按钮，30米以外禁用并显示未解锁文案
                 if (isWithin30Meters) {
                     cardHtml += `
                         <div class="spot-actions">
