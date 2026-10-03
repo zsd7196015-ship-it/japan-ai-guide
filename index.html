@@ -166,9 +166,31 @@
             background: #fef9e7;
             padding: 10px 12px;
             border-radius: 6px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             line-height: 1.6;
             border-left: 3px solid #f39c12;
+        }
+
+        .spot-photo-section {
+            font-size: 0.88rem;
+            color: #8e44ad;
+            background: #f4ecf7;
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            line-height: 1.6;
+            border-left: 3px solid #9b59b6;
+        }
+
+        .spot-shop-section {
+            font-size: 0.88rem;
+            color: #16a085;
+            background: #e8f8f5;
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            line-height: 1.6;
+            border-left: 3px solid #1abc9c;
         }
 
         .spot-actions {
@@ -268,7 +290,7 @@
                 statusErrorFetch: "获取景点讲解数据失败，请稍后重试。",
                 noSpots: "1000 米范围内暂无符合该分类的讲解点。",
                 welcomeTitle: "欢迎来到 AI 随身导游",
-                welcomeDesc: "超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹，为您逐一揭秘简介与趣闻。想听就听，随时掌控您的专属旅程。",
+                welcomeDesc: "超越传统导游的超级知识库！点击上方按钮，系统将自动定位您 1000 米以内的地标与古迹，为您逐一揭秘简介、趣闻、拍照机位与伴手礼。随时掌控您的专属旅程。",
                 cats: { 
                     recommend: "🌟 景点推荐与深度讲解", 
                     historic: "⛩️ 历史古迹与神社", 
@@ -282,6 +304,8 @@
                 mapBtn: "🗺️ 导航",
                 labelOverview: "🏛️ <b>简介：</b>",
                 labelAnecdote: "📜 <b>趣闻：</b>",
+                labelPhoto: "📷 <b>拍照机位：</b>",
+                labelShop: "🛍️ <b>伴手礼与老店推荐：</b>",
                 speechLang: "zh-CN"
             },
             en: {
@@ -309,6 +333,8 @@
                 mapBtn: "🗺️ Map",
                 labelOverview: "🏛️ <b>Overview:</b>",
                 labelAnecdote: "📜 <b>Anecdotes:</b>",
+                labelPhoto: "📷 <b>Best Photo Spot:</b>",
+                labelShop: "🛍️ <b>Souvenirs & Shops:</b>",
                 speechLang: "en-US"
             },
             ja: {
@@ -336,6 +362,8 @@
                 mapBtn: "🗺️ マップ",
                 labelOverview: "🏛️ <b>概要：</b>",
                 labelAnecdote: "📜 <b>逸話：</b>",
+                labelPhoto: "📷 <b>撮影おすすめスポット：</b>",
+                labelShop: "🛍️ <b>お土産・名店おすすめ：</b>",
                 speechLang: "ja-JP"
             }
         };
@@ -467,41 +495,77 @@
             return !!tags.tourism || !!tags.historic;
         }
 
+        // 大幅丰富的大景点深度知识库（含历史、趣闻、拍照机位、伴手礼）
         function generateAIGuideContent(name, tags, lang) {
             let basicInfo = "";
             let anecdoteInfo = "";
+            let photoInfo = "";
+            let shopInfo = "";
 
-            if (name.includes("浅草寺")) {
-                basicInfo = "欢迎来到东京都内最古老的寺庙——浅草寺。始建于公元628年，承载了近一千四百年的信仰与繁华。";
-                anecdoteInfo = "雷门中央重达700公斤的巨型红灯笼，由松下电器创始人松下幸之助在祈愿病愈后于1960年首次捐赠并延续至今。";
+            if (name.includes("浅草寺") || name.includes("雷门")) {
+                if (lang === 'en') {
+                    basicInfo = "As Tokyo's oldest and most famous Buddhist temple founded in 628 AD, Senso-ji is dedicated to the Bodhisattva Kannon and welcomes over 30 million visitors annually.";
+                    anecdoteInfo = "The iconic 700-kg red lantern at Kaminarimon Gate was first donated by electronics tycoon Konosuke Matsushita in 1960 after praying for recovery from illness.";
+                    photoInfo = "Stand right in the middle under the Kaminarimon giant lantern looking up, or use the Asakura Culture Tourist Information Center rooftop observation deck for a panoramic view of Nakamise-dori.";
+                    shopInfo = "Nakamise-dori shopping street is packed with traditional snacks like Ningyo-yaki (doll cakes) and Kaminari-okoshi (crispy rice candy). Don't miss Kimuraya's Ningyo-yaki!";
+                } else if (lang === 'ja') {
+                    basicInfo = "推古天皇36年（628年）に創建された都内最古のお寺。聖観世音菩薩を本尊とし、年間3000万人を超える参拝客が訪れます。";
+                    anecdoteInfo = "雷門の高さ3.9m、重さ約700kgの赤提灯は、1960年に松下電器（現パナソニック）の創業者・松下幸之助が寄贈したことに始まります。";
+                    photoInfo = "雷門の提灯の真下から見上げるアングル、または文化観光センター8階の展望テラスから仲見世通りを一望するショットが絶景です。";
+                    shopInfo = "仲見世通りには「人形焼」や「雷おこし」の名店が軒を連ねます。創業100年を超える木村家的人形焼はマストバイです！";
+                } else {
+                    basicInfo = "建于公元628年的东京都内最古老寺庙，供奉观音菩萨。这里不仅是信仰中心，更是江户风情的活化石，每年吸引上千万游客顶礼膜拜。";
+                    anecdoteInfo = "雷门中央那盏重达700公斤、高近4米的巨型红灯笼，是1960年由松下电器创始人松下幸之助因病痊愈后为报恩首次捐赠并延续至今的传奇之作。";
+                    photoInfo = "最佳拍照机位：1. 雷门灯笼正下方仰拍，完美避开人潮；2. 浅草文化观光中心8楼免费展望台，俯瞰整条仲见世商店街与远处的晴空塔同框。";
+                    shopInfo = "必买伴手礼与老店推荐：仲见世通里的“木村家总本店”人形焼（人偶烧）始创于明治时期；还有香脆可口的“雷おこし”（雷门米花糖）。";
+                }
             } else if (name.includes("上野恩赐公园")) {
-                basicInfo = "作为东京最具代表性的文化绿洲，其前身可追溯至德川幕府的家族菩提寺——宽永寺的广阔领地。";
-                anecdoteInfo = "园内的西乡隆盛铜像当年揭幕时，西乡的遗孀曾当场惊呼‘这根本不是我丈夫’，至今仍是东京市民津津乐道的趣谈。";
+                if (lang === 'en') {
+                    basicInfo = "Japan's first public park established in 1873, formerly the vast temple grounds of Kanei-ji, serving as the family temple of the Tokugawa Shogunate.";
+                    anecdoteInfo = "When the bronze statue of Saigo Takamori was unveiled, his wife famously exclaimed 'That is not my husband at all!', which remains a local legend.";
+                    photoInfo = "Shinobazu Pond covered with lotus leaves with Tokyo Skytree in the background, or the central cherry blossom avenue (Sakura-dori) in spring/autumn.";
+                    shopInfo = "Ueno Station area offers Panda-themed pastries and traditional sweets like Mitsuhashiya's Anmitsu.";
+                } else if (lang === 'ja') {
+                    basicInfo = "1873年に開園した日本初の公園の一つ。もともとは徳川将軍家の菩提寺である寛永寺の広大な敷地でした。";
+                    anecdoteInfo = "西郷隆盛像の除幕式で、西郷の妻が「うちの人はこんな人じゃなかった」と驚いたという逸話が有名です。";
+                    photoInfo = "不忍池の蓮とスカイツリーを収めるアングルや、春の桜並木、秋のイチョウ並木が写真映え抜群です。";
+                    shopInfo = "上野駅周辺のパンダモチーフのお菓子や、老舗甘味処「みはし」のあんみつが人気です。";
+                } else {
+                    basicInfo = "日本第一座西式公园，前身是德川幕府的家族菩提寺“宽永寺”领地。园内汇聚了东博、国立科学博物馆以及上野动物园，是东京的文化艺术心脏。";
+                    anecdoteInfo = "园内著名的西乡隆盛铜像当年揭幕时，西乡的妻子曾当场惊呼‘这根本不是我丈夫’，因为雕像把他打猎时的随性姿态永久定格了。";
+                    photoInfo = "最佳拍照机位：不忍池畔的木栈道，可将满池荷花与远处的东京晴空塔同框；清水观音堂的“月之松”圆窗构图也是摄影师的最爱。";
+                    shopInfo = "伴手礼推荐：上野车站エキュート（ecute）内的限定“熊猫年轮蛋糕”或老字号甘味处“みはし”的豆かん（豆乳凉粉）。";
+                }
             } else if (name.includes("神宫") || name.includes("神社") || name.includes("大师") || name.includes("寺") || name.includes("院")) {
-                basicInfo = "这是一座历史深厚的宗教地标或古刹，建筑规制完备，完美融合了传统的木构与地方信仰文化。";
-                anecdoteInfo = "相传在古代地方建社或建寺之初，曾有高僧显灵与清泉涌出的奇闻在民间流传。";
+                basicInfo = lang === 'en' ? "A historic religious sanctuary with profound local heritage and traditional wooden architecture." :
+                            lang === 'ja' ? "地域に深く根ざした歴史ある社寺で、伝統的な木造建築と静寂な雰囲気が魅力です。" :
+                            "这是一座历史深厚的宗教地标或古刹，建筑规制完备，完美融合了传统的木构与地方信仰文化。";
+                anecdoteInfo = lang === 'en' ? "Legend says sacred springs and divine signs once appeared here during its ancient founding." :
+                               lang === 'ja' ? "創建の際には不思議な霊験や吉兆があったと伝えられています。" :
+                               "相传在古代地方建社或建寺之初，曾有高僧显灵与清泉涌出的奇闻在民间流传。";
+                photoInfo = lang === 'en' ? "Capture the majestic Torii gate framed by greenery or the serene water purification basin (Chozuya)." :
+                            lang === 'ja' ? "緑に囲まれた鳥居や、手水舎の厳かな雰囲気を背景にした撮影がおすすめです。" :
+                            "最佳拍照机位：鸟居正下方或手水舍（净手处）的侧面特写，极具日式美学。";
+                shopInfo = lang === 'en' ? "Look for traditional Omamori (lucky amulets) and EMA (wooden prayer plaques) as unique souvenirs." :
+                           lang === 'ja' ? "社務所で授かるお守りや絵馬が最高の旅の記念になります。" :
+                           "纪念品推荐：社务所限定的精致“御守”与祈愿“绘马”。";
             } else if (name.includes("公园") || name.includes("庭园")) {
-                basicInfo = "作为城市中的重要绿地空间，园内水系环绕、古木参天，完美融合了自然生态与人文纪念景观。";
+                basicInfo = lang === 'en' ? "An urban green oasis featuring well-landscaped gardens, walking paths, and peaceful ponds." :
+                            lang === 'ja' ? "都会のオアシスとして親しまれる緑豊かな公園で、散策やリフレッシュに最適です。" :
+                            "作为城市中的重要绿地空间，园内水系环绕、古木参天，完美融合了自然生态与人文纪念景观。";
+                photoInfo = lang === 'en' ? "Find a scenic spot by the lake bridge during golden hour for stunning reflections." :
+                           lang === 'ja' ? "夕暮れ時の池にかかる橋や、木漏れ日の差し込む散策路が撮影スポットです。" :
+                           "最佳拍照机位：湖心桥或林荫小道的斑驳光影处，非常适合拍摄人像。";
             } else {
-                basicInfo = "位于周边的特色人文点位，完整保留了本地区独特的街区风貌与历史印记。";
+                basicInfo = lang === 'en' ? "An interesting local spot preserving the unique cultural landscape and history of this neighborhood." :
+                            lang === 'ja' ? "地域の独特な雰囲気を残す、散策にぴったりのローカルスポットです。" :
+                            "位于周边的特色人文点位，完整保留了本地区独特的街区风貌与历史印记。";
             }
 
-            if (lang === 'en') {
-                return { 
-                    basic: `${name} is an important historical and cultural landmark in this area, featuring traditional local heritage and architecture.`, 
-                    anecdote: anecdoteInfo ? "Local folklore and traditional stories have long been associated with this site." : "" 
-                };
-            } else if (lang === 'ja') {
-                return { 
-                    basic: `${name}は、地域に伝わる歴史的由緒や伝統的建築様式を持つ注目のスポットです。`, 
-                    anecdote: anecdoteInfo ? "古くから地域住民に親しまれ、様々な伝承が語り継がれています。" : "" 
-                };
-            } else {
-                return { basic: basicInfo, anecdote: anecdoteInfo };
-            }
+            return { basic: basicInfo, anecdote: anecdoteInfo, photo: photoInfo, shop: shopInfo };
         }
 
-        function toggleAudio(buttonElement, titleText, basicText, anecdoteText) {
+        function toggleAudio(buttonElement, titleText, basicText, anecdoteText, photoText, shopText) {
             if (!('speechSynthesis' in window)) {
                 alert('您的浏览器不支持语音播报功能');
                 return;
@@ -522,12 +586,22 @@
 
             let textToSpeak = currentLang === 'en' ? `Now introducing: ${titleText}. Overview: ${basicText}` : 
                               currentLang === 'ja' ? `${titleText}についてご案内します。概要：${basicText}` : 
-                              `现在为您讲解：${titleText}。简介：${basicText}`;
+                              `现在为您深度讲解：${titleText}。简介：${basicText}`;
             
             if (anecdoteText) {
                 textToSpeak += currentLang === 'en' ? ` Anecdote: ${anecdoteText}` : 
                                currentLang === 'ja' ? ` 逸話：${anecdoteText}` : 
                                ` 趣闻：${anecdoteText}`;
+            }
+            if (photoText) {
+                textToSpeak += currentLang === 'en' ? ` Best photo spot: ${photoText}` : 
+                               currentLang === 'ja' ? ` 撮影スポット：${photoText}` : 
+                               ` 拍照机位建议：${photoText}`;
+            }
+            if (shopText) {
+                textToSpeak += currentLang === 'en' ? ` Recommended shops and souvenirs: ${shopText}` : 
+                               currentLang === 'ja' ? ` おすすめのお土産や名店：${shopText}` : 
+                               ` 伴手礼与老店推荐：${shopText}`;
             }
 
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
@@ -635,9 +709,17 @@
                     cardHtml += `<div class="spot-anecdote-section">${t.labelAnecdote} ${guideData.anecdote}</div>`;
                 }
 
+                if (guideData.photo) {
+                    cardHtml += `<div class="spot-photo-section">${t.labelPhoto} ${guideData.photo}</div>`;
+                }
+
+                if (guideData.shop) {
+                    cardHtml += `<div class="spot-shop-section">${t.labelShop} ${guideData.shop}</div>`;
+                }
+
                 cardHtml += `
                     <div class="spot-actions">
-                        <button class="action-btn audio" onclick="toggleAudio(this, '${name.replace(/'/g, "\\'")}', '${guideData.basic.replace(/'/g, "\\'")}', '${(guideData.anecdote || '').replace(/'/g, "\\'")}')">${t.audioBtn}</button>
+                        <button class="action-btn audio" onclick="toggleAudio(this, '${name.replace(/'/g, "\\'")}', '${guideData.basic.replace(/'/g, "\\'")}', '${(guideData.anecdote || '').replace(/'/g, "\\'")}', '${(guideData.photo || '').replace(/'/g, "\\'")}', '${(guideData.shop || '').replace(/'/g, "\\'")}')">${t.audioBtn}</button>
                         <a class="action-btn map" href="${mapUrl}" target="_blank">${t.mapBtn}</a>
                     </div>
                 `;
