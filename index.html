@@ -327,7 +327,7 @@
                 distanceWalk: "距离您：步行可达范围内",
                 audioBtn: "🎤 听讲解",
                 stopBtn: "⏹ 停止播报",
-                mapBtn: "🗺️ 导航",
+                mapBtn: "🗺️️ 导航",
                 labelOverview: "🏛 <b>简介：</b>",
                 labelAnecdote: "📜 <b>趣闻典故：</b>",
                 labelPhoto: "📷 <b>绝佳拍照机位：</b>",
@@ -399,7 +399,35 @@
             }
         };
 
+        // ==========================================
+        // 全局优先级/系统打断核心监听：来电、切后台、锁屏、关页面
+        // ==========================================
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // 当用户切到后台、来电弹窗遮挡或锁屏时，瞬间强制停止语音
+                stopCurrentSpeech();
+            }
+        });
+
+        window.addEventListener('pagehide', () => {
+            stopCurrentSpeech();
+        });
+
+        window.addEventListener('beforeunload', () => {
+            stopCurrentSpeech();
+        });
+
+        function stopCurrentSpeech() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            if (activeSpeechButton) {
+                resetAudioButton(activeSpeechButton);
+            }
+        }
+
         function changeLanguage() {
+            stopCurrentSpeech();
             currentLang = document.getElementById('lang-select').value;
             const t = i18n[currentLang];
             
@@ -424,11 +452,13 @@
         }
 
         function onCategoryChange() {
+            stopCurrentSpeech();
             currentCategory = document.getElementById('category-select').value;
             renderSpots();
         }
 
         function getLocationAndExplore() {
+            stopCurrentSpeech();
             const t = i18n[currentLang];
             const statusEl = document.getElementById('status');
             
@@ -615,12 +645,10 @@
                 resetAudioButton(activeSpeechButton);
             }
 
-            // 语音播报严格只读名称和简介，绝不朗读任何距离提示语！
             let textToSpeak = currentLang === 'en' ? `${titleText}. Overview: ${basicText}` : 
                                     currentLang === 'ja' ? `${titleText}。概要：${basicText}` : 
                                     `${titleText}。简介：${basicText}`;
             
-            // 只有走到 20 米以内时，语音才追加深度的趣闻与推荐
             if (isNearby) {
                 if (anecdoteText) {
                     textToSpeak += currentLang === 'en' ? ` Anecdote: ${anecdoteText}` : 
@@ -672,8 +700,6 @@
                 const tags = spot.tags || {};
                 let name = tags.name || tags['name:ja'] || tags['name:en'] || tags['name:zh'] || '';
                 
-                // 修复分类逻辑：
-                // historic 或 amenity=place_of_worship 或 名字里带寺/神社/宫/院 的，全部归入 historic
                 let isHistoric = !!tags.historic || tags.amenity === 'place_of_worship' || name.includes('寺') || name.includes('神社') || name.includes('宫') || name.includes('院');
                 let isPark = tags.leisure === 'park' || name.includes('公园');
                 let isMuseum = tags.tourism === 'museum' || name.includes('博物馆') || name.includes('乡土馆');
@@ -685,7 +711,6 @@
                 } else if (currentCategory === 'museum') {
                     return isMuseum;
                 } else {
-                    // recommend（综合精选）：展示全部优质景点
                     return true;
                 }
             });
@@ -738,8 +763,6 @@
                 
                 const isLandmark = isLandmarkSpot(name, tags);
                 const guideData = generateAIGuideContent(name, tags, currentLang);
-
-                // 核心判定：是否在 20 米以内
                 const isNearby = (distanceVal <= 20);
 
                 const card = document.createElement('div');
@@ -752,7 +775,6 @@
                 `;
 
                 if (isNearby) {
-                    // 20米以内：展示全部深度秘闻、拍照、伴手礼
                     if (guideData.anecdote) {
                         cardHtml += `<div class="spot-anecdote-section">${t.labelAnecdote} ${guideData.anecdote}</div>`;
                     }
@@ -763,7 +785,6 @@
                         cardHtml += `<div class="spot-shop-section">${t.labelShop} ${guideData.shop}</div>`;
                     }
                 } else {
-                    // 20米以外：在卡片上显示提示（告诉用户走近可解锁），但语音绝对不读它！
                     cardHtml += `<div class="proximity-notice">${t.nearbyNotice}</div>`;
                 }
 
